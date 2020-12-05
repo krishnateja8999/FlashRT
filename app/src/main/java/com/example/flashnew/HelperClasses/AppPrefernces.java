@@ -127,5 +127,31 @@ public class AppPrefernces {
         return preference.getString("System", " ");
     }
 
+    public void setPhotoBoolean(String photoBoolean) {
+        editor.putString("PhotoBoolean", photoBoolean);
+        editor.apply();
+    }
+
+    public String getPhotoBoolean() {
+        return preference.getString("PhotoBoolean", " ");
+    }
+
+    public void setLatitude(String Latitude) {
+        editor.putString("Latitude", Latitude);
+        editor.apply();
+    }
+
+    public String getLatitude() {
+        return preference.getString("Latitude", " ");
+    }
+
+    public void setLongitude(String longitude) {
+        editor.putString("Longitude", longitude);
+        editor.apply();
+    }
+
+    public String getLongitude() {
+        return preference.getString("Longitude", " ");
+    }
 
 }

@@ -66,8 +66,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String LOW_TYPE = "low_type";
     public static final String DELIVERY_IMAGE = "image";
     public static final String PERIMETER = "perimeter";
+    public static final String PHOTO_BOOLEAN = "photo_boolean";
     public static final String CREATE_TABLE_TABLE_DELIVERY_DETAILS = "CREATE TABLE " + TABLE_DELIVERY_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            H_CODE + " TEXT, " + RELATIONSHIP + " TEXT, " + NO_OF_ATTEMPTS + " INTEGER, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LOW_TYPE + " TEXT, " + DELIVERY_IMAGE + " BLOB)";
+            H_CODE + " TEXT, " + RELATIONSHIP + " TEXT, " + NO_OF_ATTEMPTS + " INTEGER, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LOW_TYPE + " TEXT, " + PHOTO_BOOLEAN + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + DELIVERY_IMAGE + " BLOB)";
 
 
     private ByteArrayOutputStream objectByteArrayOutputStream;
@@ -176,6 +177,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(DATE_TIME, deliveryModal.getDateTime());
             contentValues.put(BATTERY_LEVEL, deliveryModal.getBatteryLevel());
             contentValues.put(LOW_TYPE, deliveryModal.getLowType());
+            contentValues.put(PHOTO_BOOLEAN, deliveryModal.getPhotoBoolean());
+            contentValues.put(LATITUDE, deliveryModal.getLatitude());
+            contentValues.put(LONGITUDE, deliveryModal.getLongitude());
             contentValues.put(DELIVERY_IMAGE, imageInByte);
 
             long result = db.insert(TABLE_DELIVERY_DETAILS, null, contentValues);
@@ -185,6 +189,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } else {
                 Log.e(TAG, "storeDeliveryDetails1: " + result);
             }
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

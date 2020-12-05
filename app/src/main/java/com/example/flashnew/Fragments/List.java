@@ -1,13 +1,23 @@
 package com.example.flashnew.Fragments;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputType;
@@ -32,6 +42,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -51,8 +63,10 @@ import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
+import com.example.flashnew.Server.InternetConnectionChecker;
 import com.example.flashnew.Server.Utils;
 import com.example.flashnew.Server.retrofitRelated.APIservice;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -68,6 +82,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,7 +93,7 @@ import static android.content.ContentValues.TAG;
 import static android.content.Context.BATTERY_SERVICE;
 import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
-public class List extends Fragment {
+public class List extends Fragment implements LocationListener {
     private TextView title, imei;
     private Spinner spinner;
     private Button conf, can, camera;
@@ -95,7 +111,8 @@ public class List extends Fragment {
     private AutoCompleteTextView hawb;
     private Spinner attemptsDropDown;
     private Bitmap photo, OutImage;
-
+    private LocationManager locationManager;
+    private InternetConnectionChecker internetChecker;
 
     @Nullable
     @Override
@@ -122,16 +139,17 @@ public class List extends Fragment {
         mDatabaseHelper = new DatabaseHelper(context);
         hawb = view.findViewById(R.id.hawb);
         attemptsDropDown = view.findViewById(R.id.attemptsDropDown);
+        internetChecker = new InternetConnectionChecker(context);
         String[] items = new String[]{"1", "2", "3"};
         ArrayAdapter<String> attemptAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, items);
         attemptsDropDown.setAdapter(attemptAdapter);
-
         String[] values1 =
                 {"Selecione Relacionamento", "Mãe", "Tio"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter1);
         preferences.setIMEI("514515854152463");
+
         hawb.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -160,6 +178,7 @@ public class List extends Fragment {
         }
         imei.setText("IMEI : 9876543210123");
 
+
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,12 +186,17 @@ public class List extends Fragment {
                 imei.setText("IMEI : 9876543210123");
                 rl2.setVisibility(View.GONE);
                 rl1.setVisibility(View.VISIBLE);
+                hawb.setText("");
+                spinner.setSelection(0);
+                attemptsDropDown.setSelection(0);
 //                preferences.clearListID();
                 preferences.setLowType("ENTREGA");
+                preferences.setPhotoBoolean("false");
                 HawbStringArray();
+                getLocation();
                 checkDB();
                 try {
-                    PutJsonRequest();
+//                    PutJsonRequest();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -197,16 +221,15 @@ public class List extends Fragment {
         conf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                storeDeliveryData();
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Sucesso");
-
                 //Setting message manually and performing action on button click
                 builder.setMessage("Completado com sucesso..")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                storeDeliveryData();
                                 title.setText("Lista : " + preferences.getListID());
                                 imei.setText("IMEI : 9876543210123");
                                 rl2.setVisibility(View.VISIBLE);
@@ -328,17 +351,11 @@ public class List extends Fragment {
             String formattedDate = df.format(c.getTime());
 
             mDatabaseHelper.storeDeliveryDetails(new TableThreeDeliveryModal(hawb.getText().toString(), spinner.getSelectedItem().toString(),
-                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), OutImage));
+                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
 
         } catch (Exception e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void ConvertDeliveryTable2Array() {
-        Cursor data = mDatabaseHelper.getDeliveryData();
-        ArrayList<String> list = new ArrayList<String>();
-
     }
 
     private void JsonParseListScreen() {
@@ -433,70 +450,12 @@ public class List extends Fragment {
         }
     }
 
-    private void PutJsonRequest() {
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObj = new JSONObject();
-        JSONObject jsonObj1 = new JSONObject();
-        try {
-
-            jsonObj.put("codHawb", "02305767706");
-            jsonObj.put("dataHoraBaixa", "2020-12-03T15:26:22");
-            jsonObj.put("foraAlvo", "100");
-            jsonObj.put("latitude", "-46.86617505263801");
-            jsonObj.put("longitude", " -23.214458905023452");
-            jsonObj.put("nivelBateria", "98");
-            jsonObj.put("tipoBaixa", "ENTREGA");
-            jsonArray.put(jsonObj);
-
-            jsonObj1.put("imei", preferences.getIMEI());
-            jsonObj1.put("franquia", preferences.getFranchise());
-            jsonObj1.put("sistema", preferences.getSystem());
-            jsonObj1.put("lista", preferences.getListID());
-            jsonObj1.put("entregas", jsonArray);
-
-            //Log.e(TAG, "PutJsonRequest: "+jsonObj1 );
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ApiUtils.GET_LIST + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    //Log.e(TAG, "PUTonResponse: " + response);
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "PUTonResponseError: " + error);
-
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    String auth1 = "Basic "
-                            + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
-                            Base64.NO_WRAP);
-                    params.put("Authorization", auth1);
-                    params.put("x-versao-rt", "3.8.10");
-                    params.put("x-rastreador", "ricardo");
-//                    params.put("Content-Type", "application/json");
-                    params.put("Content-Type", "application/json; charset=utf-8");
-                    return params;
-                }
-
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-            };
-            request.setTag(TAG);
-            queue.add(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     private void checkDB() {
+        if (internetChecker.checkInternetConnection()) {
+            Log.e(TAG, "checkDB: " + internetChecker.checkInternetConnection());
+//            internetChecker.failureAlert();
+//            internetChecker.serverErrorAlert();
+        }
         Cursor data = mDatabaseHelper.getData();
         ArrayList<String> list1 = new ArrayList<String>();
         ArrayList<String> list2 = new ArrayList<String>();
@@ -508,37 +467,118 @@ public class List extends Fragment {
         }
         while (data.moveToNext()) {
             list1.add(data.getString(1));
-            list1.add(data.getString(2));
-            list1.add(data.getString(3));
-            list1.add(data.getString(4));
-
-//            for (int counter = 0; counter < list1.size(); counter++) {
-//                Log.e(TAG, "checkDB5: "+list1.get(counter) );
-//                Log.e(TAG, "checkDB5: "+list1.size() );
-//            }
-
+            list2.add(data.getString(2));
+            list3.add(data.getString(3));
+            list4.add(data.getString(4));
 
             Log.e(TAG, "checkDB1: " + list1);
-            Log.e(TAG, "checkDB2: " + list1.size());
+//            Log.e(TAG, "checkDB2: " + list2);
 //            Log.e(TAG, "checkDB3: "+list3 );
 //            Log.e(TAG, "checkDB4: "+list4 );
+            list1.clear();
+            list2.clear();
+            list3.clear();
+            list4.clear();
         }
-//        data.close();
-
-//        for (data.moveToNext(); data.isAfterLast(); data.moveToNext()){
-//            list1.add(data.getString(1));
-//            list1.add(data.getString(2));
-//            list1.add(data.getString(3));
-//            list1.add(data.getString(4));
-//
-//            Log.e(TAG, "checkDB1: "+list1 );
-////            Log.e(TAG, "checkDB2: "+list2 );
-////            Log.e(TAG, "checkDB3: "+list3 );
-////            Log.e(TAG, "checkDB4: "+list4 );
-//        }
-
-
     }
+
+    private void PutJsonRequest() {
+
+        Cursor data = mDatabaseHelper.getDeliveryData();
+        ArrayList<String> codHawb = new ArrayList<String>();
+        ArrayList<String> dataHoraBaixa = new ArrayList<String>();
+        ArrayList<String> latitude = new ArrayList<String>();
+        ArrayList<String> longitude = new ArrayList<String>();
+        ArrayList<String> nivelBateria = new ArrayList<String>();
+        ArrayList<String> tipoBaixa = new ArrayList<String>();
+        ArrayList<String> foto = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Log.e(TAG, "PutJsonRequest: No Data");
+        }
+        while (data.moveToNext()) {
+            codHawb.add(data.getString(1));
+            dataHoraBaixa.add(data.getString(4));
+            latitude.add(data.getString(8));
+            longitude.add(data.getString(9));
+            nivelBateria.add(data.getString(5));
+            tipoBaixa.add(data.getString(6));
+            foto.add(data.getString(7));
+
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObj = new JSONObject();
+            JSONObject jsonObj1 = new JSONObject();
+            try {
+
+                jsonObj.put("codHawb", codHawb);
+                jsonObj.put("dataHoraBaixa", dataHoraBaixa);
+                jsonObj.put("latitude", latitude);
+                jsonObj.put("longitude", longitude);
+                jsonObj.put("nivelBateria", nivelBateria);
+                jsonObj.put("tipoBaixa", tipoBaixa);
+                jsonObj.put("foto", foto);
+                jsonArray.put(jsonObj);
+
+                jsonObj1.put("imei", preferences.getIMEI());
+                jsonObj1.put("franquia", preferences.getFranchise());
+                jsonObj1.put("sistema", preferences.getSystem());
+                jsonObj1.put("lista", preferences.getListID());
+                jsonObj1.put("entregas", jsonArray);
+
+
+                Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ApiUtils.GET_LIST + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e(TAG, "PUTonResponse: " + response);
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "PUTonResponseError: " + error);
+
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> params = new HashMap<String, String>();
+                        String auth1 = "Basic "
+                                + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                                Base64.NO_WRAP);
+                        params.put("Authorization", auth1);
+                        params.put("x-versao-rt", "3.8.10");
+                        params.put("x-rastreador", "ricardo");
+//                    params.put("Content-Type", "application/json");
+                        params.put("Content-Type", "application/json; charset=utf-8");
+                        return params;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+                };
+                request.setTag(TAG);
+                queue.add(request);
+
+                codHawb.clear();
+                dataHoraBaixa.clear();
+                latitude.clear();
+                longitude.clear();
+                nivelBateria.clear();
+                tipoBaixa.clear();
+                foto.clear();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -546,9 +586,8 @@ public class List extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             photo = (Bitmap) data.getExtras().get("data");
             OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
-
+            preferences.setPhotoBoolean("true");
             Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -558,6 +597,41 @@ public class List extends Fragment {
         super.onAttach(context);
         this.context = (Landing_Screen) context;
     }
+
+    // Location
+
+    private void getLocation() {
+        try {
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        Log.e(TAG, "onLocationChanged: " + location.getLatitude() + ", " + location.getLongitude());
+        preferences.setLatitude(String.valueOf(location.getLatitude()));
+        preferences.setLongitude(String.valueOf(location.getLongitude()));
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+        Toast.makeText(context, "Habilite o GPS e a Internet", Toast.LENGTH_SHORT).show();
+    }
+
 }
 
 
