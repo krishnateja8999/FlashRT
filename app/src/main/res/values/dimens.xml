@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="slidingmenu_offset">60dp</dimen>
+    <dimen name="list_padding">10dp</dimen>
+    <dimen name="shadow_width">15dp</dimen>
+
+    <integer name="num_cols">1</integer>
+
+    <color name="menu_disabled">#AAAAAA</color>
+    <dimen name="largeSizeText">16sp</dimen>
+    <dimen name="main_button_height">130dp</dimen>
+    <dimen name="main_actionbar_margin_bottom">15dp</dimen>
+    <dimen name="small_Margin">5dp</dimen>
+    <dimen name="standardMargin">10dp</dimen>
+    <dimen name="largeMargin">15dp</dimen>
+    <dimen name="welcome_screen_marginbottom">30dp</dimen>
+
+    <!-- padding Values related to padding throughout the application-->
+    <dimen name="standardPadding">10dp</dimen>
+    <dimen name="smallPadding">5dp</dimen>
+    <dimen name="large_padding">15dp</dimen>
+</resources>

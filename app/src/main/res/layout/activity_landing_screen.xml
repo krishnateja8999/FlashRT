@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/container2"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/re2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include layout="@layout/toolbar" />
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/flash_logo"
+
+                    android:layout_centerInParent="true" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:layout_marginEnd="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginEnd="2dp"
+                        android:background="@drawable/notification_bg"
+                        android:id="@+id/notifications" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hyderabad"
+                        android:textSize="14sp"
+                        android:id="@+id/toolbar_loc"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#ff1a1a" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AZIMUTH"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp" />
+
+                <!-- <ImageView
+                     android:layout_width="40dp"
+                     android:layout_height="35dp"
+                     android:src="@drawable/bell"
+                     android:layout_alignParentEnd="true"
+                     android:tint="@color/colorPrimary"
+                     android:layout_margin="10dp"
+                     android:visibility="gone"
+                     android:layout_centerVertical="true"
+                     android:id="@+id/logout"/>-->
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content">
+                    <!--   <Button
+                           android:layout_width="80dp"
+                           android:layout_height="30dp"
+                           android:text="SOS"
+                           android:id="@+id/sos"
+                           android:textColor="@color/white"
+                           android:textStyle="bold"
+                           android:background="@drawable/rounded_red_button"/>-->
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </FrameLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_below="@+id/re2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/navigation"
+        android:background="@color/white" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        app:labelVisibilityMode="labeled"
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:elevation="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary1"
+        app:itemIconTint="@color/colorss"
+        app:itemTextColor="@color/colorss"
+        app:elevation="4dp"
+        app:menu="@menu/bottom_navigation_auditor" />
+
+</RelativeLayout>

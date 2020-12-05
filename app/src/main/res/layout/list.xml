@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:unio="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/actionBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:id="@+id/mainContent"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/buttonSync"
+                    android:layout_alignParentTop="true"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/listScreenListDownload"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:alpha="0.8"
+                        android:background="@color/white"
+                        unio:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:id="@+id/buttonLista"
+                            android:layout_width="fill_parent"
+                            android:layout_height="@dimen/main_button_height"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/listaText"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginBottom="15dp"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal|bottom"
+                                android:text="@string/main_lista"
+                                android:textColor="@color/bg"
+                                android:textSize="48dp" />
+
+                            <ImageView
+                                android:id="@+id/listaIcon"
+                                android:layout_width="300dp"
+                                android:layout_height="100dp"
+                                android:layout_gravity="bottom"
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_filesdownload"
+                                android:textColor="@android:color/white" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+
+                    <LinearLayout
+                        android:id="@+id/buttonContainer1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/main_button_height"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:alpha="0.8"
+                                android:background="@color/white"
+                                unio:cardCornerRadius="10dp">
+
+
+                                <LinearLayout
+                                    android:id="@+id/buttonEntrega"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:layout_margin="5dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:id="@+id/delivary"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="0.8"
+                                        android:gravity="center_horizontal|center_vertical"
+                                        android:src="@drawable/ic_food_delivery"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="49sp" />
+
+                                    <TextView
+                                        android:id="@+id/entregaText"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_marginTop="15dp"
+                                        android:layout_weight="0.9"
+                                        android:gravity="center_horizontal"
+                                        android:text="@string/main_entrega"
+                                        android:textColor="@color/bg"
+                                        android:textSize="17sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:alpha="0.8"
+                                android:background="@color/white"
+                                unio:cardCornerRadius="10dp">
+
+                                <LinearLayout
+
+                                    android:id="@+id/buttonDevolucao"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:layout_margin="5dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:id="@+id/returnn"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="0.8"
+                                        android:gravity="center_horizontal|center_vertical"
+                                        android:src="@drawable/ic_delivery_man"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="49sp" />
+
+                                    <TextView
+                                        android:id="@+id/devolucaoText"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_marginTop="15dp"
+                                        android:layout_weight="0.9"
+                                        android:gravity="center_horizontal"
+                                        android:text="@string/main_devolucao"
+                                        android:textColor="@color/bg"
+                                        android:textSize="17sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/buttonContainer"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/main_button_height"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:alpha="0.8"
+                                android:background="@color/white"
+                                unio:cardCornerRadius="10dp">
+
+
+                                <LinearLayout
+                                    android:id="@+id/buttonColeta"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:layout_margin="5dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:id="@+id/coletaIcon"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="0.8"
+                                        android:gravity="center_horizontal|center_vertical"
+                                        android:src="@drawable/ic_motorbike"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="49sp" />
+
+                                    <TextView
+                                        android:id="@+id/coletaText"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_marginTop="15dp"
+
+                                        android:layout_weight="0.9"
+                                        android:gravity="center_horizontal"
+                                        android:text="@string/main_coleta"
+                                        android:textColor="@color/bg"
+                                        android:textSize="17sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:alpha="0.8"
+                                android:background="@color/white"
+                                unio:cardCornerRadius="10dp">
+
+                                <LinearLayout
+                                    android:id="@+id/buttonPesquisa"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:layout_margin="5dp"
+
+
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+
+                                        android:id="@+id/pesquisaIcon"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="15dp"
+                                        android:layout_weight="0.8"
+                                        android:src="@drawable/ic_search_black_24dp"
+                                        android:textSize="49sp" />
+
+                                    <TextView
+                                        android:id="@+id/pesquisaText"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:layout_marginTop="15dp"
+                                        android:layout_weight="0.9"
+                                        android:gravity="center_horizontal"
+                                        android:text="@string/main_pesquisa"
+                                        android:textColor="@color/bg"
+                                        android:textSize="17sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <ImageView
+
+                    android:id="@+id/buttonSync"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:minWidth="50dp"
+                    android:minHeight="50dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_baseline_message_24"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/copyright_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_copyright_version"
+                        android:textColor="@android:color/white"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="3.8.1"
+                        android:textColor="@android:color/white"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="-5dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/beta" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/actionBar"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="5dp"
+                android:paddingBottom="20dp"
+                android:visibility="gone">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:alpha="0.8"
+                    android:background="@color/white"
+                    unio:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="15dp"
+                        android:orientation="vertical">
+
+
+                        <LinearLayout
+                            android:id="@+id/hawbLayout"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/targetSubOptions"
+                            android:layout_alignParentLeft="true"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_marginBottom="20dp"
+                            android:orientation="horizontal">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/hawb"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="@string/hawb_hint"
+                                android:inputType="number"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
+                        <Spinner
+                            android:id="@+id/targetOptions"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginRight="15dp"
+                            android:backgroundTint="@color/bg" />
+
+                        <EditText
+                            android:id="@+id/entregaName"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:digits="0123456789abcdefghijklmnopqrstvuwxyzABCDEFGHIJKLMNOPQRSTVUWXYZáÁéÉíÍóÓúÚàÀãÃõÕâÂêÊôÔçÇ.,-: "
+                            android:hint="Nome"
+                            android:inputType="textFilter"
+                            android:maxLength="60"
+                            android:singleLine="true"
+                            android:visibility="gone" />
+
+                        <EditText
+                            android:id="@+id/entregaId"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/entregaName"
+                            android:layout_marginTop="10dp"
+                            android:digits="0,1,2,3,4,5,6,7,8,9,ABCDEFGHIJKLMNOPQRSTVUWXYZ-."
+                            android:hint="Identificação"
+                            android:inputType="textCapCharacters|textFilter"
+                            android:maxLength="20"
+                            android:singleLine="true"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:gravity="center"
+                            android:text="@string/list_screen2"
+                            android:textColor="@color/Red"
+                            android:textSize="14dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/list_screen3"
+                                android:textSize="15sp"
+                                android:textColor="@color/black"
+                                android:layout_marginStart="100dp" />
+
+                            <Spinner
+                                android:id="@+id/attemptsDropDown"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:spinnerMode="dropdown" />
+
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/buttonPhotoAR"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/entregaId"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginRight="15dp"
+                            android:background="@drawable/rounded_blue_button"
+                            android:text="Selecione a foto"
+                            android:textColor="@color/white"
+                            android:visibility="visible" />
+
+                        <Button
+                            android:id="@+id/buttonPhotoLocal"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/buttonPhotoAR"
+                            android:layout_marginTop="10dp"
+                            android:text="Tirar foto"
+                            android:visibility="gone" />
+
+                        <Button
+                            android:id="@+id/buttonPhotoFora"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/buttonPhotoLocal"
+                            android:layout_marginTop="10dp"
+                            android:text="Tirar foto do local, fora do raio permitido"
+                            android:visibility="gone" />
+
+                        <LinearLayout
+                            android:id="@+id/buttonLayout"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/fotoContainer"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="40dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_marginBottom="30dp"
+                            android:orientation="horizontal">
+
+                            <Button
+
+                                android:id="@+id/buttonConfirm"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                                android:layout_marginRight="10dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_blue_button"
+                                android:text="@string/button_confirmar"
+                                android:textColor="@color/white"
+
+                                />
+
+                            <Button
+                                android:id="@+id/buttonCancel"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                                android:layout_marginLeft="10dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_red_button"
+                                android:text="@string/button_cancelar"
+                                android:textColor="@color/white"
+
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/ListScreenProgressBar"
+        android:layout_width="wrap_content"
+        android:background="@color/white"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+
+</RelativeLayout>

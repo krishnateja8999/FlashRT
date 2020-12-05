@@ -1,0 +1,224 @@
+<resources>
+    <string name="app_name">Flash_portuguese</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="beta" />
+    <string name="app_copyright_version">Version</string>
+    <string name="form_adapter_validation">"{{form_label}}" é obrigatório</string>
+    <string name="app_accesibility_description">The permission serves to better assist users in using the application, improving usability.</string>
+    <string name="hint">Nome</string>
+    <string name="iden">Identificação</string>
+    <string name="titlebar_image">Flash Logo</string>
+    <string name="actionbar_title">Sem Lista</string>
+
+    <string name="Login_screen1">Atenção</string>
+    <string name="Login_screen2">Informe a senha master</string>
+    <string name="Login_screen3">Host Servidor</string>
+    <string name="Login_screen4">Voltar</string>
+    <string name="Login_screen5">Identificação não foi preenchido</string>
+    <string name="Login_screen6">Login não foi preenchido</string>
+    <string name="Login_screen7">Senha não foi preenchido</string>
+    <string name="Login_screen8">O usuário não tem permissao para acessar o recurso</string>
+    <string name="Login_screen9">Informe a senha master</string>
+    <string name="Login_screen10">Senha incorreta</string>
+
+
+    <string name="main_entrega">Entrega</string>
+    <string name="main_devolucao">Devolução</string>
+    <string name="main_coleta">Coleta</string>
+    <string name="main_pesquisa">Pesquisa</string>
+    <string name="main_lista">Lista</string>
+    <string name="main_ajuda">Ajuda</string>
+
+    <string name="configurar_host">Host Servidor</string>
+    <string name="configurar_host_bigdata">Host Servidor BigData</string>
+    <string name="configurar_usuario">Identificação</string>
+    <string name="configurar_login">Login</string>
+    <string name="configurar_senha">Senha</string>
+    <string name="configurar_tipo">Tipo</string>
+
+    <string name="hawb_hint">Digite a hawb</string>
+
+    <string name="lista_entregues">Hawbs entregues</string>
+    <string name="lista_devolvidas">Hawbs devolvidas</string>
+    <string name="lista_pendentes">Hawbs pendentes</string>
+    <string name="lista_aguardando_sincronizar">Sincronizar hawb</string>
+    <string name="lista_aguardando_sincronizar_imagens">Sincronizar imagens</string>
+    <string name="lista_coletas_pendente">Coletas pendentes</string>
+    <string name="lista_coletas_feitas">Coletas feitas</string>
+    <string name="lista_coletas_feitass">tbmvc</string>
+    <string name="lista_coletas_aguardando_sincronizar">Coletas aguardando\nsincronizar</string>
+    <string name="lista_coletas_aguardando_sincronizar_imagens">Imagens de coleta\naguardando sincronizar</string>
+    <!--<string name="lista_aguardando_sincronizar_imagens_fora_alvo">Sincronizar imagens fora do raio</string>-->
+    <string name="lista_default">0</string>
+
+    <string name="button_confirmar">Confirmar</string>
+    <string name="button_cancelar">Cancelar</string>
+    <string name="button_voltar">Voltar</string>
+
+    <string name="menu_title">Menu</string>
+    <string name="menu_configurar">Configurar</string>
+    <string name="menu_apagar_lista">Apagar lista aberta</string>
+    <string name="menu_limpar_dados">Limpar dados</string>
+    <string name="menu_restaurar">Restaurar</string>
+
+    <string name="coleta_escanear">Escanear QR Code</string>
+    <string name="coleta_digitar">Digitar coleta</string>
+    <string name="coleta_id">Coleta: 000015151</string>
+    <string name="coleta_lista_item_icon">IC</string>
+    <string name="coleta_lista_item_name">00016547</string>
+    <string name="coleta_lista_item_address">Rua Exemplo 123, Sala 5, 01525–000, São Paulo - SP</string>
+    <string name="coleta_lista_item_start">Iniciar</string>
+
+    <string name="entrega_foto_local">Tirar foto do local</string>
+
+    <string name="pesquisa_buscar">Buscar pesquisa</string>
+    <string name="pesquisa_iniciar">Abrir Pesquisa</string>
+    <string name="pesquisa_finalizar">Enviar Respostas</string>
+
+    <!--    List screeen-->
+    <string name="list_screen1">Insira um código de lista válido</string>
+    <string name="list_screen2">Preencha os detalhes acima primeiro</string>
+    <string name="list_screen3">Tentativas: </string>
+    <string name="list_screen4">Foto salvo com sucesso</string>
+
+
+    <string-array name="device_type">
+        <item>Corporativo</item>
+        <item>Particular</item>
+    </string-array>
+
+    <string-array name="coleta_action">
+        <item>Coletado</item>
+        <item>Não coletado</item>
+    </string-array>
+
+    <string-array name="pesquisa_action">
+        <item>Respondido</item>
+        <item>Não respondido</item>
+    </string-array>
+
+    <string-array name="grau_relacionamento">
+        <item>-- Selecionar parentesco --</item>
+        <item>1 - Próprio</item>
+        <item>2 - Mãe</item>
+        <item>3 - Pai</item>
+        <item>21 - Irmão</item>
+        <item>4 - Portaria</item>
+        <item>7 - Funcionário</item>
+        <item>14 - Esposa</item>
+        <item>15 - Esposo</item>
+        <item>6 - Segurança</item>
+        <item>16 - Recepção</item>
+        <item>8 - Empregada</item>
+        <item>5 - Secretário</item>
+        <item>9 - Filho</item>
+        <item>12 - Avô</item>
+        <item>18 - Sogro</item>
+        <item>10 - Tio</item>
+        <item>11 - Sobrinho</item>
+        <item>17 - Primo</item>
+        <item>25 - Neto</item>
+        <item>22 - Noivo</item>
+        <item>23 - Cunhado</item>
+        <item>24 - Genro</item>
+        <item>13 - Procurador</item>
+        <item>19 - Inquilino</item>
+        <item>20 - Síndico</item>
+        <item>26 - Resp. Autorizado</item>
+        <item>0 - Agência</item>
+        <item>51 - Caixa de Correspondência</item>
+        <item>52 - Entregue Sob a Porta</item>
+        <item>50 - Deixado Na Varanda</item>
+        <item>53 - Garagem</item>
+    </string-array>
+
+    <string-array name="motivo_dev">
+        <item>509 - Desconhecido (Destinatário / Interlocutor)</item>
+        <item>501 - Recusado (Destinatário / Interlocutor)</item>
+        <item>507 - Não existe número indicado</item>
+        <item>600 - Ausente (Destinatário / Interlocutor)</item>
+        <item>502 - Alto Risco</item>
+        <item>800 - Encomenda Extraviada - Perda</item>
+        <item>801 - Encomenda Extraviada - Furto/Roubo</item>
+        <item>500 - Endereço errado/insuficiente</item>
+        <item>73 - Outros</item>
+        <item>503 - Difícil Acesso</item>
+        <item>505 - Falecido</item>
+        <item>508 - Caixa Postal</item>
+        <item>510 - Pessoa Sem Documentação</item>
+        <item>516 - Encomenda Danificada</item>
+        <item>511 - CEP Não Atendido</item>
+        <item>704 - Insatisfeito/Falta Informação</item>
+        <item>705 - Não concorda com o contrato</item>
+        <item>708 - Ao Remetente</item>
+        <item>604 - Faltou</item>
+        <item>512 - Transferido</item>
+        <item>513 - Em Férias</item>
+        <item>514 - Ex-funcionário (saiu da empresa)</item>
+        <item>515 - Licença / Afastado</item>
+        <item>518 - Zona Rural</item>
+        <item>519 - Cadastro Destinatário Incompleto</item>
+        <item>520 - Endereço rejeitado</item>
+        <item>963 - Fechada - Sem Expediente</item>
+        <item>521 - Número não existe</item>
+        <item>522 - Rua Não Existe</item>
+        <item>523 - Falta o Número</item>
+        <item>524 - Falta o Bairro/Lote/Quadra</item>
+        <item>525 - Falta Bloco/Apto</item>
+        <item>526 - Falta Ramal</item>
+        <item>531 - Atraso Motivo Chuva</item>
+        <item>532 - Veículo Quebrou</item>
+        <item>527 - Em Reunião</item>
+        <item>528 - Espera Excedida</item>
+        <item>529 - Greve/Recesso</item>
+        <item>530 - Dest Outra Unidade</item>
+    </string-array>
+
+    <string-array name="motivo_grupo">
+        <item>-- Selecionar grupo --</item>
+        <item>ENDEREÇAMENTO</item>
+        <item>AUSENTE</item>
+        <item>NÃO VISITADO</item>
+        <item>OUTROS</item>
+    </string-array>
+
+    <string-array name="motivo_endereco_errado">
+        <item>521 - Número não existe</item>
+        <item>522 - Rua Não Existe</item>
+        <item>523 - Falta o Número</item>
+        <item>524 - Falta Bairro/Lote/Quadra</item>
+        <item>525 - Falta Bloco/Apto</item>
+        <item>526 - Falta Ramal</item>
+    </string-array>
+
+    <string-array name="motivo_ausente">
+        <item>600 - Ausente (Destinatário / Interlocutor)</item>
+        <item>527 - Em Reunião</item>
+        <item>528 - Espera Excedida</item>
+        <item>513 - Em Férias</item>
+        <item>515 - Licença / Afastado</item>
+        <item>529 - Greve / Recesso</item>
+        <item>963 - Fechada / Sem Expediente</item>
+        <item>514 - Ex-funcionário (saiu da empresa)</item>
+        <item>530 - Dest Outra Unidade</item>
+        <item>512 - Transferido</item>
+    </string-array>
+
+    <string-array name="motivo_nao_visitado">
+        <item>601 - Atraso no roteiro (Programado nova tentativa)</item>
+        <item>531 - Atraso Motivo Chuva</item>
+        <item>532 - Veículo Quebrou</item>
+    </string-array>
+
+    <string-array name="motivo_outros">
+        <item>504 - Mudou-se</item>
+        <item>505 - Falecido</item>
+        <item>509 - Desconhecido (Destinatário / Interlocutor)</item>
+        <item>510 - Pessoa Sem Documentação</item>
+        <item>503 - Difícil Acesso</item>
+        <item>501 - Recusado (Destinatário / Interlocutor)</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
