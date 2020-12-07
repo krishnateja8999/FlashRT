@@ -221,6 +221,7 @@ public class List extends Fragment implements LocationListener {
             public void onClick(View view) {
                 storeDeliveryData();
                 mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                mDatabaseHelper.ValidateDataWithFirstTable(hawb.getText().toString());
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Sucesso");
                 //Setting message manually and performing action on button click

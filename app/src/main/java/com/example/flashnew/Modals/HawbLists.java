@@ -5,12 +5,22 @@ public class HawbLists {
     String name;
     float latitude;
     float longitude;
+    boolean tick;
 
-    public HawbLists(String hawbCode, String name, float latitude, float longitude) {
+    public HawbLists(String hawbCode, String name, float latitude, float longitude, boolean tick) {
         this.hawbCode = hawbCode;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.tick = tick;
+    }
+
+    public boolean isTick() {
+        return tick;
+    }
+
+    public void setTick(boolean tick) {
+        this.tick = tick;
     }
 
     public String getHawbCode() {

@@ -1,6 +1,7 @@
 package com.example.flashnew.Adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.view.LayoutInflater;
@@ -12,8 +13,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.Modals.HawbLists;
 import com.example.flashnew.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,7 @@ import java.util.Locale;
 public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyViewHolder> {
     private Context context;
     private ArrayList<HawbLists> hawbLists;
+    private DatabaseHelper mDatabaseHelper;
 
     public HawbListAdapter(Context context, ArrayList<HawbLists> hawbLists) {
         this.context = context;
@@ -40,7 +44,13 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.Hcode.setText(hawbLists.get(position).getHawbCode());
         holder.name.setText(hawbLists.get(position).getName());
-        // holder.timeImage.setImageResource(R.drawable.ic_right);
+        if (!hawbLists.get(position).isTick()) {
+            holder.timeImage.setImageResource(R.drawable.ic_right);
+        }
+
+        //Picasso.get().load(hawbLists.get(position).isTick()).into(holder.timeImage);
+
+        //holder.timeImage.setImageResource(R.drawable.ic_right);
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(context, Locale.getDefault());
