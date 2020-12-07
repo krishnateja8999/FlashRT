@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,7 +40,7 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.Hcode.setText(hawbLists.get(position).getHawbCode());
         holder.name.setText(hawbLists.get(position).getName());
-
+        // holder.timeImage.setImageResource(R.drawable.ic_right);
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(context, Locale.getDefault());
@@ -69,6 +70,7 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
 
         private TextView Hcode;
         private TextView address, city, name, postalCode;
+        private ImageView timeImage;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -79,6 +81,7 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
             city = itemView.findViewById(R.id.city_hawb_list);
             name = itemView.findViewById(R.id.name_hawb_list);
             postalCode = itemView.findViewById(R.id.pincode_hawb_List);
+            timeImage = itemView.findViewById(R.id.timeImage);
 
         }
     }

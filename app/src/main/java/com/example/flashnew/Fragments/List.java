@@ -1,7 +1,6 @@
 package com.example.flashnew.Fragments;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,13 +10,8 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputType;
@@ -43,7 +37,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -53,7 +46,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
@@ -65,28 +57,17 @@ import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
 import com.example.flashnew.Server.InternetConnectionChecker;
 import com.example.flashnew.Server.Utils;
-import com.example.flashnew.Server.retrofitRelated.APIservice;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -182,23 +163,32 @@ public class List extends Fragment implements LocationListener {
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                title.setText("Entrega");
-                imei.setText("IMEI : 9876543210123");
-                rl2.setVisibility(View.GONE);
-                rl1.setVisibility(View.VISIBLE);
-                hawb.setText("");
-                spinner.setSelection(0);
-                attemptsDropDown.setSelection(0);
-//                preferences.clearListID();
-                preferences.setLowType("ENTREGA");
-                preferences.setPhotoBoolean("false");
-                HawbStringArray();
-                getLocation();
-                checkDB();
-                try {
-//                    PutJsonRequest();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                Cursor data = mDatabaseHelper.getDataFromTableFour();
+                if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
+                    listDownloadDialog();
+                } else if (data.getCount() == 0) {
+                    EmptyDataInTableFourDialog();
+                } else {
+                    title.setText("Entrega");
+                    imei.setText("IMEI : 9876543210123");
+                    rl2.setVisibility(View.GONE);
+                    rl1.setVisibility(View.VISIBLE);
+                    hawb.setText("");
+                    spinner.setSelection(0);
+                    attemptsDropDown.setSelection(0);
+                    //preferences.clearListID();
+                    preferences.setLowType("ENTREGA");
+                    preferences.setPhotoBoolean("false");
+                    HawbStringArray();
+                    getLocation();
+//                checkDB();
+                    Log.e(TAG, "checkInternetConnection: " + internetChecker.checkInternetConnection());
+
+                    try {
+                        //PutJsonRequest();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -206,15 +196,23 @@ public class List extends Fragment implements LocationListener {
         retur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values2);
-                adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                spinner.setAdapter(adapter1);
-                title.setText("Devolução");
-                imei.setText("IMEI : 9876543210123");
-                rl2.setVisibility(View.GONE);
-                rl1.setVisibility(View.VISIBLE);
-                preferences.setLowType("DEVOLUCAO");
-                HawbStringArray();
+                Cursor data = mDatabaseHelper.getDataFromTableFour();
+
+                if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
+                    listDownloadDialog();
+                } else if (data.getCount() == 0) {
+                    EmptyDataInTableFourDialog();
+                } else {
+                    ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values2);
+                    adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spinner.setAdapter(adapter1);
+                    title.setText("Devolução");
+                    imei.setText("IMEI : 9876543210123");
+                    rl2.setVisibility(View.GONE);
+                    rl1.setVisibility(View.VISIBLE);
+                    preferences.setLowType("DEVOLUCAO");
+                    HawbStringArray();
+                }
             }
         });
 
@@ -222,7 +220,8 @@ public class List extends Fragment implements LocationListener {
             @Override
             public void onClick(View view) {
                 storeDeliveryData();
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Sucesso");
                 //Setting message manually and performing action on button click
                 builder.setMessage("Completado com sucesso..")
@@ -324,13 +323,14 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void HawbStringArray() {
-        Cursor data = mDatabaseHelper.getData();
+        Cursor data = mDatabaseHelper.getDataFromTableFour();
         ArrayList<String> list = new ArrayList<String>();
         if (data.getCount() == 0) {
-            Toast.makeText(context, "Sem dados", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Sem dados", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "HawbStringArray: ");
         } else {
             while (data.moveToNext()) {
-                list.add(data.getString(3));
+                list.add(data.getString(1));
             }
             String[] str = Utils.GetStringArray(list);
             Log.e(TAG, "HawbStringArray: " + Arrays.toString(str));
@@ -350,7 +350,7 @@ public class List extends Fragment implements LocationListener {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String formattedDate = df.format(c.getTime());
 
-            mDatabaseHelper.storeDeliveryDetails(new TableThreeDeliveryModal(hawb.getText().toString(), spinner.getSelectedItem().toString(),
+            mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinner.getSelectedItem().toString(),
                     attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
 
         } catch (Exception e) {
@@ -403,6 +403,9 @@ public class List extends Fragment implements LocationListener {
                                     hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, latitude, longitude);
                             boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
                             System.out.println(success);
+
+                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
+                            System.out.println(tableFourHawbCode);
 
                             FragmentTransaction fragmentTransaction = context
                                     .getSupportFragmentManager().beginTransaction();
@@ -510,13 +513,13 @@ public class List extends Fragment implements LocationListener {
             JSONObject jsonObj1 = new JSONObject();
             try {
 
-                jsonObj.put("codHawb", codHawb);
-                jsonObj.put("dataHoraBaixa", dataHoraBaixa);
-                jsonObj.put("latitude", latitude);
-                jsonObj.put("longitude", longitude);
-                jsonObj.put("nivelBateria", nivelBateria);
-                jsonObj.put("tipoBaixa", tipoBaixa);
-                jsonObj.put("foto", foto);
+                jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
+                jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
+                jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
                 jsonArray.put(jsonObj);
 
                 jsonObj1.put("imei", preferences.getIMEI());
@@ -525,13 +528,17 @@ public class List extends Fragment implements LocationListener {
                 jsonObj1.put("lista", preferences.getListID());
                 jsonObj1.put("entregas", jsonArray);
 
-
                 Log.e(TAG, "PutJsonRequest: " + jsonObj1);
 
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ApiUtils.GET_LIST + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ApiUtils.GET_LIST + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(TAG, "PUTonResponse: " + response);
+                        try {
+                            String statusMessage = response.getString("statusMessage");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 }, new Response.ErrorListener() {
@@ -563,6 +570,7 @@ public class List extends Fragment implements LocationListener {
                 request.setTag(TAG);
                 queue.add(request);
 
+
                 codHawb.clear();
                 dataHoraBaixa.clear();
                 latitude.clear();
@@ -577,6 +585,27 @@ public class List extends Fragment implements LocationListener {
             }
 
         }
+    }
+
+    private void EmptyDataInTableFourDialog() {
+//        Cursor data= mDatabaseHelper.getDataFromTableFour();
+//        Log.e(TAG, "DataInTableFour: "+data.getCount());
+//        if (data.getCount()==0){
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        builder1.setTitle(getResources().getString(R.string.Login_screen1));
+        builder1.setMessage(getResources().getString(R.string.list_screen5));
+        builder1.setCancelable(false);
+        builder1.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+        //}
     }
 
 
@@ -622,7 +651,7 @@ public class List extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Log.e(TAG, "onLocationChanged: " + location.getLatitude() + ", " + location.getLongitude());
+//        Log.e(TAG, "onLocationChanged: " + location.getLatitude() + ", " + location.getLongitude());
         preferences.setLatitude(String.valueOf(location.getLatitude()));
         preferences.setLongitude(String.valueOf(location.getLongitude()));
     }

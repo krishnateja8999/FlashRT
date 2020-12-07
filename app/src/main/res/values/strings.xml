@@ -81,6 +81,7 @@
     <string name="list_screen2">Preencha os detalhes acima primeiro</string>
     <string name="list_screen3">Tentativas: </string>
     <string name="list_screen4">Foto salvo com sucesso</string>
+    <string name="list_screen5">Nenhuma lista para entregar, sincronize para atualizar as listas</string>
 
 
     <string-array name="device_type">

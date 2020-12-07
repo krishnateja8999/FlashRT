@@ -28,6 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_DELIVER_DETAILS = "tbl_deliverer_details";
     public static final String TABLE_TOTAL_LIST_DETAILS = "tbl_list_details";
     public static final String TABLE_DELIVERY_DETAILS = "tbl_delivery_details";
+    public static final String TABLE_HAWB_CODES = "tbl_hawb_code";
 
 
     //Table 1 columns & query:
@@ -58,17 +59,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //Table 3 columns & query:
-    public static final String H_CODE = "h_code";
-    public static final String RELATIONSHIP = "relation";
-    public static final String NO_OF_ATTEMPTS = "attempts";
-    public static final String DATE_TIME = "date_time";
-    public static final String BATTERY_LEVEL = "battery_level";
-    public static final String LOW_TYPE = "low_type";
-    public static final String DELIVERY_IMAGE = "image";
-    public static final String PERIMETER = "perimeter";
-    public static final String PHOTO_BOOLEAN = "photo_boolean";
-    public static final String CREATE_TABLE_TABLE_DELIVERY_DETAILS = "CREATE TABLE " + TABLE_DELIVERY_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String H_CODE = "h_code";
+    private static final String RELATIONSHIP = "relation";
+    private static final String NO_OF_ATTEMPTS = "attempts";
+    private static final String DATE_TIME = "date_time";
+    private static final String BATTERY_LEVEL = "battery_level";
+    private static final String LOW_TYPE = "low_type";
+    private static final String DELIVERY_IMAGE = "image";
+    private static final String PERIMETER = "perimeter";
+    private static final String PHOTO_BOOLEAN = "photo_boolean";
+    private static final String CREATE_TABLE_TABLE_DELIVERY_DETAILS = "CREATE TABLE " + TABLE_DELIVERY_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             H_CODE + " TEXT, " + RELATIONSHIP + " TEXT, " + NO_OF_ATTEMPTS + " INTEGER, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LOW_TYPE + " TEXT, " + PHOTO_BOOLEAN + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + DELIVERY_IMAGE + " BLOB)";
+
+    //Table 4 query:
+    private static final String CREATE_TABLE_HAWB_CODES = "CREATE TABLE " + TABLE_HAWB_CODES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            HAWB_CODE + " TEXT)";
 
 
     private ByteArrayOutputStream objectByteArrayOutputStream;
@@ -84,6 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_DELIVERER_DETAILS);
         db.execSQL(CREATE_TABLE_TOTAL_LIST_DETAILS);
         db.execSQL(CREATE_TABLE_TABLE_DELIVERY_DETAILS);
+        db.execSQL(CREATE_TABLE_HAWB_CODES);
 
     }
 
@@ -93,6 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DELIVER_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_LIST_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DELIVERY_DETAILS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_HAWB_CODES);
 
         //create new tables on upgrade
         onCreate(db);
@@ -103,6 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_DELIVER_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_TOTAL_LIST_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_DELIVERY_DETAILS);
+        db.execSQL("DELETE FROM " + TABLE_HAWB_CODES);
         db.close();
     }
 
@@ -162,7 +170,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public void storeDeliveryDetails(TableThreeDeliveryModal deliveryModal) {
+    public void addDataToTableThree(TableThreeDeliveryModal deliveryModal) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             Bitmap imageToStoreBitmap = deliveryModal.getImage();
@@ -202,4 +210,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public boolean addDataToTableFour(String item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(HAWB_CODE, item);
+        long result = db.insert(TABLE_HAWB_CODES, null, contentValues);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public Cursor getDataFromTableFour() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_HAWB_CODES;
+        return db.rawQuery(query, null);
+    }
+
+    public void deleteHawbFromTableFour(String h_code) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_HAWB_CODES + " WHERE " + HAWB_CODE + " = '" + h_code + "'";
+        db.execSQL(query);
+    }
 }

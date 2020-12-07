@@ -36,7 +36,7 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:id="@+id/img"
+                        android:id="@+id/timeImage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="15dp"

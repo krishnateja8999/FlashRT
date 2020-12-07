@@ -1,8 +1,6 @@
 package com.example.flashnew.Server;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import java.util.ArrayList;
 
@@ -18,6 +16,15 @@ public class Utils {
         for (int j = 0; j < arr.size(); j++) {
             str[j] = arr.get(j);
         }
+        return str;
+    }
+
+    public static String ConvertArrayListToString(ArrayList<String> arrList) {
+        StringBuffer sb = new StringBuffer();
+        for (String s : arrList) {
+            sb.append(s);
+        }
+        String str = sb.toString();
         return str;
     }
 
