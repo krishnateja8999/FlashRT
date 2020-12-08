@@ -7,22 +7,30 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.flashnew.Fragments.Collect;
 import com.example.flashnew.Fragments.List;
@@ -36,6 +44,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
+import static android.content.ContentValues.TAG;
 
 public class Landing_Screen extends AppCompatActivity {
     public NavigationView navigationView;
@@ -90,6 +100,13 @@ public class Landing_Screen extends AppCompatActivity {
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
+        Menu menuNav = navigationView.getMenu();
+        MenuItem nav_item2 = menuNav.findItem(R.id.list_delete);
+//        if (preferences.getListID().equals("")||preferences.getListID().equals(" ")) {
+//            nav_item2.setEnabled(false);
+//        }else {
+//            nav_item2.setEnabled(true);
+//        }
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -102,7 +119,43 @@ public class Landing_Screen extends AppCompatActivity {
                         return true;
                     case R.id.about:
                         // startActivity(new Intent(Landing_Screen.this,About.class));
+                        Log.e(TAG, "onClick: " + preferences.getListID().toString());
                         return true;
+
+                    case R.id.list_delete:
+                        if (preferences.getListID().equals("") || preferences.getListID().equals(" ")) {
+                            Toast.makeText(Landing_Screen.this, "No Lists", Toast.LENGTH_SHORT).show();
+                        } else {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
+                            final EditText edittext = new EditText(Landing_Screen.this);
+                            edittext.setBackgroundResource(R.drawable.edit_text_border);
+                            edittext.setPadding(30, 30, 30, 30);
+                            edittext.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            builder1.setCancelable(true);
+                            builder1.setTitle(getResources().getString(R.string.Login_screen1));
+                            builder1.setMessage(getResources().getString(R.string.Login_screen2));
+                            builder1.setView(edittext);
+
+                            builder1.setPositiveButton(
+                                    "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            if (edittext.getText().toString().length() == 0) {
+                                                edittext.setError(getResources().getString(R.string.Login_screen9));
+                                            } else if (edittext.getText().toString().equals(getResources().getString(R.string.lista_coletas_feitass))) {
+                                                listDownloadDialog();
+                                            } else {
+                                                edittext.setError(getResources().getString(R.string.Login_screen10));
+                                                Toast.makeText(Landing_Screen.this, "Wrong Password", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                            //Creating dialog box
+                            AlertDialog alert = builder1.create();
+                            alert.show();
+                        }
+                        return true;
+
                     case R.id.nav_logout:
                         preferences.logout();
                         startActivity(new Intent(Landing_Screen.this, LoginActivity.class));
@@ -145,7 +198,6 @@ public class Landing_Screen extends AppCompatActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-
                                 progressDialog.dismiss();
                             }
                         }, 3000);
@@ -182,6 +234,46 @@ public class Landing_Screen extends AppCompatActivity {
                 break;
 
         }
+    }
+
+    private void listDownloadDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        final EditText edittext = new EditText(this);
+        edittext.setBackgroundResource(R.drawable.edit_text_border);
+        edittext.setPadding(30, 30, 30, 30);
+        edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setTitle(getResources().getString(R.string.Login_screen1));
+        builder.setMessage("Digite o código da lista para excluir");
+        builder.setCancelable(false);
+        builder.setView(edittext);
+
+        builder.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //preferences.setListID(edittext.getText().toString());
+                        if (preferences.getListID().equals(edittext.getText().toString())) {
+                            databaseHelper.DeleteDataFromTableTwo();
+                            preferences.clearListID();
+                            Intent intent = new Intent("list_code_status");
+                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
+                        } else {
+                            Toast.makeText(Landing_Screen.this, "O código da lista inserido está errado", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        builder.setNegativeButton(
+                "CANCELAR",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        //Creating dialog box
+        androidx.appcompat.app.AlertDialog alert = builder.create();
+        alert.show();
+
     }
 
     @Override

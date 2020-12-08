@@ -1,9 +1,11 @@
 package com.example.flashnew.Fragments;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -39,6 +42,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -50,6 +54,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.LoginActivity;
 import com.example.flashnew.Modals.TableOneDelivererModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
@@ -94,6 +99,8 @@ public class List extends Fragment implements LocationListener {
     private Bitmap photo, OutImage;
     private LocationManager locationManager;
     private InternetConnectionChecker internetChecker;
+    private ListCodeUpdater listCodeUpdater;
+    private ListScreenUpdater listScreenUpdater;
 
     @Nullable
     @Override
@@ -126,10 +133,20 @@ public class List extends Fragment implements LocationListener {
         attemptsDropDown.setAdapter(attemptAdapter);
         String[] values1 =
                 {"Selecione Relacionamento", "Mãe", "Tio"};
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
+        String[] tab_names = getResources().getStringArray(R.array.grau_relacionamento);
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, tab_names);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter1);
         preferences.setIMEI("514515854152463");
+        listCodeUpdater = new ListCodeUpdater();
+        LocalBroadcastManager.getInstance(context).registerReceiver(listCodeUpdater, new IntentFilter("list_code_status"));
+        listScreenUpdater = new ListScreenUpdater();
+        LocalBroadcastManager.getInstance(context).registerReceiver(listScreenUpdater, new IntentFilter("list_screen"));
+        Cursor data = mDatabaseHelper.getDeliveryData(); //table3
+        Cursor data1 = mDatabaseHelper.getDataFromTableFour();
+        if (data.getCount() == 0 && data1.getCount() == 0) {
+            preferences.clearListID();
+        }
 
         hawb.addTextChangedListener(new TextWatcher() {
             @Override
@@ -164,9 +181,10 @@ public class List extends Fragment implements LocationListener {
             @Override
             public void onClick(View view) {
                 Cursor data = mDatabaseHelper.getDataFromTableFour();
+                Cursor data1 = mDatabaseHelper.getDeliveryData();
                 if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
                     listDownloadDialog();
-                } else if (data.getCount() == 0) {
+                } else if (data.getCount() == 0 && data1.getCount() != 0) {
                     EmptyDataInTableFourDialog();
                 } else {
                     title.setText("Entrega");
@@ -184,11 +202,6 @@ public class List extends Fragment implements LocationListener {
 //                checkDB();
                     Log.e(TAG, "checkInternetConnection: " + internetChecker.checkInternetConnection());
 
-                    try {
-                        //PutJsonRequest();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         });
@@ -208,6 +221,7 @@ public class List extends Fragment implements LocationListener {
                     spinner.setAdapter(adapter1);
                     title.setText("Devolução");
                     imei.setText("IMEI : 9876543210123");
+                    preferences.setPhotoBoolean("false");
                     rl2.setVisibility(View.GONE);
                     rl1.setVisibility(View.VISIBLE);
                     preferences.setLowType("DEVOLUCAO");
@@ -220,8 +234,15 @@ public class List extends Fragment implements LocationListener {
             @Override
             public void onClick(View view) {
                 storeDeliveryData();
+                try {
+                    if (internetChecker.checkInternetConnection()) {
+                        PutJsonRequest();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
-                mDatabaseHelper.ValidateDataWithFirstTable(hawb.getText().toString());
+                mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Sucesso");
                 //Setting message manually and performing action on button click
@@ -234,6 +255,8 @@ public class List extends Fragment implements LocationListener {
                                 imei.setText("IMEI : 9876543210123");
                                 rl2.setVisibility(View.VISIBLE);
                                 rl1.setVisibility(View.GONE);
+                                Intent intent = new Intent("list_screen");
+                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                             }
                         });
                 //Creating dialog box
@@ -306,7 +329,6 @@ public class List extends Fragment implements LocationListener {
                     public void onClick(DialogInterface dialog, int id) {
                         preferences.setListID(edittext.getText().toString());
                         JsonParseListScreen();
-
                     }
                 });
 
@@ -357,6 +379,23 @@ public class List extends Fragment implements LocationListener {
         } catch (Exception e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void EmptyDataInTableFourDialog() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        builder1.setTitle(getResources().getString(R.string.Login_screen1));
+        builder1.setMessage(getResources().getString(R.string.list_screen5));
+        builder1.setCancelable(false);
+        builder1.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
     }
 
     private void JsonParseListScreen() {
@@ -454,41 +493,10 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
-    private void checkDB() {
-        if (internetChecker.checkInternetConnection()) {
-            Log.e(TAG, "checkDB: " + internetChecker.checkInternetConnection());
-//            internetChecker.failureAlert();
-//            internetChecker.serverErrorAlert();
-        }
-        Cursor data = mDatabaseHelper.getData();
-        ArrayList<String> list1 = new ArrayList<String>();
-        ArrayList<String> list2 = new ArrayList<String>();
-        ArrayList<String> list3 = new ArrayList<String>();
-        ArrayList<String> list4 = new ArrayList<String>();
+    public void PutJsonRequest() {
 
-        if (data.getCount() == 0) {
-            Toast.makeText(context, "Sem dados", Toast.LENGTH_SHORT).show();
-        }
-        while (data.moveToNext()) {
-            list1.add(data.getString(1));
-            list2.add(data.getString(2));
-            list3.add(data.getString(3));
-            list4.add(data.getString(4));
-
-            Log.e(TAG, "checkDB1: " + list1);
-//            Log.e(TAG, "checkDB2: " + list2);
-//            Log.e(TAG, "checkDB3: "+list3 );
-//            Log.e(TAG, "checkDB4: "+list4 );
-            list1.clear();
-            list2.clear();
-            list3.clear();
-            list4.clear();
-        }
-    }
-
-    private void PutJsonRequest() {
-
-        Cursor data = mDatabaseHelper.getDeliveryData();
+        Cursor data = mDatabaseHelper.getDeliveryData(); //table3
+        Cursor data1 = mDatabaseHelper.getDataFromTableFour();
         ArrayList<String> codHawb = new ArrayList<String>();
         ArrayList<String> dataHoraBaixa = new ArrayList<String>();
         ArrayList<String> latitude = new ArrayList<String>();
@@ -584,29 +592,45 @@ public class List extends Fragment implements LocationListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+        }
+        mDatabaseHelper.DeleteFromTableThreeUponSync();
+        Log.e(TAG, "getDeliveryData: " + data.getCount());
+        Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
+        if (data.getCount() == 0 && data1.getCount() == 0) {
+            preferences.clearListID();
         }
     }
 
-    private void EmptyDataInTableFourDialog() {
-//        Cursor data= mDatabaseHelper.getDataFromTableFour();
-//        Log.e(TAG, "DataInTableFour: "+data.getCount());
-//        if (data.getCount()==0){
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-        builder1.setTitle(getResources().getString(R.string.Login_screen1));
-        builder1.setMessage(getResources().getString(R.string.list_screen5));
-        builder1.setCancelable(false);
-        builder1.setPositiveButton(
-                "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        //Creating dialog box
-        AlertDialog alert1 = builder1.create();
-        alert1.show();
-        //}
+    private void checkDB() {
+        if (internetChecker.checkInternetConnection()) {
+            Log.e(TAG, "checkDB: " + internetChecker.checkInternetConnection());
+//            internetChecker.failureAlert();
+//            internetChecker.serverErrorAlert();
+        }
+        Cursor data = mDatabaseHelper.getData();
+        ArrayList<String> list1 = new ArrayList<String>();
+        ArrayList<String> list2 = new ArrayList<String>();
+        ArrayList<String> list3 = new ArrayList<String>();
+        ArrayList<String> list4 = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Toast.makeText(context, "Sem dados", Toast.LENGTH_SHORT).show();
+        }
+        while (data.moveToNext()) {
+            list1.add(data.getString(1));
+            list2.add(data.getString(2));
+            list3.add(data.getString(3));
+            list4.add(data.getString(4));
+
+            Log.e(TAG, "checkDB1: " + list1);
+//            Log.e(TAG, "checkDB2: " + list2);
+//            Log.e(TAG, "checkDB3: "+list3 );
+//            Log.e(TAG, "checkDB4: "+list4 );
+            list1.clear();
+            list2.clear();
+            list3.clear();
+            list4.clear();
+        }
     }
 
 
@@ -622,10 +646,23 @@ public class List extends Fragment implements LocationListener {
     }
 
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = (Landing_Screen) context;
+    private class ListCodeUpdater extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context i, Intent intent) {
+            title.setVisibility(View.GONE);
+        }
+    }
+
+    private class ListScreenUpdater extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Cursor data = mDatabaseHelper.getDeliveryData(); //table3
+            Cursor data1 = mDatabaseHelper.getDataFromTableFour();
+            if (data.getCount() == 0 && data1.getCount() == 0) {
+                preferences.clearListID();
+            }
+        }
     }
 
     // Location
@@ -660,6 +697,12 @@ public class List extends Fragment implements LocationListener {
     @Override
     public void onProviderDisabled(@NonNull String provider) {
         Toast.makeText(context, "Habilite o GPS e a Internet", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = (Landing_Screen) context;
     }
 
 }

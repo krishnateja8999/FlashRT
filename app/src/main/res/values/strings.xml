@@ -75,6 +75,7 @@
     <string name="pesquisa_buscar">Buscar pesquisa</string>
     <string name="pesquisa_iniciar">Abrir Pesquisa</string>
     <string name="pesquisa_finalizar">Enviar Respostas</string>
+    <string name="side_nav">Apagar lista aberta</string>
 
     <!--    List screeen-->
     <string name="list_screen1">Insira um código de lista válido</string>

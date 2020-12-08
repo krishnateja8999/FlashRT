@@ -44,13 +44,10 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.Hcode.setText(hawbLists.get(position).getHawbCode());
         holder.name.setText(hawbLists.get(position).getName());
-        if (!hawbLists.get(position).isTick()) {
-            holder.timeImage.setImageResource(R.drawable.ic_right);
+
+        if (hawbLists.get(position).getTick().equals("false")) {
+            holder.timeImage.setImageResource(R.drawable.ic_time);
         }
-
-        //Picasso.get().load(hawbLists.get(position).isTick()).into(holder.timeImage);
-
-        //holder.timeImage.setImageResource(R.drawable.ic_right);
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(context, Locale.getDefault());

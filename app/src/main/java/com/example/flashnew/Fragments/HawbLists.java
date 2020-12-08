@@ -52,7 +52,7 @@ public class HawbLists extends Fragment {
         } else {
             while (data.moveToNext()) {
                 hawbListsArrayList.add(new com.example.flashnew.Modals.HawbLists(data.getString(3), data.getString(5),
-                        data.getFloat(10), data.getFloat(11), false));
+                        data.getFloat(10), data.getFloat(11), data.getString(12)));
             }
             adapter = new HawbListAdapter(getContext(), hawbListsArrayList);
             recyclerViewHawbList.setAdapter(adapter);

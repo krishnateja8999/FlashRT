@@ -56,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TICK_MARK = "tick_mark";
     private static final String CREATE_TABLE_TOTAL_LIST_DETAILS = "CREATE TABLE " + TABLE_TOTAL_LIST_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CUSTOMER_ID + " INTEGER, "
             + CONTRACT_ID + " INTEGER, " + HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, "
-            + ATTEMPTS + " INTEGER, " + SPECIAL_PHOTO + " TEXT, " + SCORE + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + TICK_MARK + " BOOLEAN)";
+            + ATTEMPTS + " INTEGER, " + SPECIAL_PHOTO + " TEXT, " + SCORE + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + TICK_MARK + " TEXT)";
 
 
     //Table 3 columns & query:
@@ -154,6 +154,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(SCORE, twoListModal.getScore());
         contentValues.put(LATITUDE, twoListModal.getLatitude());
         contentValues.put(LONGITUDE, twoListModal.getLongitude());
+        contentValues.put(TICK_MARK, "false");
 
         long result = db.insert(TABLE_TOTAL_LIST_DETAILS, null, contentValues);
         db.close();
@@ -169,6 +170,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_TOTAL_LIST_DETAILS;
         Cursor data = db.rawQuery(query, null);
         return data;
+    }
+
+    public void ValidateDataWithSecondTable(String code) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String query= "SELECT * FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " ='" + code + "'";
+        String query = "UPDATE " + TABLE_TOTAL_LIST_DETAILS + " SET " + TICK_MARK + "=' true  ' WHERE " + HAWB_CODE + " ='" + code + "'";
+        db.execSQL(query);
+    }
+
+    public void DeleteDataFromTableTwo() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_TOTAL_LIST_DETAILS;
+        db.execSQL(query);
     }
 
     public void addDataToTableThree(TableThreeDeliveryModal deliveryModal) {
@@ -211,6 +225,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public void DeleteFromTableThreeUponSync() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_DELIVERY_DETAILS;
+        db.execSQL(query);
+    }
+
     public boolean addDataToTableFour(String item) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -233,13 +253,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteHawbFromTableFour(String h_code) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_HAWB_CODES + " WHERE " + HAWB_CODE + " = '" + h_code + "'";
-        db.execSQL(query);
-    }
-
-    public void ValidateDataWithFirstTable(String code) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        //String query= "SELECT * FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " ='" + code + "'";
-        String query = "UPDATE " + TABLE_TOTAL_LIST_DETAILS + " SET " + TICK_MARK + "='" + true + "' WHERE " + HAWB_CODE + " ='" + code + "'";
         db.execSQL(query);
     }
 }
