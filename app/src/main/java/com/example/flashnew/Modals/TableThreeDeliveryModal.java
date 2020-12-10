@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 public class TableThreeDeliveryModal {
 
     private String hawbCode;
-    private String relationship;
+    private int relationship;
     private String attempts;
     private String dateTime;
     private int batteryLevel;
@@ -15,7 +15,7 @@ public class TableThreeDeliveryModal {
     private String longitude;
     private Bitmap image;
 
-    public TableThreeDeliveryModal(String hawbCode, String relationship, String attempts, String dateTime, int batteryLevel, String lowType, String photoBoolean, String latitude, String longitude, Bitmap image) {
+    public TableThreeDeliveryModal(String hawbCode, int relationship, String attempts, String dateTime, int batteryLevel, String lowType, String photoBoolean, String latitude, String longitude, Bitmap image) {
         this.hawbCode = hawbCode;
         this.relationship = relationship;
         this.attempts = attempts;
@@ -44,11 +44,11 @@ public class TableThreeDeliveryModal {
         this.hawbCode = hawbCode;
     }
 
-    public String getRelationship() {
+    public int getRelationship() {
         return relationship;
     }
 
-    public void setRelationship(String relationship) {
+    public void setRelationship(int relationship) {
         this.relationship = relationship;
     }
 

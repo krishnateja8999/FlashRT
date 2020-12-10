@@ -10,6 +10,7 @@
     <string name="iden">Identificação</string>
     <string name="titlebar_image">Flash Logo</string>
     <string name="actionbar_title">Sem Lista</string>
+    <string name="permissions_request">Algumas permissões são necessãrias para o uso do aplicativo, prossiga para habilitar</string>
 
     <string name="Login_screen1">Atenção</string>
     <string name="Login_screen2">Informe a senha master</string>

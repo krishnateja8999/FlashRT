@@ -24,10 +24,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -81,14 +83,13 @@ import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 public class List extends Fragment implements LocationListener {
     private TextView title, imei;
-    private Spinner spinner;
+    private Spinner spinner, spinner2;
     private Button conf, can, camera;
     private LinearLayout linearLayout, retur;
     private RelativeLayout rl1, rl2;
     private Landing_Screen context;
     private LinearLayout linearLayout1, linearLayout2;
-    private String[] values2 =
-            {"Selecione o motivo da devolução", "Endereçando", "Ausente", "Outras"};
+    private String[] values2, enderec, ausente, nao_visitado, outros;
     private CardView listScreenListDownload;
     private AppPrefernces preferences;
     private RequestQueue queue;
@@ -108,6 +109,7 @@ public class List extends Fragment implements LocationListener {
         final View view = inflater.inflate(R.layout.list, container, false);
         linearLayout = view.findViewById(R.id.buttonEntrega);
         spinner = view.findViewById(R.id.targetOptions);
+        spinner2 = view.findViewById(R.id.spinner2);
         rl1 = view.findViewById(R.id.rl);
         rl2 = view.findViewById(R.id.rl1);
         title = view.findViewById(R.id.actionbarTitle);
@@ -129,15 +131,17 @@ public class List extends Fragment implements LocationListener {
         attemptsDropDown = view.findViewById(R.id.attemptsDropDown);
         internetChecker = new InternetConnectionChecker(context);
         String[] items = new String[]{"1", "2", "3"};
+        values2 = getResources().getStringArray(R.array.motivo_grupo);
         ArrayAdapter<String> attemptAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, items);
         attemptsDropDown.setAdapter(attemptAdapter);
-        String[] values1 =
-                {"Selecione Relacionamento", "Mãe", "Tio"};
         String[] tab_names = getResources().getStringArray(R.array.grau_relacionamento);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, tab_names);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter1);
-        preferences.setIMEI("514515854152463");
+        enderec = getResources().getStringArray(R.array.motivo_dev);
+        ausente = getResources().getStringArray(R.array.motivo_ausente);
+        nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
+        outros = getResources().getStringArray(R.array.motivo_outros);
         listCodeUpdater = new ListCodeUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listCodeUpdater, new IntentFilter("list_code_status"));
         listScreenUpdater = new ListScreenUpdater();
@@ -145,6 +149,7 @@ public class List extends Fragment implements LocationListener {
         Cursor data = mDatabaseHelper.getDeliveryData(); //table3
         Cursor data1 = mDatabaseHelper.getDataFromTableFour();
         if (data.getCount() == 0 && data1.getCount() == 0) {
+            mDatabaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
         }
 
@@ -174,7 +179,7 @@ public class List extends Fragment implements LocationListener {
         } else {
             title.setText("Lista : " + preferences.getListID());
         }
-        imei.setText("IMEI : 9876543210123");
+        imei.setText("IMEI : " + preferences.getIMEI());
 
 
         linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -188,7 +193,7 @@ public class List extends Fragment implements LocationListener {
                     EmptyDataInTableFourDialog();
                 } else {
                     title.setText("Entrega");
-                    imei.setText("IMEI : 9876543210123");
+                    imei.setText("IMEI : " + preferences.getIMEI());
                     rl2.setVisibility(View.GONE);
                     rl1.setVisibility(View.VISIBLE);
                     hawb.setText("");
@@ -210,17 +215,57 @@ public class List extends Fragment implements LocationListener {
             @Override
             public void onClick(View view) {
                 Cursor data = mDatabaseHelper.getDataFromTableFour();
-
                 if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
                     listDownloadDialog();
                 } else if (data.getCount() == 0) {
                     EmptyDataInTableFourDialog();
                 } else {
+                    spinner.setVisibility(View.GONE);
+                    spinner2.setVisibility(View.VISIBLE);
                     ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values2);
                     adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                    spinner.setAdapter(adapter1);
+                    spinner2.setAdapter(adapter1);
+                    spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            if (position == 1) {
+                                spinner2.setVisibility(View.GONE);
+                                spinner.setVisibility(View.VISIBLE);
+                                spinner.performClick();
+                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, enderec);
+                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                spinner.setAdapter(adapter2);
+                            } else if (position == 2) {
+                                spinner2.setVisibility(View.GONE);
+                                spinner.setVisibility(View.VISIBLE);
+                                spinner.performClick();
+                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, ausente);
+                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                spinner.setAdapter(adapter2);
+                            } else if (position == 3) {
+                                spinner2.setVisibility(View.GONE);
+                                spinner.setVisibility(View.VISIBLE);
+                                spinner.performClick();
+                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, nao_visitado);
+                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                spinner.setAdapter(adapter2);
+                            } else if (position == 4) {
+                                spinner2.setVisibility(View.GONE);
+                                spinner.setVisibility(View.VISIBLE);
+                                spinner.performClick();
+                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, outros);
+                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                spinner.setAdapter(adapter2);
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
                     title.setText("Devolução");
-                    imei.setText("IMEI : 9876543210123");
+                    imei.setText("IMEI : " + preferences.getIMEI());
                     preferences.setPhotoBoolean("false");
                     rl2.setVisibility(View.GONE);
                     rl1.setVisibility(View.VISIBLE);
@@ -252,9 +297,10 @@ public class List extends Fragment implements LocationListener {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                                 title.setText("Lista : " + preferences.getListID());
-                                imei.setText("IMEI : 9876543210123");
+                                imei.setText("IMEI : " + preferences.getIMEI());
                                 rl2.setVisibility(View.VISIBLE);
                                 rl1.setVisibility(View.GONE);
+                                spinner.setSelection(0);
                                 Intent intent = new Intent("list_screen");
                                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                             }
@@ -286,22 +332,9 @@ public class List extends Fragment implements LocationListener {
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
             }
         });
 
-        linearLayout1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                context.changeFragment1(3);
-            }
-        });
-        linearLayout2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                context.changeFragment1(4);
-            }
-        });
         can.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -361,7 +394,6 @@ public class List extends Fragment implements LocationListener {
                     (getContext(), android.R.layout.select_dialog_item, str);
             hawb.setThreshold(1);//will start working from first character
             hawb.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
-
         }
     }
 
@@ -373,7 +405,10 @@ public class List extends Fragment implements LocationListener {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String formattedDate = df.format(c.getTime());
 
-            mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinner.getSelectedItem().toString(),
+            String spinnerValue = spinner.getSelectedItem().toString();
+            int spinnerID = Integer.parseInt(spinnerValue.replaceAll("[^0-9]", ""));
+
+            mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinnerID,
                     attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
 
         } catch (Exception e) {
@@ -504,6 +539,8 @@ public class List extends Fragment implements LocationListener {
         ArrayList<String> nivelBateria = new ArrayList<String>();
         ArrayList<String> tipoBaixa = new ArrayList<String>();
         ArrayList<String> foto = new ArrayList<String>();
+        ArrayList<String> relationID = new ArrayList<String>();
+
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -516,6 +553,8 @@ public class List extends Fragment implements LocationListener {
             nivelBateria.add(data.getString(5));
             tipoBaixa.add(data.getString(6));
             foto.add(data.getString(7));
+            relationID.add(data.getString(2));
+
 
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObj = new JSONObject();
@@ -529,6 +568,7 @@ public class List extends Fragment implements LocationListener {
                 jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
                 jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
                 jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
                 jsonArray.put(jsonObj);
 
                 jsonObj1.put("imei", preferences.getIMEI());
@@ -579,7 +619,6 @@ public class List extends Fragment implements LocationListener {
                 request.setTag(TAG);
                 queue.add(request);
 
-
                 codHawb.clear();
                 dataHoraBaixa.clear();
                 latitude.clear();
@@ -587,8 +626,7 @@ public class List extends Fragment implements LocationListener {
                 nivelBateria.clear();
                 tipoBaixa.clear();
                 foto.clear();
-
-
+                relationID.clear();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -597,6 +635,7 @@ public class List extends Fragment implements LocationListener {
         Log.e(TAG, "getDeliveryData: " + data.getCount());
         Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
         if (data.getCount() == 0 && data1.getCount() == 0) {
+            mDatabaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
         }
     }
@@ -660,6 +699,7 @@ public class List extends Fragment implements LocationListener {
             Cursor data = mDatabaseHelper.getDeliveryData(); //table3
             Cursor data1 = mDatabaseHelper.getDataFromTableFour();
             if (data.getCount() == 0 && data1.getCount() == 0) {
+                mDatabaseHelper.DeleteDataFromTableTwo();
                 preferences.clearListID();
             }
         }

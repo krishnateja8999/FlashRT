@@ -10,17 +10,25 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -32,6 +40,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Fragments.Collect;
 import com.example.flashnew.Fragments.List;
 import com.example.flashnew.Fragments.Messages;
@@ -40,10 +55,21 @@ import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.LoginActivity;
 import com.example.flashnew.R;
+import com.example.flashnew.Server.ApiUtils;
+import com.example.flashnew.Server.InternetConnectionChecker;
+import com.example.flashnew.Server.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -64,10 +90,11 @@ public class Landing_Screen extends AppCompatActivity {
     ProgressDialog progressDialog;
     private AppPrefernces preferences;
     private DatabaseHelper databaseHelper;
+    private RequestQueue queue;
+    private InternetConnectionChecker internetChecker;
 
-    CircularImageView iv_profile_auditor;
-    String mess;
 
+    @SuppressLint({"MissingPermission", "HardwareIds"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,16 +104,17 @@ public class Landing_Screen extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar_t);
         setSupportActionBar(toolbar);
         preferences = new AppPrefernces(this);
-        permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION};
-        acceptPermissions();
+        permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE};
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 //        changeFragment(new Dashboard());
         changeFragment(new List());
         layout = findViewById(R.id.container2);
         databaseHelper = new DatabaseHelper(this);
-
-
+        queue = Volley.newRequestQueue(this);
+        internetChecker = new InternetConnectionChecker(this);
+        PermissionsRequest();
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -98,15 +126,14 @@ public class Landing_Screen extends AppCompatActivity {
             toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.white));
         }
 
+        if (Build.VERSION.SDK_INT <= 24) {
+            preferences.setIMEI(telephonyManager.getDeviceId());
+        } else {
+            preferences.setIMEI(getDeviceUniqueID(this));
+        }
+
         navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
-        Menu menuNav = navigationView.getMenu();
-        MenuItem nav_item2 = menuNav.findItem(R.id.list_delete);
-//        if (preferences.getListID().equals("")||preferences.getListID().equals(" ")) {
-//            nav_item2.setEnabled(false);
-//        }else {
-//            nav_item2.setEnabled(true);
-//        }
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -124,7 +151,7 @@ public class Landing_Screen extends AppCompatActivity {
 
                     case R.id.list_delete:
                         if (preferences.getListID().equals("") || preferences.getListID().equals(" ")) {
-                            Toast.makeText(Landing_Screen.this, "No Lists", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Landing_Screen.this, "Sem listas", Toast.LENGTH_SHORT).show();
                         } else {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
                             final EditText edittext = new EditText(Landing_Screen.this);
@@ -189,18 +216,49 @@ public class Landing_Screen extends AppCompatActivity {
                         changeFragment(new Search());
                         return true;
                     case R.id.nav_dashboard:
-//                       changeFragment(new Dashboard());
-                        progressDialog = new ProgressDialog(Landing_Screen.this);
-                        progressDialog.setTitle("Carregando dados");
-                        progressDialog.setMessage("Por favor, espere..");
-                        progressDialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
-                        progressDialog.show();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.dismiss();
+                        if (internetChecker.checkInternetConnection()) {
+                            Cursor data = databaseHelper.getDeliveryData(); //table3
+                            if (data.getCount() == 0) {
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
+                                builder1.setTitle(getResources().getString(R.string.Login_screen1));
+                                builder1.setMessage("Sem listas");
+                                builder1.setCancelable(true);
+                                builder1.setPositiveButton(
+                                        "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                AlertDialog alert1 = builder1.create();
+                                alert1.show();
+                            } else {
+                                progressDialog = new ProgressDialog(Landing_Screen.this);
+                                progressDialog.setTitle("Carregando dados");
+                                progressDialog.setMessage("Por favor, espere..");
+                                progressDialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                                progressDialog.show();
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            PutJsonRequest();
+                                            Intent intent = new Intent("list_code_status");
+                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
+
+                                            Intent intent1 = new Intent("list_screen");
+                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent1);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        progressDialog.dismiss();
+                                    }
+                                }, 3000);
                             }
-                        }, 3000);
+                        } else {
+                            Toast.makeText(Landing_Screen.this, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+                        }
+
                         return true;
                     case R.id.list:
                         changeFragment(new List());
@@ -290,14 +348,155 @@ public class Landing_Screen extends AppCompatActivity {
         return true;
     }
 
+    public String getDeviceUniqueID(Activity activity) {
+        @SuppressLint("HardwareIds") String device_unique_id = Settings.Secure.getString(activity.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        return device_unique_id;
+    }
+
+    private void PermissionsRequest() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getApplicationContext(), permissions[4]) != PackageManager.PERMISSION_GRANTED) {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
+            builder1.setTitle(getResources().getString(R.string.Login_screen1));
+            builder1.setMessage(getResources().getString(R.string.permissions_request));
+            builder1.setCancelable(false);
+            builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    acceptPermissions();
+                }
+            });
+            builder1.setNegativeButton("SAIR", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            //Creating dialog box
+            AlertDialog alert1 = builder1.create();
+            alert1.show();
+        }
+    }
+
     private void acceptPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED)
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[4]) != PackageManager.PERMISSION_GRANTED)
                 requestPermissions(permissions, PERMISSION_REQ_CODE);
             else {
-                if ((ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED))
+                if ((ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED) || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[4]) != PackageManager.PERMISSION_GRANTED)
                     requestPermissions(permissions, PERMISSION_REQ_CODE);
             }
+        }
+    }
+
+    public void PutJsonRequest() {
+
+        Cursor data = databaseHelper.getDeliveryData(); //table3
+        Cursor data1 = databaseHelper.getDataFromTableFour();
+        ArrayList<String> codHawb = new ArrayList<String>();
+        ArrayList<String> dataHoraBaixa = new ArrayList<String>();
+        ArrayList<String> latitude = new ArrayList<String>();
+        ArrayList<String> longitude = new ArrayList<String>();
+        ArrayList<String> nivelBateria = new ArrayList<String>();
+        ArrayList<String> tipoBaixa = new ArrayList<String>();
+        ArrayList<String> foto = new ArrayList<String>();
+        ArrayList<String> relationID = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Log.e(TAG, "PutJsonRequest: No Data");
+        }
+        while (data.moveToNext()) {
+            codHawb.add(data.getString(1));
+            dataHoraBaixa.add(data.getString(4));
+            latitude.add(data.getString(8));
+            longitude.add(data.getString(9));
+            nivelBateria.add(data.getString(5));
+            tipoBaixa.add(data.getString(6));
+            foto.add(data.getString(7));
+            relationID.add(data.getString(2));
+
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObj = new JSONObject();
+            JSONObject jsonObj1 = new JSONObject();
+            try {
+
+                jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
+                jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
+                jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
+                jsonArray.put(jsonObj);
+
+                jsonObj1.put("imei", preferences.getIMEI());
+                jsonObj1.put("franquia", preferences.getFranchise());
+                jsonObj1.put("sistema", preferences.getSystem());
+                jsonObj1.put("lista", preferences.getListID());
+                jsonObj1.put("entregas", jsonArray);
+
+                Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+
+                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ApiUtils.GET_LIST + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e(TAG, "PUTonResponse: " + response);
+                        try {
+                            String statusMessage = response.getString("statusMessage");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "PUTonResponseError: " + error);
+
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> params = new HashMap<String, String>();
+                        String auth1 = "Basic "
+                                + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                                Base64.NO_WRAP);
+                        params.put("Authorization", auth1);
+                        params.put("x-versao-rt", "3.8.10");
+                        params.put("x-rastreador", "ricardo");
+//                    params.put("Content-Type", "application/json");
+                        params.put("Content-Type", "application/json; charset=utf-8");
+                        return params;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+                };
+                request.setTag(TAG);
+                queue.add(request);
+
+
+                codHawb.clear();
+                dataHoraBaixa.clear();
+                latitude.clear();
+                longitude.clear();
+                nivelBateria.clear();
+                tipoBaixa.clear();
+                foto.clear();
+                relationID.clear();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        databaseHelper.DeleteFromTableThreeUponSync();
+        Log.e(TAG, "getDeliveryData: " + data.getCount());
+        Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
+        if (data.getCount() == 0 && data1.getCount() == 0) {
+            databaseHelper.DeleteDataFromTableTwo();
+            preferences.clearListID();
         }
     }
 
