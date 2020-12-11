@@ -248,29 +248,35 @@
                             <AutoCompleteTextView
                                 android:id="@+id/hawb"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_height="35dp"
                                 android:layout_weight="1"
+                                android:paddingLeft="8dp"
+                                android:background="@drawable/edit_text_grey_border"
                                 android:hint="@string/hawb_hint"
                                 android:inputType="number"
                                 android:textColor="@color/black" />
                         </LinearLayout>
 
                         <Spinner
-                            android:id="@+id/targetOptions"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="15dp"
-                            android:layout_marginRight="15dp"
-                            android:backgroundTint="@color/bg" />
-
-                        <Spinner
                             android:id="@+id/spinner2"
                             android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
+                            android:background="@android:drawable/btn_dropdown"
                             android:layout_marginLeft="15dp"
                             android:layout_marginRight="15dp"
-                            android:backgroundTint="@color/bg"
                             android:visibility="gone" />
+                        <!--                                                    android:background="@drawable/edit_text_grey_border"
+                        -->
+
+                        <Spinner
+                            android:id="@+id/targetOptions"
+                            android:layout_width="fill_parent"
+                            android:layout_height="40dp"
+                            android:background="@android:drawable/btn_dropdown"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="15dp" />
+
 
                         <EditText
                             android:id="@+id/entregaName"

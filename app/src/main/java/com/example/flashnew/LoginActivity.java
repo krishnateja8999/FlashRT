@@ -188,27 +188,20 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     loginProgressBar.setVisibility(View.GONE);
-                    try {
-                        Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.d("TAG", "LoginActivityJson3: " + error.getMessage());
-
-                    } catch (Exception e) {
-                        Log.d("TAG", "LoginActivityJson4: " + e.getMessage());
-                        dialog1.setTitle("Erro");
-                        dialog1.setMessage(getResources().getString(R.string.Login_screen8));
-                        dialog1.setCancelable(true);
-                        dialog1.setPositiveButton(
-                                "Ok",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        userName.setText("");
-                                        identification.setText("");
-                                        password.setText("");
-                                        dialog.cancel();
-                                    }
-                                });
-                        dialog1.show();
-                    }
+                    dialog1.setTitle("Erro");
+                    dialog1.setMessage(getResources().getString(R.string.Login_screen8));
+                    dialog1.setCancelable(true);
+                    dialog1.setPositiveButton(
+                            "Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    userName.setText("");
+                                    identification.setText("");
+                                    password.setText("");
+                                    dialog.cancel();
+                                }
+                            });
+                    dialog1.show();
                 }
             }) {
                 @Override
@@ -230,34 +223,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
-
-    private void retroParse() {
-
-        preferences.setUserName(userName.getText().toString());
-        preferences.setPaso(password.getText().toString());
-
-
-        APIservice mAPIService = ApiUtils.getAPIService();
-        JSONObject sendingObj = new JSONObject();
-
-        Call<JsonElement> call = mAPIService.login();
-        call.enqueue(new Callback<JsonElement>() {
-
-            @Override
-            public void onResponse(Call<JsonElement> call, retrofit2.Response<JsonElement> response) {
-                Log.e("TAG", "retrofitResponse: " + response);
-                Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
-                startActivity(i);
-            }
-
-            @Override
-            public void onFailure(Call<JsonElement> call, Throwable t) {
-                Log.e("TAG", "retrofitResponse: " + t);
-
-            }
-        });
-    }
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {

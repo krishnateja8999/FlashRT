@@ -33,7 +33,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -127,7 +129,8 @@ public class Landing_Screen extends AppCompatActivity {
         }
 
         if (Build.VERSION.SDK_INT <= 24) {
-            preferences.setIMEI(telephonyManager.getDeviceId());
+            // preferences.setIMEI(telephonyManager.getDeviceId());
+            preferences.setIMEI(getDeviceUniqueID(this));
         } else {
             preferences.setIMEI(getDeviceUniqueID(this));
         }
@@ -162,7 +165,6 @@ public class Landing_Screen extends AppCompatActivity {
                             builder1.setTitle(getResources().getString(R.string.Login_screen1));
                             builder1.setMessage(getResources().getString(R.string.Login_screen2));
                             builder1.setView(edittext);
-
                             builder1.setPositiveButton(
                                     "OK",
                                     new DialogInterface.OnClickListener() {
@@ -221,7 +223,7 @@ public class Landing_Screen extends AppCompatActivity {
                             if (data.getCount() == 0) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
                                 builder1.setTitle(getResources().getString(R.string.Login_screen1));
-                                builder1.setMessage("Sem listas");
+                                builder1.setMessage("Sem listas para sincronizar");
                                 builder1.setCancelable(true);
                                 builder1.setPositiveButton(
                                         "OK",
@@ -492,12 +494,38 @@ public class Landing_Screen extends AppCompatActivity {
             }
         }
         databaseHelper.DeleteFromTableThreeUponSync();
+        SyncFinished();
         Log.e(TAG, "getDeliveryData: " + data.getCount());
         Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
         if (data.getCount() == 0 && data1.getCount() == 0) {
             databaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
         }
+    }
+
+    private void SyncFinished() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setTitle(getResources().getString(R.string.Login_screen1));
+        builder1.setMessage("Sincronização concluída");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
 }

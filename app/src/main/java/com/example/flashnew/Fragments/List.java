@@ -22,8 +22,10 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -97,7 +99,8 @@ public class List extends Fragment implements LocationListener {
     private DatabaseHelper mDatabaseHelper;
     private AutoCompleteTextView hawb;
     private Spinner attemptsDropDown;
-    private Bitmap photo, OutImage;
+    private Bitmap photo;
+    private Bitmap OutImage;
     private LocationManager locationManager;
     private InternetConnectionChecker internetChecker;
     private ListCodeUpdater listCodeUpdater;
@@ -152,6 +155,7 @@ public class List extends Fragment implements LocationListener {
             mDatabaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
         }
+        Log.e(TAG, "onCreateView: " + OutImage);
 
         hawb.addTextChangedListener(new TextWatcher() {
             @Override
@@ -263,7 +267,8 @@ public class List extends Fragment implements LocationListener {
 //        });
 
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
-            title.setVisibility(View.GONE);
+            title.setText("Sem Listas");
+
         } else {
             title.setText("Lista : " + preferences.getListID());
         }
@@ -287,6 +292,9 @@ public class List extends Fragment implements LocationListener {
                     hawb.setText("");
                     spinner.setSelection(0);
                     attemptsDropDown.setSelection(0);
+                    conf.setText("Entrega");
+                    camera.setText("Selecione a foto");
+                    OutImage = null;
                     //preferences.clearListID();
                     preferences.setLowType("ENTREGA");
                     preferences.setPhotoBoolean("false");
@@ -316,29 +324,27 @@ public class List extends Fragment implements LocationListener {
                     spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            if (position == 1) {
-                                spinner2.setVisibility(View.GONE);
+                            if (position == 0) {
+                                spinner.setVisibility(View.GONE);
+                            } else if (position == 1) {
                                 spinner.setVisibility(View.VISIBLE);
                                 spinner.performClick();
                                 ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, enderec);
                                 adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                                 spinner.setAdapter(adapter2);
                             } else if (position == 2) {
-                                spinner2.setVisibility(View.GONE);
                                 spinner.setVisibility(View.VISIBLE);
                                 spinner.performClick();
                                 ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, ausente);
                                 adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                                 spinner.setAdapter(adapter2);
                             } else if (position == 3) {
-                                spinner2.setVisibility(View.GONE);
                                 spinner.setVisibility(View.VISIBLE);
                                 spinner.performClick();
                                 ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, nao_visitado);
                                 adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                                 spinner.setAdapter(adapter2);
                             } else if (position == 4) {
-                                spinner2.setVisibility(View.GONE);
                                 spinner.setVisibility(View.VISIBLE);
                                 spinner.performClick();
                                 ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, outros);
@@ -358,6 +364,9 @@ public class List extends Fragment implements LocationListener {
                     spinner.setSelection(0);
                     attemptsDropDown.setSelection(0);
                     preferences.setPhotoBoolean("false");
+                    camera.setText("Selecione a foto");
+                    conf.setText("Devolver");
+                    OutImage = null;
                     rl2.setVisibility(View.GONE);
                     rl1.setVisibility(View.VISIBLE);
                     preferences.setLowType("DEVOLUCAO");
@@ -369,10 +378,16 @@ public class List extends Fragment implements LocationListener {
         conf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean check = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
+
                 if (hawb.getText().toString().length() == 0) {
                     hawb.setError("Selecione um Hawb");
+                } else if (!check) {
+                    Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
                 } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
                     Toast.makeText(context, "Selecione uma relação", Toast.LENGTH_SHORT).show();
+                } else if (OutImage == null) {
+                    Toast.makeText(context, "No Photo", Toast.LENGTH_SHORT).show();
                 } else {
                     storeDeliveryData();
                     try {
@@ -384,10 +399,15 @@ public class List extends Fragment implements LocationListener {
                     }
                     mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
                     mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat time = new SimpleDateFormat("HH:mm");
+                    Calendar c = Calendar.getInstance();
+                    String formattedDate = df.format(c.getTime());
+                    String formatTime = time.format(c.getTime());
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("Sucesso");
                     //Setting message manually and performing action on button click
-                    builder.setMessage("Completado com sucesso..")
+                    builder.setMessage("Hawb entregue com sucesso em " + formattedDate + " as " + formatTime)
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -443,6 +463,7 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void listDownloadDialog() {
+        Log.e(TAG, "listDownloadDialog: ");
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final EditText edittext = new EditText(context);
         edittext.setBackgroundResource(R.drawable.edit_text_border);
@@ -595,14 +616,8 @@ public class List extends Fragment implements LocationListener {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     ListScreenProgressBar.setVisibility(View.GONE);
-                    try {
-                        Log.e(TAG, "ListScreen2: " + error);
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        preferences.clearListID();
-                        Log.e(TAG, "ListScreen5: " + e);
-                        Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
-                    }
+                    Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
+                    preferences.clearListID();
                 }
             }) {
                 @Override
@@ -775,7 +790,9 @@ public class List extends Fragment implements LocationListener {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             photo = (Bitmap) data.getExtras().get("data");
             OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
+            Log.e(TAG, "onActivityResult: " + OutImage);
             preferences.setPhotoBoolean("true");
+            camera.setText("Selecione a foto" + "   ✔");
             Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
         }
     }
@@ -784,7 +801,7 @@ public class List extends Fragment implements LocationListener {
     private class ListCodeUpdater extends BroadcastReceiver {
         @Override
         public void onReceive(Context i, Intent intent) {
-            title.setVisibility(View.GONE);
+            title.setText("Sem Listas");
         }
     }
 
@@ -832,7 +849,8 @@ public class List extends Fragment implements LocationListener {
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-        Toast.makeText(context, "Habilite o GPS e a Internet", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Habilite o GPS e a Internet", Toast.LENGTH_SHORT).show();
+        Log.e(TAG, "onProviderDisabled: ");
     }
 
     @Override
