@@ -268,6 +268,4 @@ public class LoginActivity extends AppCompatActivity {
     }
 }
 
-//line1
-//code1
-//code2
+//ghgjhgjkhkhjkjkjhkhjk
