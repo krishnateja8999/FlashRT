@@ -269,4 +269,4 @@ public class LoginActivity extends AppCompatActivity {
 }
 
 
-//This is a test from system 2
+//This is a test
