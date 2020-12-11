@@ -267,3 +267,5 @@ public class LoginActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 }
+
+//This is a test
