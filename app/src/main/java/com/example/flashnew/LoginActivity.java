@@ -269,4 +269,4 @@ public class LoginActivity extends AppCompatActivity {
 }
 
 
-//This is a test from test branch
+//Deleting the comment from test branch and adding this.
