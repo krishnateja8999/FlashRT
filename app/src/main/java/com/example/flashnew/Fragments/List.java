@@ -174,6 +174,94 @@ public class List extends Fragment implements LocationListener {
             }
         });
 
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                if (position==0){
+//                    conf.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            if (hawb.getText().toString().length()==0) {
+//                                hawb.setError("Selecione um Hawb");
+//                            }else {
+//                                Toast.makeText(context, "Selecione uma relação", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
+//                }else {
+//                    conf.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            if (hawb.getText().toString().length()==0) {
+//                                hawb.setError("Selecione um Hawb");
+//                            } else {
+//                                storeDeliveryData();
+//                                try {
+//                                    if (internetChecker.checkInternetConnection()) {
+//                                        PutJsonRequest();
+//                                    }
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                                mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+//                                mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//                                builder.setTitle("Sucesso");
+//                                //Setting message manually and performing action on button click
+//                                builder.setMessage("Completado com sucesso..")
+//                                        .setCancelable(false)
+//                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                                            public void onClick(DialogInterface dialog, int id) {
+//                                                dialog.cancel();
+//                                                title.setText("Lista : " + preferences.getListID());
+//                                                imei.setText("IMEI : " + preferences.getIMEI());
+//                                                rl2.setVisibility(View.VISIBLE);
+//                                                rl1.setVisibility(View.GONE);
+//                                                spinner.setSelection(0);
+//                                                Intent intent = new Intent("list_screen");
+//                                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+//                                            }
+//                                        });
+//                                //Creating dialog box
+//                                AlertDialog alert = builder.create();
+//                                //Setting the title manually
+//                                alert.setTitle("Atenção");
+//                                alert.show();
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//
+//        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                if (position==0){
+//                    conf.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            if (hawb.getText().toString().length()==0) {
+//                                hawb.setError("Selecione um Hawb");
+//                            }else {
+//                                Toast.makeText(context, "Selecione uma relação", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
             title.setVisibility(View.GONE);
         } else {
@@ -266,6 +354,9 @@ public class List extends Fragment implements LocationListener {
                     });
                     title.setText("Devolução");
                     imei.setText("IMEI : " + preferences.getIMEI());
+                    hawb.setText("");
+                    spinner.setSelection(0);
+                    attemptsDropDown.setSelection(0);
                     preferences.setPhotoBoolean("false");
                     rl2.setVisibility(View.GONE);
                     rl1.setVisibility(View.VISIBLE);
@@ -278,38 +369,44 @@ public class List extends Fragment implements LocationListener {
         conf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                storeDeliveryData();
-                try {
-                    if (internetChecker.checkInternetConnection()) {
-                        PutJsonRequest();
+                if (hawb.getText().toString().length() == 0) {
+                    hawb.setError("Selecione um Hawb");
+                } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
+                    Toast.makeText(context, "Selecione uma relação", Toast.LENGTH_SHORT).show();
+                } else {
+                    storeDeliveryData();
+                    try {
+                        if (internetChecker.checkInternetConnection()) {
+                            PutJsonRequest();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                    mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Sucesso");
+                    //Setting message manually and performing action on button click
+                    builder.setMessage("Completado com sucesso..")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                    title.setText("Lista : " + preferences.getListID());
+                                    imei.setText("IMEI : " + preferences.getIMEI());
+                                    rl2.setVisibility(View.VISIBLE);
+                                    rl1.setVisibility(View.GONE);
+                                    spinner.setSelection(0);
+                                    Intent intent = new Intent("list_screen");
+                                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                                }
+                            });
+                    //Creating dialog box
+                    AlertDialog alert = builder.create();
+                    //Setting the title manually
+                    alert.setTitle("Atenção");
+                    alert.show();
                 }
-                mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
-                mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Sucesso");
-                //Setting message manually and performing action on button click
-                builder.setMessage("Completado com sucesso..")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                title.setText("Lista : " + preferences.getListID());
-                                imei.setText("IMEI : " + preferences.getIMEI());
-                                rl2.setVisibility(View.VISIBLE);
-                                rl1.setVisibility(View.GONE);
-                                spinner.setSelection(0);
-                                Intent intent = new Intent("list_screen");
-                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                            }
-                        });
-                //Creating dialog box
-                AlertDialog alert = builder.create();
-                //Setting the title manually
-                alert.setTitle("Atenção");
-                alert.show();
             }
         });
 
@@ -382,7 +479,6 @@ public class List extends Fragment implements LocationListener {
         Cursor data = mDatabaseHelper.getDataFromTableFour();
         ArrayList<String> list = new ArrayList<String>();
         if (data.getCount() == 0) {
-            //Toast.makeText(context, "Sem dados", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "HawbStringArray: ");
         } else {
             while (data.moveToNext()) {
