@@ -385,9 +385,9 @@ public class List extends Fragment implements LocationListener {
                 } else if (!check) {
                     Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
                 } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
-                    Toast.makeText(context, "Selecione uma relação", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
                 } else if (OutImage == null) {
-                    Toast.makeText(context, "No Photo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
                 } else {
                     storeDeliveryData();
                     try {
@@ -742,6 +742,7 @@ public class List extends Fragment implements LocationListener {
                 e.printStackTrace();
             }
         }
+        DeleteDataUponSyncOrUpload();
         mDatabaseHelper.DeleteFromTableThreeUponSync();
         Log.e(TAG, "getDeliveryData: " + data.getCount());
         Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
@@ -749,6 +750,21 @@ public class List extends Fragment implements LocationListener {
             mDatabaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
         }
+    }
+
+    private void DeleteDataUponSyncOrUpload() {
+        Cursor data = mDatabaseHelper.getDeliveryData();
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(TAG, "HawbStringArray: ");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                mDatabaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));
+                list.clear();
+            }
+        }
+
     }
 
     private void checkDB() {

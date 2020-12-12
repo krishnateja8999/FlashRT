@@ -174,7 +174,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void ValidateDataWithSecondTable(String code) {
         SQLiteDatabase db = this.getWritableDatabase();
-        //String query= "SELECT * FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " ='" + code + "'";
         String query = "UPDATE " + TABLE_TOTAL_LIST_DETAILS + " SET " + TICK_MARK + "=' true  ' WHERE " + HAWB_CODE + " ='" + code + "'";
         db.execSQL(query);
     }
@@ -182,6 +181,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void DeleteDataFromTableTwo() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_TOTAL_LIST_DETAILS;
+        db.execSQL(query);
+    }
+
+    public void DeleteDataUponUpload(String code_hawb) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " = '" + code_hawb + "'";
         db.execSQL(query);
     }
 

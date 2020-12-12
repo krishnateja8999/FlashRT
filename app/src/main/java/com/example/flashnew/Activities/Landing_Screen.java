@@ -70,6 +70,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -149,6 +150,7 @@ public class Landing_Screen extends AppCompatActivity {
                         return true;
                     case R.id.about:
                         // startActivity(new Intent(Landing_Screen.this,About.class));
+                        DeleteDataUponSyncOrUpload();
                         Log.e(TAG, "onClick: " + preferences.getListID().toString());
                         return true;
 
@@ -493,6 +495,7 @@ public class Landing_Screen extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        DeleteDataUponSyncOrUpload();
         databaseHelper.DeleteFromTableThreeUponSync();
         SyncFinished();
         Log.e(TAG, "getDeliveryData: " + data.getCount());
@@ -517,6 +520,21 @@ public class Landing_Screen extends AppCompatActivity {
         //Creating dialog box
         AlertDialog alert1 = builder1.create();
         alert1.show();
+    }
+
+    private void DeleteDataUponSyncOrUpload() {
+        Cursor data = databaseHelper.getDeliveryData();
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(TAG, "HawbStringArray: ");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                databaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));
+                list.clear();
+            }
+        }
+
     }
 
     @Override
