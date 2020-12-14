@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,8 +28,13 @@ import androidx.fragment.app.Fragment;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.R;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.google.zxing.*;
 
 import net.skoumal.fragmentback.BackFragment;
+
+import javax.xml.transform.Result;
+
+import static android.app.Activity.RESULT_OK;
 
 public class Collect extends Fragment implements BackFragment {
     private final int permsRequestCode = 200;
@@ -134,9 +141,17 @@ public class Collect extends Fragment implements BackFragment {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAMERA_REQUEST) {
+        /*if (requestCode == CAMERA_REQUEST) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            // imageView.setImageBitmap(photo);
+            // imageView.setImageBitmap(photo);]
+        }*/
+        Log.d("jaya", "activity result");
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                String content = data.getStringExtra("SCAN_RESULT");
+                Toast.makeText(getContext(), content, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -146,8 +161,14 @@ public class Collect extends Fragment implements BackFragment {
                 requestPermissions(permissions, permsRequestCode);
             else {
                 if ((ContextCompat.checkSelfPermission(getContext(), permissions[0]) == PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getContext(), permissions[1]) == PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getContext(), permissions[2]) == PackageManager.PERMISSION_GRANTED)) {
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    try {
+                        Log.d("jaya", "opencamera1");
+                        Intent cameraIntent = new Intent("com.google.zxing.client.android.SCAN");
+                        cameraIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                        startActivityForResult(cameraIntent, 0);
+                    } catch (Exception e) {
+
+                    }
                 } else
                     requestPermissions(permissions, permsRequestCode);
             }
@@ -155,8 +176,14 @@ public class Collect extends Fragment implements BackFragment {
             mCameraPermission = true;
             mAccessImagesFromLocalStorage = true;
             mReadImagesFromStorage = true;
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            Log.d("jaya", "opencamera");
+            try {
+                Intent cameraIntent = new Intent("com.google.zxing.client.android.SCAN");
+                cameraIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(cameraIntent, 0);
+            } catch (Exception e) {
+
+            }
         }
     }
 

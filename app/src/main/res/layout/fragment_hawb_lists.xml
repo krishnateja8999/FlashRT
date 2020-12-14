@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
+    android:tag="unique_tag"
     tools:context=".Fragments.HawbLists">
 
     <include
@@ -19,12 +20,32 @@
         android:layout_below="@+id/actionBar"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewHawbList"
-            android:layout_width="350dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/background"
-            android:layout_gravity="center" />
+            android:id="@+id/textView"
+            android:text="All Lists have been synchronized."
+            android:visibility="gone"
+            android:textSize="25sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:paddingLeft="20dp" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipe_container"
+            android:layout_gravity="center">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHawbList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background"
+                android:layout_gravity="center" />
+
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     </LinearLayout>

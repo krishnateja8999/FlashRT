@@ -130,8 +130,6 @@ public class LoginActivity extends AppCompatActivity {
         confirm_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                try {
                     if (identification.getText().toString().length() <= 0) {
                         identification.setError(getResources().getString(R.string.Login_screen5));
                     } else if (userName.getText().toString().length() <= 0) {
@@ -141,10 +139,6 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         jsonParse();
                     }
-                } catch (Exception e) {
-                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d("TAG", "LoginActivityJson2: " + e.getMessage());
-                }
             }
         });
 
@@ -158,7 +152,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void jsonParse() {
-        try {
             loginProgressBar.setVisibility(View.VISIBLE);
             StringRequest request = new StringRequest(Request.Method.GET, ApiUtils.LOGIN, new Response.Listener<String>() {
                 @Override
@@ -215,13 +208,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             };
             queue.add(request);
-
-        } catch (Exception e) {
-            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.d("TAG", "LoginActivityJson1: " + e.getMessage());
-
-        }
-
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

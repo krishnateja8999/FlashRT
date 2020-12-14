@@ -178,94 +178,6 @@ public class List extends Fragment implements LocationListener {
             }
         });
 
-//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                if (position==0){
-//                    conf.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            if (hawb.getText().toString().length()==0) {
-//                                hawb.setError("Selecione um Hawb");
-//                            }else {
-//                                Toast.makeText(context, "Selecione uma relação", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//                }else {
-//                    conf.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            if (hawb.getText().toString().length()==0) {
-//                                hawb.setError("Selecione um Hawb");
-//                            } else {
-//                                storeDeliveryData();
-//                                try {
-//                                    if (internetChecker.checkInternetConnection()) {
-//                                        PutJsonRequest();
-//                                    }
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                                mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
-//                                mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
-//                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//                                builder.setTitle("Sucesso");
-//                                //Setting message manually and performing action on button click
-//                                builder.setMessage("Completado com sucesso..")
-//                                        .setCancelable(false)
-//                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                                            public void onClick(DialogInterface dialog, int id) {
-//                                                dialog.cancel();
-//                                                title.setText("Lista : " + preferences.getListID());
-//                                                imei.setText("IMEI : " + preferences.getIMEI());
-//                                                rl2.setVisibility(View.VISIBLE);
-//                                                rl1.setVisibility(View.GONE);
-//                                                spinner.setSelection(0);
-//                                                Intent intent = new Intent("list_screen");
-//                                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-//                                            }
-//                                        });
-//                                //Creating dialog box
-//                                AlertDialog alert = builder.create();
-//                                //Setting the title manually
-//                                alert.setTitle("Atenção");
-//                                alert.show();
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//
-//        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                if (position==0){
-//                    conf.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            if (hawb.getText().toString().length()==0) {
-//                                hawb.setError("Selecione um Hawb");
-//                            }else {
-//                                Toast.makeText(context, "Selecione uma relação", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
             title.setText("Sem Listas");
 
@@ -274,104 +186,31 @@ public class List extends Fragment implements LocationListener {
         }
         imei.setText("IMEI : " + preferences.getIMEI());
 
+        listScreenListDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
+                    listDownloadDialog();
+                } else {
+                    FragmentTransaction fragmentTransaction = context
+                            .getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.content, new HawbLists());
+                    fragmentTransaction.commit();
+                }
+            }
+        });
 
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Cursor data = mDatabaseHelper.getDataFromTableFour();
-                Cursor data1 = mDatabaseHelper.getDeliveryData();
-                if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
-                    listDownloadDialog();
-                } else if (data.getCount() == 0 && data1.getCount() != 0) {
-                    EmptyDataInTableFourDialog();
-                } else {
-                    title.setText("Entrega");
-                    imei.setText("IMEI : " + preferences.getIMEI());
-                    rl2.setVisibility(View.GONE);
-                    rl1.setVisibility(View.VISIBLE);
-                    hawb.setText("");
-                    spinner.setSelection(0);
-                    attemptsDropDown.setSelection(0);
-                    conf.setText("Entrega");
-                    camera.setText("Selecione a foto");
-                    OutImage = null;
-                    //preferences.clearListID();
-                    preferences.setLowType("ENTREGA");
-                    preferences.setPhotoBoolean("false");
-                    HawbStringArray();
-                    getLocation();
-//                checkDB();
-                    Log.e(TAG, "checkInternetConnection: " + internetChecker.checkInternetConnection());
-
-                }
+                Delivery();
             }
         });
 
         retur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Cursor data = mDatabaseHelper.getDataFromTableFour();
-                if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
-                    listDownloadDialog();
-                } else if (data.getCount() == 0) {
-                    EmptyDataInTableFourDialog();
-                } else {
-                    spinner.setVisibility(View.GONE);
-                    spinner2.setVisibility(View.VISIBLE);
-                    ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values2);
-                    adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                    spinner2.setAdapter(adapter1);
-                    spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            if (position == 0) {
-                                spinner.setVisibility(View.GONE);
-                            } else if (position == 1) {
-                                spinner.setVisibility(View.VISIBLE);
-                                spinner.performClick();
-                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, enderec);
-                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                                spinner.setAdapter(adapter2);
-                            } else if (position == 2) {
-                                spinner.setVisibility(View.VISIBLE);
-                                spinner.performClick();
-                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, ausente);
-                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                                spinner.setAdapter(adapter2);
-                            } else if (position == 3) {
-                                spinner.setVisibility(View.VISIBLE);
-                                spinner.performClick();
-                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, nao_visitado);
-                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                                spinner.setAdapter(adapter2);
-                            } else if (position == 4) {
-                                spinner.setVisibility(View.VISIBLE);
-                                spinner.performClick();
-                                ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, outros);
-                                adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                                spinner.setAdapter(adapter2);
-                            }
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-
-                        }
-                    });
-                    title.setText("Devolução");
-                    imei.setText("IMEI : " + preferences.getIMEI());
-                    hawb.setText("");
-                    spinner.setSelection(0);
-                    attemptsDropDown.setSelection(0);
-                    preferences.setPhotoBoolean("false");
-                    camera.setText("Selecione a foto");
-                    conf.setText("Devolver");
-                    OutImage = null;
-                    rl2.setVisibility(View.GONE);
-                    rl1.setVisibility(View.VISIBLE);
-                    preferences.setLowType("DEVOLUCAO");
-                    HawbStringArray();
-                }
+                Returns();
             }
         });
 
@@ -430,20 +269,6 @@ public class List extends Fragment implements LocationListener {
             }
         });
 
-        listScreenListDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
-                    listDownloadDialog();
-                } else {
-                    FragmentTransaction fragmentTransaction = context
-                            .getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.content, new HawbLists());
-                    fragmentTransaction.commit();
-                }
-            }
-        });
-
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -460,6 +285,100 @@ public class List extends Fragment implements LocationListener {
         });
 
         return view;
+    }
+
+    private void Delivery() {
+        Cursor data = mDatabaseHelper.getDataFromTableFour();
+        Cursor data1 = mDatabaseHelper.getDeliveryData();
+        if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
+            listDownloadDialogForDelivery();
+        } else if (data.getCount() == 0 && data1.getCount() != 0) {
+            EmptyDataInTableFourDialog();
+        } else {
+            title.setText("Entrega");
+            imei.setText("IMEI : " + preferences.getIMEI());
+            rl2.setVisibility(View.GONE);
+            rl1.setVisibility(View.VISIBLE);
+            hawb.setText("");
+            spinner.setSelection(0);
+            attemptsDropDown.setSelection(0);
+            conf.setText("Entrega");
+            camera.setText("Selecione a foto");
+            OutImage = null;
+            //preferences.clearListID();
+            preferences.setLowType("ENTREGA");
+            preferences.setPhotoBoolean("false");
+            HawbStringArray();
+            getLocation();
+//                checkDB();
+            Log.e(TAG, "checkInternetConnection: " + internetChecker.checkInternetConnection());
+
+        }
+    }
+
+    private void Returns() {
+        Cursor data = mDatabaseHelper.getDataFromTableFour();
+        if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
+            listDownloadDialogForReturn();
+        } else if (data.getCount() == 0) {
+            EmptyDataInTableFourDialog();
+        } else {
+            spinner.setVisibility(View.GONE);
+            spinner2.setVisibility(View.VISIBLE);
+            ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values2);
+            adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+            spinner2.setAdapter(adapter1);
+            spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position == 0) {
+                        spinner.setVisibility(View.GONE);
+                    } else if (position == 1) {
+                        spinner.setVisibility(View.VISIBLE);
+                        spinner.performClick();
+                        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, enderec);
+                        adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                        spinner.setAdapter(adapter2);
+                    } else if (position == 2) {
+                        spinner.setVisibility(View.VISIBLE);
+                        spinner.performClick();
+                        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, ausente);
+                        adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                        spinner.setAdapter(adapter2);
+                    } else if (position == 3) {
+                        spinner.setVisibility(View.VISIBLE);
+                        spinner.performClick();
+                        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, nao_visitado);
+                        adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                        spinner.setAdapter(adapter2);
+                    } else if (position == 4) {
+                        spinner.setVisibility(View.VISIBLE);
+                        spinner.performClick();
+                        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, outros);
+                        adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                        spinner.setAdapter(adapter2);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            title.setText("Devolução");
+            imei.setText("IMEI : " + preferences.getIMEI());
+            hawb.setText("");
+            spinner.setSelection(0);
+            attemptsDropDown.setSelection(0);
+            preferences.setPhotoBoolean("false");
+            camera.setText("Selecione a foto");
+            conf.setText("Devolver");
+            OutImage = null;
+            rl2.setVisibility(View.GONE);
+            rl1.setVisibility(View.VISIBLE);
+            preferences.setLowType("DEVOLUCAO");
+            HawbStringArray();
+        }
     }
 
     private void listDownloadDialog() {
@@ -493,8 +412,74 @@ public class List extends Fragment implements LocationListener {
         //Creating dialog box
         AlertDialog alert = builder.create();
         alert.show();
-
     }
+
+    private void listDownloadDialogForDelivery() {
+        Log.e(TAG, "listDownloadDialog: ");
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final EditText edittext = new EditText(context);
+        edittext.setBackgroundResource(R.drawable.edit_text_border);
+        edittext.setPadding(30, 30, 30, 30);
+        edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setTitle("Atenção");
+        builder.setMessage("Insira uma lista");
+        builder.setCancelable(false);
+        builder.setView(edittext);
+
+        builder.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        preferences.setListID(edittext.getText().toString());
+                        JsonParseListScreen2();
+                    }
+                });
+
+        builder.setNegativeButton(
+                "CANCELAR",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void listDownloadDialogForReturn() {
+        Log.e(TAG, "listDownloadDialog: ");
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final EditText edittext = new EditText(context);
+        edittext.setBackgroundResource(R.drawable.edit_text_border);
+        edittext.setPadding(30, 30, 30, 30);
+        edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setTitle("Atenção");
+        builder.setMessage("Insira uma lista");
+        builder.setCancelable(false);
+        builder.setView(edittext);
+
+        builder.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        preferences.setListID(edittext.getText().toString());
+                        JsonParseListScreen3();
+                    }
+                });
+
+        builder.setNegativeButton(
+                "CANCELAR",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
 
     private void HawbStringArray() {
         Cursor data = mDatabaseHelper.getDataFromTableFour();
@@ -548,6 +533,21 @@ public class List extends Fragment implements LocationListener {
         //Creating dialog box
         AlertDialog alert1 = builder1.create();
         alert1.show();
+    }
+
+    private void DeleteDataUponSyncOrUpload() {
+        Cursor data = mDatabaseHelper.getDeliveryData();
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                mDatabaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));
+                list.clear();
+            }
+        }
+
     }
 
     private void JsonParseListScreen() {
@@ -605,6 +605,178 @@ public class List extends Fragment implements LocationListener {
                             fragmentTransaction.commit();
 //                            setSuccessDialog();
                         }
+
+                        ListScreenProgressBar.setVisibility(View.GONE);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ListScreenProgressBar.setVisibility(View.GONE);
+                    Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
+                    preferences.clearListID();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    String auth1 = "Basic "
+                            + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                            Base64.NO_WRAP);
+                    params.put("Authorization", auth1);
+                    params.put("x-versao-rt", "3.8.10");
+                    params.put("x-rastreador", "ricardo");
+                    return params;
+                }
+            };
+            queue.add(request);
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void JsonParseListScreen2() {
+        try {
+            ListScreenProgressBar.setVisibility(View.VISIBLE);
+            final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.e(TAG, "ListScreen1: " + response);
+
+                    try {
+                        String franchiseName = response.getString("franquia");
+                        String system = response.getString("sistema");
+                        int lists = response.getInt("lista");
+                        int deliveryID = response.getInt("idEntregador");
+                        String delivererName = response.getString("nomeEntregador");
+                        int totalDocuments = response.getInt("quantidadeDocumentos");
+
+                        preferences.setFranchise(franchiseName);
+                        preferences.setSystem(system);
+
+                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                                deliveryID, delivererName, totalDocuments);
+                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                        Log.e(TAG, "ListScreen3: " + success1);
+
+                        JSONArray array = response.getJSONArray("documentos");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            Log.e(TAG, "ListScreen4: " + object);
+
+                            int customerID = object.getInt("idCliente");
+                            int contractID = object.getInt("idContrato");
+                            String hawbCode = object.getString("codHawb");
+                            String numberOrder = object.getString("numeroEncomandaCliente");
+                            String recipientName = object.getString("nomeDestinatario");
+                            int dna = object.getInt("dna");
+                            int attempts = object.getInt("tentativas");
+                            String specialPhoto = object.getString("fotoEspecial");
+                            int score = object.getInt("score");
+                            float latitude = (float) object.getDouble("latitude");
+                            float longitude = (float) object.getDouble("longitude");
+
+                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, latitude, longitude);
+                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                            System.out.println(success);
+
+                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
+                            System.out.println(tableFourHawbCode);
+                            Delivery();
+//                            setSuccessDialog();
+                        }
+                        Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
+                        ListScreenProgressBar.setVisibility(View.GONE);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ListScreenProgressBar.setVisibility(View.GONE);
+                    Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
+                    preferences.clearListID();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    String auth1 = "Basic "
+                            + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                            Base64.NO_WRAP);
+                    params.put("Authorization", auth1);
+                    params.put("x-versao-rt", "3.8.10");
+                    params.put("x-rastreador", "ricardo");
+                    return params;
+                }
+            };
+            queue.add(request);
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void JsonParseListScreen3() {
+        try {
+            ListScreenProgressBar.setVisibility(View.VISIBLE);
+            final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.e(TAG, "ListScreen1: " + response);
+
+                    try {
+                        String franchiseName = response.getString("franquia");
+                        String system = response.getString("sistema");
+                        int lists = response.getInt("lista");
+                        int deliveryID = response.getInt("idEntregador");
+                        String delivererName = response.getString("nomeEntregador");
+                        int totalDocuments = response.getInt("quantidadeDocumentos");
+
+                        preferences.setFranchise(franchiseName);
+                        preferences.setSystem(system);
+
+                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                                deliveryID, delivererName, totalDocuments);
+                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                        Log.e(TAG, "ListScreen3: " + success1);
+
+                        JSONArray array = response.getJSONArray("documentos");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            Log.e(TAG, "ListScreen4: " + object);
+
+                            int customerID = object.getInt("idCliente");
+                            int contractID = object.getInt("idContrato");
+                            String hawbCode = object.getString("codHawb");
+                            String numberOrder = object.getString("numeroEncomandaCliente");
+                            String recipientName = object.getString("nomeDestinatario");
+                            int dna = object.getInt("dna");
+                            int attempts = object.getInt("tentativas");
+                            String specialPhoto = object.getString("fotoEspecial");
+                            int score = object.getInt("score");
+                            float latitude = (float) object.getDouble("latitude");
+                            float longitude = (float) object.getDouble("longitude");
+
+                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, latitude, longitude);
+                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                            System.out.println(success);
+
+                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
+                            System.out.println(tableFourHawbCode);
+                            Returns();
+//                            setSuccessDialog();
+                        }
+                        Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
+
 
                         ListScreenProgressBar.setVisibility(View.GONE);
 
@@ -752,20 +924,6 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
-    private void DeleteDataUponSyncOrUpload() {
-        Cursor data = mDatabaseHelper.getDeliveryData();
-        ArrayList<String> list = new ArrayList<String>();
-        if (data.getCount() == 0) {
-            Log.e(TAG, "HawbStringArray: ");
-        } else {
-            while (data.moveToNext()) {
-                list.add(data.getString(1));
-                mDatabaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));
-                list.clear();
-            }
-        }
-
-    }
 
     private void checkDB() {
         if (internetChecker.checkInternetConnection()) {

@@ -150,7 +150,6 @@ public class Landing_Screen extends AppCompatActivity {
                         return true;
                     case R.id.about:
                         // startActivity(new Intent(Landing_Screen.this,About.class));
-                        DeleteDataUponSyncOrUpload();
                         Log.e(TAG, "onClick: " + preferences.getListID().toString());
                         return true;
 
@@ -498,11 +497,14 @@ public class Landing_Screen extends AppCompatActivity {
         DeleteDataUponSyncOrUpload();
         databaseHelper.DeleteFromTableThreeUponSync();
         SyncFinished();
+        Intent intent = new Intent("list_view_updater");
+        LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
         Log.e(TAG, "getDeliveryData: " + data.getCount());
         Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
         if (data.getCount() == 0 && data1.getCount() == 0) {
             databaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
+            changeFragment(new List());
         }
     }
 

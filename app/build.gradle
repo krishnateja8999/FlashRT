@@ -59,6 +59,8 @@ dependencies {
 
     implementation 'net.skoumal.fragmentback:fragment-back:0.2.3'
 
+    implementation 'com.google.zxing:core:3.2.1'
+
 
 
 
