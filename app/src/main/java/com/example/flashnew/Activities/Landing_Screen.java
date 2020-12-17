@@ -78,19 +78,13 @@ import static android.content.ContentValues.TAG;
 
 public class Landing_Screen extends AppCompatActivity {
     public NavigationView navigationView;
-    private int mCartCount;
-    RelativeLayout rl_notofications;
-
-    private LayerDrawable mCartMenuIcon;
-    TextView name;
     public Toolbar toolbar, searchToolbar;
-    BottomNavigationView bottomNavigationView;
-    RelativeLayout layout;
-    CircularImageView profile_image;
-    ImageView imageView, profile;
+    private BottomNavigationView bottomNavigationView;
+    private RelativeLayout layout;
+    private ImageView log_out;
     public static final int PERMISSION_REQ_CODE = 200;
     private String[] permissions;
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
     private AppPrefernces preferences;
     private DatabaseHelper databaseHelper;
     private RequestQueue queue;
@@ -119,6 +113,7 @@ public class Landing_Screen extends AppCompatActivity {
         internetChecker = new InternetConnectionChecker(this);
         PermissionsRequest();
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        log_out = findViewById(R.id.log_out);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -186,12 +181,12 @@ public class Landing_Screen extends AppCompatActivity {
                         }
                         return true;
 
-                    case R.id.nav_logout:
-                        preferences.logout();
-                        startActivity(new Intent(Landing_Screen.this, LoginActivity.class));
-                        databaseHelper.truncateAllTablesOnLogout();
-                        finish();
-                        return true;
+//                    case R.id.nav_logout:
+//                        preferences.logout();
+//                        startActivity(new Intent(Landing_Screen.this, LoginActivity.class));
+//                        databaseHelper.truncateAllTablesOnLogout();
+//                        finish();
+//                        return true;
                 }
                 return false;
             }
@@ -270,6 +265,35 @@ public class Landing_Screen extends AppCompatActivity {
                 return false;
             }
         });
+
+        log_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
+                builder1.setTitle(getResources().getString(R.string.Login_screen1));
+                builder1.setMessage("Você quer sair?");
+                builder1.setCancelable(true);
+                builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        preferences.logout();
+                        startActivity(new Intent(Landing_Screen.this, LoginActivity.class));
+                        databaseHelper.truncateAllTablesOnLogout();
+                        finish();
+                    }
+                });
+                builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                //Creating dialog box
+                AlertDialog alert1 = builder1.create();
+                alert1.show();
+            }
+        });
+
     }
 
     public void changeFragment(Fragment fragment) {

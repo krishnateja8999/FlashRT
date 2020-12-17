@@ -44,26 +44,30 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.Hcode.setText(hawbLists.get(position).getHawbCode());
         holder.name.setText(hawbLists.get(position).getName());
+        holder.address.setText(hawbLists.get(position).getClientNumber());
+
 
         if (hawbLists.get(position).getTick().equals("false")) {
             holder.timeImage.setImageResource(R.drawable.ic_time);
         }
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(context, Locale.getDefault());
 
-        try {
-            addresses = geocoder.getFromLocation(hawbLists.get(position).getLatitude(), hawbLists.get(position).getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            String address = addresses.get(0).getAddressLine(0);
-            String city = addresses.get(0).getAdminArea();
-            String postalCode = addresses.get(0).getPostalCode();
-            holder.address.setText(address);
-            holder.city.setText(city);
-            holder.postalCode.setText(postalCode);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        Geocoder geocoder;
+//        List<Address> addresses;
+//        geocoder = new Geocoder(context, Locale.getDefault());
+//
+//        try {
+//            addresses = geocoder.getFromLocation(hawbLists.get(position).getLatitude(), hawbLists.get(position).getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+//            String address = addresses.get(0).getAddressLine(0);
+//            String city = addresses.get(0).getAdminArea();
+//            String postalCode = addresses.get(0).getPostalCode();
+//            holder.address.setText(address);
+//            holder.city.setText(city);
+//            holder.postalCode.setText(postalCode);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
 
     }
@@ -84,11 +88,11 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
             super(itemView);
 
             Hcode = itemView.findViewById(R.id.hawbCode12345);
-            address = itemView.findViewById(R.id.address_hawb_list);
-            city = itemView.findViewById(R.id.city_hawb_list);
             name = itemView.findViewById(R.id.name_hawb_list);
-            postalCode = itemView.findViewById(R.id.pincode_hawb_List);
+            address = itemView.findViewById(R.id.address_hawb_list);
             timeImage = itemView.findViewById(R.id.timeImage);
+            city = itemView.findViewById(R.id.city_hawb_list);
+            postalCode = itemView.findViewById(R.id.pincode_hawb_List);
 
         }
     }

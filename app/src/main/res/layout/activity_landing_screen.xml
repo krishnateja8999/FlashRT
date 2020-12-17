@@ -25,34 +25,25 @@
                     android:layout_width="150dp"
                     android:layout_height="50dp"
                     android:src="@drawable/flash_logo"
-
                     android:layout_centerInParent="true" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:gravity="center"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"
                     android:layout_height="wrap_content">
 
                     <ImageView
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_marginEnd="2dp"
-                        android:background="@drawable/notification_bg"
-                        android:id="@+id/notifications" />
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Hyderabad"
-                        android:textSize="14sp"
-                        android:id="@+id/toolbar_loc"
-                        android:fontFamily="sans-serif"
-                        android:textColor="#ff1a1a" />
+                        android:clickable="true"
+                        android:id="@+id/log_out"
+                        android:src="@drawable/ic_baseline_lock_24"
+                        android:focusable="true" />
 
 
                 </LinearLayout>

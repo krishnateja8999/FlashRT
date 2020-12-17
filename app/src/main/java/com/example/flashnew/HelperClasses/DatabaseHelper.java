@@ -53,10 +53,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SCORE = "score";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
+    public static final String CLIENT_NUMBER = "client_number";
     public static final String TICK_MARK = "tick_mark";
     private static final String CREATE_TABLE_TOTAL_LIST_DETAILS = "CREATE TABLE " + TABLE_TOTAL_LIST_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CUSTOMER_ID + " INTEGER, "
             + CONTRACT_ID + " INTEGER, " + HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, "
-            + ATTEMPTS + " INTEGER, " + SPECIAL_PHOTO + " TEXT, " + SCORE + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + TICK_MARK + " TEXT)";
+            + ATTEMPTS + " INTEGER, " + SPECIAL_PHOTO + " TEXT, " + SCORE + " INTEGER, " + CLIENT_NUMBER + " TEXT, " + TICK_MARK + " TEXT)";
 
 
     //Table 3 columns & query:
@@ -152,8 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(ATTEMPTS, twoListModal.getAttempts());
         contentValues.put(SPECIAL_PHOTO, twoListModal.getSpecialPhoto());
         contentValues.put(SCORE, twoListModal.getScore());
-        contentValues.put(LATITUDE, twoListModal.getLatitude());
-        contentValues.put(LONGITUDE, twoListModal.getLongitude());
+        contentValues.put(CLIENT_NUMBER, twoListModal.getClientNumber());
         contentValues.put(TICK_MARK, "false");
 
         long result = db.insert(TABLE_TOTAL_LIST_DETAILS, null, contentValues);

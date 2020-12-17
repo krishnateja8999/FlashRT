@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -52,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private androidx.appcompat.app.AlertDialog.Builder dialog1;
     private AppPrefernces preferences;
+    private CheckBox checkbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         dialog = new ProgressDialog(this);
         dialog1 = new androidx.appcompat.app.AlertDialog.Builder(this);
         preferences = new AppPrefernces(this);
+        checkbox = findViewById(R.id.checkbox);
 
         if (preferences.isLoggedIn()) {
             Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
@@ -84,12 +87,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (masterPasswordEditText.getText().toString().length() <= 0) {
-                    masterPasswordEditText.setError(getResources().getString(R.string.Login_screen9));
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen9), Toast.LENGTH_LONG).show();
+                    masterPasswordEditText.setText("");
+                    //masterPasswordEditText.setError(getResources().getString(R.string.Login_screen9));
                 } else if (masterPasswordEditText.getText().toString().equals(getResources().getString(R.string.lista_coletas_feitass))) {
                     masterPasswordDialog1.setVisibility(View.GONE);
                     masterPasswordDialog2.setVisibility(View.VISIBLE);
                 } else {
-                    masterPasswordEditText.setError(getResources().getString(R.string.Login_screen10));
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen10), Toast.LENGTH_LONG).show();
+                    masterPasswordEditText.setText("");
+                    //masterPasswordEditText.setError(getResources().getString(R.string.Login_screen10));
                 }
             }
         });
@@ -131,11 +138,19 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                     if (identification.getText().toString().length() <= 0) {
-                        identification.setError(getResources().getString(R.string.Login_screen5));
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen5), Toast.LENGTH_LONG).show();
+                        identification.requestFocus();
+                        //identification.setError(getResources().getString(R.string.Login_screen5));
                     } else if (userName.getText().toString().length() <= 0) {
-                        userName.setError(getResources().getString(R.string.Login_screen6));
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen6), Toast.LENGTH_LONG).show();
+                        userName.requestFocus();
+                        //userName.setError(getResources().getString(R.string.Login_screen6));
                     } else if (password.getText().toString().length() <= 0) {
-                        password.setError(getResources().getString(R.string.Login_screen7));
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen7), Toast.LENGTH_LONG).show();
+                        password.requestFocus();
+                        //password.setError(getResources().getString(R.string.Login_screen7));
+                    } else if (!checkbox.isChecked()) {
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen11), Toast.LENGTH_LONG).show();
                     } else {
                         jsonParse();
                     }
@@ -188,9 +203,7 @@ public class LoginActivity extends AppCompatActivity {
                             "Ok",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    userName.setText("");
-                                    identification.setText("");
-                                    password.setText("");
+                                    userName.requestFocus();
                                     dialog.cancel();
                                 }
                             });
@@ -209,6 +222,7 @@ public class LoginActivity extends AppCompatActivity {
             };
             queue.add(request);
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {

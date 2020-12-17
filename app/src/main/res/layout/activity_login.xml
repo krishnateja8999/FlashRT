@@ -135,15 +135,30 @@
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
-                <EditText
-                    android:id="@+id/hostserverUrl"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:padding="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="3dp"
-                    android:background="@drawable/edit_text_grey_border" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/hostserverUrl"
+                        android:layout_width="300dp"
+                        android:layout_height="45dp"
+                        android:padding="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="3dp"
+                        android:enabled="false"
+                        android:text="http://191.241.243.133:8080"
+                        android:background="@drawable/edit_text_grey_border" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
 
                 <TextView
                     android:layout_width="wrap_content"

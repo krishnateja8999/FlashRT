@@ -3,16 +3,22 @@ package com.example.flashnew.Modals;
 public class HawbLists {
     String hawbCode;
     String name;
-    float latitude;
-    float longitude;
+    String clientNumber;
     String tick;
 
-    public HawbLists(String hawbCode, String name, float latitude, float longitude, String tick) {
+    public HawbLists(String hawbCode, String name, String clientNumber, String tick) {
         this.hawbCode = hawbCode;
         this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.clientNumber = clientNumber;
         this.tick = tick;
+    }
+
+    public String getClientNumber() {
+        return clientNumber;
+    }
+
+    public void setClientNumber(String clientNumber) {
+        this.clientNumber = clientNumber;
     }
 
     public String getTick() {
@@ -37,21 +43,5 @@ public class HawbLists {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public float getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
     }
 }

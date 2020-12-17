@@ -14,7 +14,6 @@
         android:background="@color/white">
 
         <LinearLayout
-
             android:id="@+id/actions_lay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +109,7 @@
                             android:textColor="@color/black"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:text="Endereço: " />
+                            android:text="Cliente numero: " />
 
                         <TextView
                             android:id="@+id/address_hawb_list"
@@ -119,10 +118,11 @@
                             android:layout_marginTop="5dp"
                             android:textColor="@color/black"
                             android:textSize="18sp"
-                            android:text="Av. Paulista, 1098, Bela Vista" />
+                            android:text="om003" />
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -147,6 +147,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">

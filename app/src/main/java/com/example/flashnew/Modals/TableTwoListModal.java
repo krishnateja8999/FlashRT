@@ -10,10 +10,9 @@ public class TableTwoListModal {
     int attempts;
     String specialPhoto;
     int score;
-    float latitude;
-    float longitude;
+    String clientNumber;
 
-    public TableTwoListModal(int customerID, int contractID, String hawbCode, String numberOrder, String recipientName, int dna, int attempts, String specialPhoto, int score, float latitude, float longitude) {
+    public TableTwoListModal(int customerID, int contractID, String hawbCode, String numberOrder, String recipientName, int dna, int attempts, String specialPhoto, int score, String clientNumber) {
         this.customerID = customerID;
         this.contractID = contractID;
         this.hawbCode = hawbCode;
@@ -23,8 +22,7 @@ public class TableTwoListModal {
         this.attempts = attempts;
         this.specialPhoto = specialPhoto;
         this.score = score;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.clientNumber = clientNumber;
     }
 
     public int getCustomerID() {
@@ -99,19 +97,11 @@ public class TableTwoListModal {
         this.score = score;
     }
 
-    public float getLatitude() {
-        return latitude;
+    public String getClientNumber() {
+        return clientNumber;
     }
 
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
+    public void setClientNumber(String clientNumber) {
+        this.clientNumber = clientNumber;
     }
 }

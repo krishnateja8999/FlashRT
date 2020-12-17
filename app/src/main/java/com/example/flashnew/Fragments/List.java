@@ -56,6 +56,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
+import com.example.flashnew.Adapters.AutoSuggestAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.LoginActivity;
@@ -220,7 +221,9 @@ public class List extends Fragment implements LocationListener {
                 boolean check = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
 
                 if (hawb.getText().toString().length() == 0) {
-                    hawb.setError("Selecione um Hawb");
+                    Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+                    hawb.requestFocus();
+                    //hawb.setError("Selecione um Hawb");
                 } else if (!check) {
                     Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
                 } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
@@ -229,12 +232,9 @@ public class List extends Fragment implements LocationListener {
                     Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
                 } else {
                     storeDeliveryData();
-                    try {
-                        if (internetChecker.checkInternetConnection()) {
-                            PutJsonRequest();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                    if (internetChecker.checkInternetConnection()) {
+                        PutJsonRequest();
                     }
                     mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
                     mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
@@ -492,10 +492,13 @@ public class List extends Fragment implements LocationListener {
             }
             String[] str = Utils.GetStringArray(list);
             Log.e(TAG, "HawbStringArray: " + Arrays.toString(str));
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                    (getContext(), android.R.layout.select_dialog_item, str);
-            hawb.setThreshold(1);//will start working from first character
-            hawb.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+            AutoSuggestAdapter adapter1 = new AutoSuggestAdapter(context, android.R.layout.simple_list_item_1, list);
+            hawb.setAdapter(adapter1);
+            hawb.setThreshold(1);
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>
+//                    (getContext(), android.R.layout.select_dialog_item, str);
+//            hawb.setThreshold(1);//will start working from first character
+//            hawb.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
         }
     }
 
@@ -551,92 +554,89 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void JsonParseListScreen() {
-        try {
-            ListScreenProgressBar.setVisibility(View.VISIBLE);
-            final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.e(TAG, "ListScreen1: " + response);
+        ListScreenProgressBar.setVisibility(View.VISIBLE);
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "ListScreen1: " + response);
 
-                    try {
-                        String franchiseName = response.getString("franquia");
-                        String system = response.getString("sistema");
-                        int lists = response.getInt("lista");
-                        int deliveryID = response.getInt("idEntregador");
-                        String delivererName = response.getString("nomeEntregador");
-                        int totalDocuments = response.getInt("quantidadeDocumentos");
+                try {
+                    String franchiseName = response.getString("franquia");
+                    String system = response.getString("sistema");
+                    int lists = response.getInt("lista");
+                    int deliveryID = response.getInt("idEntregador");
+                    String delivererName = response.getString("nomeEntregador");
+                    int totalDocuments = response.getInt("quantidadeDocumentos");
 
-                        preferences.setFranchise(franchiseName);
-                        preferences.setSystem(system);
+                    preferences.setFranchise(franchiseName);
+                    preferences.setSystem(system);
 
-                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
-                                deliveryID, delivererName, totalDocuments);
-                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                        Log.e(TAG, "ListScreen3: " + success1);
+                    TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                            deliveryID, delivererName, totalDocuments);
+                    boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                    Log.e(TAG, "ListScreen3: " + success1);
 
-                        JSONArray array = response.getJSONArray("documentos");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            Log.e(TAG, "ListScreen4: " + object);
+                    JSONArray array = response.getJSONArray("documentos");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject object = array.getJSONObject(i);
+                        Log.e(TAG, "ListScreen4: " + object);
+                        Log.e(TAG, "ListScreen4.2: " + i);
 
-                            int customerID = object.getInt("idCliente");
-                            int contractID = object.getInt("idContrato");
-                            String hawbCode = object.getString("codHawb");
-                            String numberOrder = object.getString("numeroEncomandaCliente");
-                            String recipientName = object.getString("nomeDestinatario");
-                            int dna = object.getInt("dna");
-                            int attempts = object.getInt("tentativas");
-                            String specialPhoto = object.getString("fotoEspecial");
-                            int score = object.getInt("score");
-                            float latitude = (float) object.getDouble("latitude");
-                            float longitude = (float) object.getDouble("longitude");
+                        int customerID = object.getInt("idCliente");
+                        int contractID = object.getInt("idContrato");
+                        String hawbCode = object.getString("codHawb");
+                        String numberOrder = object.getString("numeroEncomandaCliente");
+                        String recipientName = object.getString("nomeDestinatario");
+                        int dna = object.getInt("dna");
+                        int attempts = object.getInt("tentativas");
+                        String specialPhoto = object.getString("idCCusto");
+                        int score = object.getInt("score");
+                        String clientNumber = object.getString("numeroEncomandaCliente");
+//                        float latitude = (float) object.getDouble("latitude");
+//                        float longitude = (float) object.getDouble("longitude");
 
-                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, latitude, longitude);
-                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                            System.out.println(success);
+                        TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
+                        boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                        System.out.println(success);
 
-                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
-                            System.out.println(tableFourHawbCode);
+                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
+                        System.out.println(tableFourHawbCode);
 
-                            FragmentTransaction fragmentTransaction = context
-                                    .getSupportFragmentManager().beginTransaction();
-                            fragmentTransaction.replace(R.id.content, new HawbLists());
-                            fragmentTransaction.commit();
+                        FragmentTransaction fragmentTransaction = context
+                                .getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.content, new HawbLists());
+                        fragmentTransaction.commit();
 //                            setSuccessDialog();
-                        }
-
-                        ListScreenProgressBar.setVisibility(View.GONE);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+
                     ListScreenProgressBar.setVisibility(View.GONE);
-                    Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
-                    preferences.clearListID();
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    String auth1 = "Basic "
-                            + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
-                            Base64.NO_WRAP);
-                    params.put("Authorization", auth1);
-                    params.put("x-versao-rt", "3.8.10");
-                    params.put("x-rastreador", "ricardo");
-                    return params;
-                }
-            };
-            queue.add(request);
 
-        } catch (Exception e) {
-
-        }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ListScreenProgressBar.setVisibility(View.GONE);
+                Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
+                preferences.clearListID();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String auth1 = "Basic "
+                        + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                        Base64.NO_WRAP);
+                params.put("Authorization", auth1);
+                params.put("x-versao-rt", "3.8.10");
+                params.put("x-rastreador", "ricardo");
+                return params;
+            }
+        };
+        queue.add(request);
     }
 
     private void JsonParseListScreen2() {
@@ -675,13 +675,12 @@ public class List extends Fragment implements LocationListener {
                             String recipientName = object.getString("nomeDestinatario");
                             int dna = object.getInt("dna");
                             int attempts = object.getInt("tentativas");
-                            String specialPhoto = object.getString("fotoEspecial");
+                            String specialPhoto = object.getString("idCCusto");
                             int score = object.getInt("score");
-                            float latitude = (float) object.getDouble("latitude");
-                            float longitude = (float) object.getDouble("longitude");
+                            String clientNumber = object.getString("numeroEncomandaCliente");
 
                             TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, latitude, longitude);
+                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
                             boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
                             System.out.println(success);
 
@@ -760,13 +759,12 @@ public class List extends Fragment implements LocationListener {
                             String recipientName = object.getString("nomeDestinatario");
                             int dna = object.getInt("dna");
                             int attempts = object.getInt("tentativas");
-                            String specialPhoto = object.getString("fotoEspecial");
+                            String specialPhoto = object.getString("idCCusto");
                             int score = object.getInt("score");
-                            float latitude = (float) object.getDouble("latitude");
-                            float longitude = (float) object.getDouble("longitude");
+                            String clientNumber = object.getString("numeroEncomandaCliente");
 
                             TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, latitude, longitude);
+                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
                             boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
                             System.out.println(success);
 

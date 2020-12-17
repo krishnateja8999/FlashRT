@@ -99,7 +99,7 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
         } else {
             while (data.moveToNext()) {
                 hawbListsArrayList.add(new com.example.flashnew.Modals.HawbLists(data.getString(3), data.getString(5),
-                        data.getFloat(10), data.getFloat(11), data.getString(12)));
+                        data.getString(10), data.getString(11)));
             }
             adapter = new HawbListAdapter(getContext(), hawbListsArrayList);
             Log.e(TAG, "ListsView2: " + hawbListsArrayList);

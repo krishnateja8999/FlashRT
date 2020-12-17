@@ -22,7 +22,7 @@
     <string name="Login_screen8">O usuário não tem permissao para acessar o recurso</string>
     <string name="Login_screen9">Informe a senha master</string>
     <string name="Login_screen10">Senha incorreta</string>
-
+    <string name="Login_screen11">Selecione o host</string>
 
     <string name="main_entrega">Entrega</string>
     <string name="main_devolucao">Devolução</string>
