@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:unio="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:gravity="center"
+    tools:context=".Fragments.CollectDetails">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="2dp"
+        android:alpha="0.8"
+        android:background="@color/white"
+        unio:cardCornerRadius="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/targetOptions"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:backgroundTint="@color/bg" />
+
+
+            <LinearLayout
+
+                android:id="@+id/hawbLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/targetSubOptions"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal">
+
+                <AutoCompleteTextView
+                    android:id="@+id/hawb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/hint"
+                    android:inputType="text"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/entregaName"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/hawbLayout"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="15dp"
+                android:digits="0123456789abcdefghijklmnopqrstvuwxyzABCDEFGHIJKLMNOPQRSTVUWXYZáÁéÉíÍóÓúÚàÀãÃõÕâÂêÊôÔçÇ.,-: "
+                android:hint="@string/iden"
+                android:inputType="textFilter"
+                android:maxLength="60"
+                android:singleLine="true"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/entregaId"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/entregaName"
+                android:layout_marginTop="10dp"
+                android:digits="0,1,2,3,4,5,6,7,8,9,ABCDEFGHIJKLMNOPQRSTVUWXYZ-."
+                android:hint="Identificação"
+                android:inputType="textCapCharacters|textFilter"
+                android:maxLength="20"
+                android:singleLine="true"
+                android:visibility="gone" />
+
+            <Button
+
+                android:id="@+id/buttonPhotoAR"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/entregaId"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/rounded_blue_button"
+                android:text="@string/entrega_foto_local"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/buttonPhotoLocal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/buttonPhotoAR"
+                android:layout_marginTop="10dp"
+                android:text="Tirar foto"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/buttonPhotoFora"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/buttonPhotoLocal"
+                android:layout_marginTop="10dp"
+                android:text="Tirar foto do local, fora do raio permitido"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/buttonLayout1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fotoContainer"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="30dp"
+                android:orientation="horizontal">
+
+                <Button
+
+                    android:id="@+id/buttonConfirm"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_blue_button"
+                    android:text="@string/button_confirmar"
+                    android:textColor="@color/white"
+
+                    />
+
+                <Button
+                    android:id="@+id/buttonCancel"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_red_button"
+                    android:text="@string/button_cancelar"
+                    android:textColor="@color/white"
+
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

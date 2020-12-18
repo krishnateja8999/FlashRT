@@ -1,6 +1,9 @@
 package com.example.flashnew.Server;
 
 import android.content.Context;
+import android.content.DialogInterface;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 
@@ -28,11 +31,21 @@ public class Utils {
         return str;
     }
 
-//    public static boolean isNetworkAvailable() {
-//        ConnectivityManager connectivityManager
-//                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-//        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-//    }
+    public static AlertDialog DialogClass(Context context, String title, String message, String positiveBtn) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        builder1.setTitle(title);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+        builder1.setPositiveButton(positiveBtn, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+        return alert1;
+    }
 
 }

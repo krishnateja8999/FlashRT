@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:unio="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
-
-    >
+    android:background="@drawable/background">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,10 +15,9 @@
         <include
             android:id="@+id/actionBar"
             layout="@layout/actionbar"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp" />
+            android:layout_marginBottom="20dp" />
 
         <LinearLayout
             android:id="@+id/bl"
@@ -29,14 +27,29 @@
             android:layout_below="@+id/actionBar"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:orientation="vertical"
+            android:orientation="vertical">
 
-            >
+
+            <TextView
+                android:id="@+id/no_lists"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="30sp"
+                android:textColor="@color/white"
+                android:text="Sem Listas" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:visibility="visible"
+                android:id="@+id/collectRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -44,14 +57,13 @@
                     android:orientation="vertical">
 
                     <androidx.cardview.widget.CardView
-                        android:alpha="0.8"
-                        unio:cardCornerRadius="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-
                         android:layout_marginBottom="10dp"
-                        android:background="@color/white">
+                        android:alpha="0.8"
+                        android:background="@color/white"
+                        unio:cardCornerRadius="10dp">
 
                         <LinearLayout
 
@@ -136,14 +148,14 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:alpha="0.8"
-                        unio:cardCornerRadius="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-
                         android:layout_marginBottom="10dp"
-                        android:background="@color/white">
+                        android:alpha="0.8"
+
+                        android:background="@color/white"
+                        unio:cardCornerRadius="10dp">
 
                         <LinearLayout
 
@@ -228,14 +240,14 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:alpha="0.8"
-                        unio:cardCornerRadius="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-
                         android:layout_marginBottom="10dp"
-                        android:background="@color/white">
+                        android:alpha="0.8"
+
+                        android:background="@color/white"
+                        unio:cardCornerRadius="10dp">
 
                         <LinearLayout
 
@@ -320,14 +332,14 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:alpha="0.8"
-                        unio:cardCornerRadius="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-
                         android:layout_marginBottom="10dp"
-                        android:background="@color/white">
+                        android:alpha="0.8"
+
+                        android:background="@color/white"
+                        unio:cardCornerRadius="10dp">
 
                         <LinearLayout
 
@@ -416,29 +428,18 @@
 
             </ScrollView>
 
-
-            <!-- <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/coletaList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            />-->
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="20dp"
             android:id="@+id/buttonLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="20dp"
-
             android:gravity="bottom"
-            android:orientation="horizontal"
-
-
-            >
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/coletaScan"
@@ -467,176 +468,168 @@
 
         <RelativeLayout
 
-            android:layout_marginTop="25dp"
-            android:layout_below="@+id/actionBar"
             android:id="@+id/rl"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="25dp"
+            android:layout_below="@+id/actionBar"
+            android:layout_gravity="center_horizontal"
             android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
             android:layout_marginBottom="5dp"
             android:paddingBottom="20dp"
-            android:layout_gravity="center_horizontal">
+            android:visibility="gone">
 
             <androidx.cardview.widget.CardView
-                android:alpha="0.8"
-                unio:cardCornerRadius="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginLeft="2dp"
-                android:background="@color/white"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginBottom="2dp"
+                android:alpha="0.8"
+                android:background="@color/white"
+                unio:cardCornerRadius="10dp">
 
                 <LinearLayout
-                    android:layout_marginTop="30dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="30dp"
                     android:orientation="vertical">
 
                     <Spinner
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:backgroundTint="@color/bg"
+                        android:id="@+id/targetOptions"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/targetOptions"
+                        android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentLeft="true" />
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:backgroundTint="@color/bg" />
 
 
                     <LinearLayout
 
                         android:id="@+id/hawbLayout"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/targetSubOptions"
                         android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="15dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginBottom="20dp">
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="horizontal">
 
                         <AutoCompleteTextView
-                            android:textColor="@color/black"
                             android:id="@+id/hawb"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint"
                             android:layout_weight="1"
-                            android:inputType="text" />
+                            android:hint="@string/hint"
+                            android:inputType="text"
+                            android:textColor="@color/black" />
                     </LinearLayout>
 
                     <EditText
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
+                        android:id="@+id/entregaName"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/hawbLayout"
+                        android:layout_marginLeft="15dp"
                         android:layout_marginTop="10dp"
-                        android:id="@+id/entregaName"
-                        android:hint="@string/iden"
+                        android:layout_marginRight="15dp"
                         android:digits="0123456789abcdefghijklmnopqrstvuwxyzABCDEFGHIJKLMNOPQRSTVUWXYZáÁéÉíÍóÓúÚàÀãÃõÕâÂêÊôÔçÇ.,-: "
+                        android:hint="@string/iden"
                         android:inputType="textFilter"
                         android:maxLength="60"
                         android:singleLine="true"
                         android:visibility="visible" />
 
                     <EditText
+                        android:id="@+id/entregaId"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/entregaName"
                         android:layout_marginTop="10dp"
-                        android:id="@+id/entregaId"
-                        android:hint="Identificação"
-                        android:maxLength="20"
-                        android:inputType="textCapCharacters|textFilter"
                         android:digits="0,1,2,3,4,5,6,7,8,9,ABCDEFGHIJKLMNOPQRSTVUWXYZ-."
+                        android:hint="Identificação"
+                        android:inputType="textCapCharacters|textFilter"
+                        android:maxLength="20"
                         android:singleLine="true"
                         android:visibility="gone" />
 
                     <Button
 
+                        android:id="@+id/buttonPhotoAR"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/entregaId"
                         android:layout_marginLeft="15dp"
+                        android:layout_marginTop="30dp"
                         android:layout_marginRight="15dp"
                         android:background="@drawable/rounded_blue_button"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
                         android:text="@string/entrega_foto_local"
                         android:textColor="@color/white"
-                        android:id="@+id/buttonPhotoAR"
-                        android:layout_below="@+id/entregaId"
                         android:visibility="gone" />
 
                     <Button
+                        android:id="@+id/buttonPhotoLocal"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/buttonPhotoAR"
                         android:layout_marginTop="10dp"
                         android:text="Tirar foto"
-                        android:id="@+id/buttonPhotoLocal"
-                        android:layout_below="@+id/buttonPhotoAR"
                         android:visibility="gone" />
 
                     <Button
+                        android:id="@+id/buttonPhotoFora"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/buttonPhotoLocal"
                         android:layout_marginTop="10dp"
                         android:text="Tirar foto do local, fora do raio permitido"
-                        android:id="@+id/buttonPhotoFora"
-                        android:layout_below="@+id/buttonPhotoLocal"
                         android:visibility="gone" />
 
                     <LinearLayout
-                        android:id="@+id/fotoContainer"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/buttonPhotoFora"></LinearLayout>
-
-                    <LinearLayout
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
                         android:id="@+id/buttonLayout1"
-                        android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/fotoContainer"
+                        android:layout_marginLeft="15dp"
                         android:layout_marginTop="40dp"
-                        android:layout_marginBottom="30dp">
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="30dp"
+                        android:orientation="horizontal">
 
                         <Button
 
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/rounded_blue_button"
+                            android:id="@+id/buttonConfirm"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_blue_button"
                             android:text="@string/button_confirmar"
                             android:textColor="@color/white"
-                            android:id="@+id/buttonConfirm"
-                            android:layout_weight="1"
 
                             />
 
                         <Button
-                            android:layout_marginLeft="10dp"
-                            android:textColor="@color/white"
-                            android:background="@drawable/rounded_red_button"
+                            android:id="@+id/buttonCancel"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
-                            android:text="@string/button_cancelar"
-                            android:id="@+id/buttonCancel"
+                            android:layout_marginLeft="10dp"
                             android:layout_weight="1"
+                            android:background="@drawable/rounded_red_button"
+                            android:text="@string/button_cancelar"
+                            android:textColor="@color/white"
 
                             />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-
         </RelativeLayout>
+
     </RelativeLayout>
 </RelativeLayout>

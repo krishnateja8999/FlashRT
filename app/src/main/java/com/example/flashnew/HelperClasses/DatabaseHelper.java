@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.Modals.TableOneDelivererModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
@@ -25,10 +26,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
 
     //Table names
-    public static final String TABLE_DELIVER_DETAILS = "tbl_deliverer_details";
-    public static final String TABLE_TOTAL_LIST_DETAILS = "tbl_list_details";
-    public static final String TABLE_DELIVERY_DETAILS = "tbl_delivery_details";
-    public static final String TABLE_HAWB_CODES = "tbl_hawb_code";
+    private static final String TABLE_DELIVER_DETAILS = "tbl_deliverer_details";
+    private static final String TABLE_TOTAL_LIST_DETAILS = "tbl_list_details";
+    private static final String TABLE_DELIVERY_DETAILS = "tbl_delivery_details";
+    private static final String TABLE_HAWB_CODES = "tbl_hawb_code";
+    private static final String TABLE_SCANNER_DETAILS = "tbl_scanner_details";
 
 
     //Table 1 columns & query:
@@ -36,7 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String FRANCHISE = "franchise";
     private static final String LIST = "lists";
     private static final String DELIVERY_ID = "delivery_id";
-    public static final String DELIVERER_NAME = "deliverer_name";
+    private static final String DELIVERER_NAME = "deliverer_name";
     private static final String TOTAL_DOCUMENTS = "total_documents";
     private static final String CREATE_TABLE_DELIVERER_DETAILS = "CREATE TABLE " + TABLE_DELIVER_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + FRANCHISE + " TEXT, "
             + LIST + " INTEGER, " + DELIVERY_ID + " INTEGER, " + DELIVERER_NAME + " TEXT, " + TOTAL_DOCUMENTS + " TEXT)";
@@ -53,8 +55,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SCORE = "score";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
-    public static final String CLIENT_NUMBER = "client_number";
-    public static final String TICK_MARK = "tick_mark";
+    private static final String CLIENT_NUMBER = "client_number";
+    private static final String TICK_MARK = "tick_mark";
     private static final String CREATE_TABLE_TOTAL_LIST_DETAILS = "CREATE TABLE " + TABLE_TOTAL_LIST_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CUSTOMER_ID + " INTEGER, "
             + CONTRACT_ID + " INTEGER, " + HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, "
             + ATTEMPTS + " INTEGER, " + SPECIAL_PHOTO + " TEXT, " + SCORE + " INTEGER, " + CLIENT_NUMBER + " TEXT, " + TICK_MARK + " TEXT)";
@@ -77,6 +79,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_HAWB_CODES = "CREATE TABLE " + TABLE_HAWB_CODES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             HAWB_CODE + " TEXT)";
 
+    //Table 5 columns & query:
+    private static final String COLETA_ID = "coleta_id";
+    private static final String STREET_NAME = "street_name";
+    private static final String APT_NO = "apt_no";
+    private static final String CITY = "city";
+    private static final String STATE = "state";
+    private static final String PINCODE = "pincode";
+    private static final String CREATE_TABLE_SCANNER_DETAILS = "CREATE TABLE " + TABLE_SCANNER_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLETA_ID + " TEXT, " + STREET_NAME + " TEXT, " + APT_NO + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " +
+            PINCODE + " INTEGER, " + TICK_MARK + " TEXT)";
+
 
     private ByteArrayOutputStream objectByteArrayOutputStream;
     private byte[] imageInByte;
@@ -92,6 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TOTAL_LIST_DETAILS);
         db.execSQL(CREATE_TABLE_TABLE_DELIVERY_DETAILS);
         db.execSQL(CREATE_TABLE_HAWB_CODES);
+        db.execSQL(CREATE_TABLE_SCANNER_DETAILS);
 
     }
 
@@ -102,7 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_LIST_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DELIVERY_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HAWB_CODES);
-
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCANNER_DETAILS);
         //create new tables on upgrade
         onCreate(db);
     }
@@ -113,6 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_TOTAL_LIST_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_DELIVERY_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_HAWB_CODES);
+        db.execSQL("DELETE FROM " + TABLE_SCANNER_DETAILS);
         db.close();
     }
 
@@ -120,6 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * TABLE QUERYING START
      */
 
+    //Table one
     public boolean addDataToTableOne(TableOneDelivererModal delivererModal) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -140,6 +156,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    //Table two
     public boolean addDataToTableTwo(TableTwoListModal twoListModal) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -190,6 +207,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
     }
 
+    //Table three
     public void addDataToTableThree(TableThreeDeliveryModal deliveryModal) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -236,6 +254,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
     }
 
+    //Table four
     public boolean addDataToTableFour(String item) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -271,5 +290,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return true;
+    }
+
+    //Table five
+    public boolean AddDateToTableFive(TableFiveModel tableFiveModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLETA_ID, tableFiveModel.getColetaID());
+        contentValues.put(STREET_NAME, tableFiveModel.getStreetName());
+        contentValues.put(APT_NO, tableFiveModel.getAptNo());
+        contentValues.put(CITY, tableFiveModel.getCity());
+        contentValues.put(STATE, tableFiveModel.getState());
+        contentValues.put(PINCODE, tableFiveModel.getPincode());
+        contentValues.put(TICK_MARK, "false");
+
+        long result = db.insert(TABLE_SCANNER_DETAILS, null, contentValues);
+
+        db.close();
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

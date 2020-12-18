@@ -154,4 +154,15 @@ public class AppPrefernces {
         return preference.getString("Longitude", " ");
     }
 
+    //Collect Screen preferences
+
+    public void setQRCode(String qrCode) {
+        editor.putString("QRCode", qrCode);
+        editor.apply();
+    }
+
+    public String getQRCode() {
+        return preference.getString("QRCode", " ");
+    }
+
 }

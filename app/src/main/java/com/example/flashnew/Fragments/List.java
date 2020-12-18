@@ -134,7 +134,8 @@ public class List extends Fragment implements LocationListener {
         hawb = view.findViewById(R.id.hawb);
         attemptsDropDown = view.findViewById(R.id.attemptsDropDown);
         internetChecker = new InternetConnectionChecker(context);
-        String[] items = new String[]{"1", "2", "3"};
+        String[] items = new String[]{"1"};
+        //String[] items = new String[]{"1", "2", "3"};
         values2 = getResources().getStringArray(R.array.motivo_grupo);
         ArrayAdapter<String> attemptAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, items);
         attemptsDropDown.setAdapter(attemptAdapter);
