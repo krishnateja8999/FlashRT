@@ -51,7 +51,6 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
             holder.timeImage.setImageResource(R.drawable.ic_time);
         }
 
-
 //        Geocoder geocoder;
 //        List<Address> addresses;
 //        geocoder = new Geocoder(context, Locale.getDefault());
@@ -68,8 +67,6 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-
-
     }
 
     @Override

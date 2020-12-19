@@ -38,7 +38,7 @@
                 android:layout_gravity="center"
                 android:textSize="30sp"
                 android:textColor="@color/white"
-                android:text="Sem Listas" />
+                android:text="Sem coletas" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:visibility="visible"

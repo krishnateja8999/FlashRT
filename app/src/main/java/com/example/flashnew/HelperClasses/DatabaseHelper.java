@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.Modals.TableOneDelivererModal;
+import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
 
@@ -31,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_DELIVERY_DETAILS = "tbl_delivery_details";
     private static final String TABLE_HAWB_CODES = "tbl_hawb_code";
     private static final String TABLE_SCANNER_DETAILS = "tbl_scanner_details";
+    private static final String TABLE_COLETA_DETAILS = "tbl_coleta_details";
 
 
     //Table 1 columns & query:
@@ -90,6 +92,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLETA_ID + " TEXT, " + STREET_NAME + " TEXT, " + APT_NO + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " +
             PINCODE + " INTEGER, " + TICK_MARK + " TEXT)";
 
+    //Table 6 columns & query:
+    public static final String IDENTIFICATION_NO = "identification_no";
+    public static final String TYPE_PROCESS = "type_process";
+    public static final String CREATE_TABLE_COLETA_DETAILS = "CREATE TABLE " + TABLE_COLETA_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLETA_ID + " TEXT, " + RECIPIENT_NAME + " TEXT, " + IDENTIFICATION_NO + " TEXT, " + DATE_TIME + " TEXT," + TYPE_PROCESS + " TEXT," +
+            LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER)";
 
     private ByteArrayOutputStream objectByteArrayOutputStream;
     private byte[] imageInByte;
@@ -106,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TABLE_DELIVERY_DETAILS);
         db.execSQL(CREATE_TABLE_HAWB_CODES);
         db.execSQL(CREATE_TABLE_SCANNER_DETAILS);
-
+        db.execSQL(CREATE_TABLE_COLETA_DETAILS);
     }
 
     @Override
@@ -117,6 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DELIVERY_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HAWB_CODES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCANNER_DETAILS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLETA_DETAILS);
         //create new tables on upgrade
         onCreate(db);
     }
@@ -128,13 +137,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_DELIVERY_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_HAWB_CODES);
         db.execSQL("DELETE FROM " + TABLE_SCANNER_DETAILS);
+        db.execSQL("DELETE FROM " + TABLE_COLETA_DETAILS);
         db.close();
     }
 
     /**
      * TABLE QUERYING START
      */
-
+    //List screen
     //Table one
     public boolean addDataToTableOne(TableOneDelivererModal delivererModal) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -260,7 +270,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(HAWB_CODE, item);
         long result = db.insert(TABLE_HAWB_CODES, null, contentValues);
-
+        db.close();
         if (result == -1) {
             return false;
         } else {
@@ -292,6 +302,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    //Collect Screen
     //Table five
     public boolean AddDateToTableFive(TableFiveModel tableFiveModel) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -307,6 +318,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_SCANNER_DETAILS, null, contentValues);
 
+        db.close();
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public Cursor GetDataFromTableFive() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_SCANNER_DETAILS;
+        Cursor data = db.rawQuery(query, null);
+        return data;
+    }
+
+    public boolean CheckColetaData(String coletaID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_SCANNER_DETAILS + " WHERE " + COLETA_ID + " = '" + coletaID + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    public void CheckTickMarkInTableFive(String tick) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "UPDATE " + TABLE_SCANNER_DETAILS + " SET " + TICK_MARK + "=' true  ' WHERE " + COLETA_ID + " ='" + tick + "'";
+        db.execSQL(query);
+    }
+
+    //Table six
+    public boolean AddDataToTableSix(TableSixCollectModal collectModal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLETA_ID, collectModal.getCollectID());
+        contentValues.put(RECIPIENT_NAME, collectModal.getName());
+        contentValues.put(IDENTIFICATION_NO, collectModal.getIdentification());
+        contentValues.put(DATE_TIME, collectModal.getDateTime());
+        contentValues.put(TYPE_PROCESS, collectModal.getType());
+        contentValues.put(LATITUDE, collectModal.getLatitude());
+        contentValues.put(LONGITUDE, collectModal.getLongitude());
+        contentValues.put(BATTERY_LEVEL, collectModal.getBatteryPercentage());
+
+        long result = db.insert(TABLE_COLETA_DETAILS, null, contentValues);
         db.close();
         if (result == -1) {
             return false;

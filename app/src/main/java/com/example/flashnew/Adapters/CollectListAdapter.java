@@ -1,6 +1,7 @@
 package com.example.flashnew.Adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,16 +39,27 @@ public class CollectListAdapter extends RecyclerView.Adapter<CollectListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         holder.collectID.setText(listModalClasses.get(position).getHawbCode());
         holder.collectAddress.setText(listModalClasses.get(position).getAddress());
+
+        if (listModalClasses.get(position).getTick_mark().equals("false")) {
+            holder.tickImageCollect.setImageResource(R.drawable.ic_time);
+            holder.collectStart.setEnabled(true);
+        } else {
+            holder.collectStart.setEnabled(false);
+        }
 
         holder.collectStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Fragment fr = new CollectDetails();
                 FragmentTransaction fragmentTransaction = ((AppCompatActivity) context)
                         .getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.content, new CollectDetails());
+                Bundle args = new Bundle();
+                args.putString("CID", listModalClasses.get(holder.getAdapterPosition()).getHawbCode());
+                fr.setArguments(args);
+                fragmentTransaction.replace(R.id.content, fr);
                 fragmentTransaction.commit();
             }
         });

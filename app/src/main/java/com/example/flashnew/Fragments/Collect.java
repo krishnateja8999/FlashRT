@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -82,25 +83,22 @@ public class Collect extends Fragment implements BackFragment {
         mDatabaseHelper = new DatabaseHelper(getContext());
         title.setText("Coletas");
         imei.setText("IMEI : " + prefernces.getIMEI());
-        prefernces.setQRCode("null");
         qrCodeValidator = new QRCodeValidator();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(qrCodeValidator, new IntentFilter("qr_code_validate"));
-        ValidateQRCode();
 
         recyclerViewCollectList = view.findViewById(R.id.collectRecyclerView);
         listModalClasses = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerViewCollectList.setLayoutManager(layoutManager);
+        ColetaLists();
 
-
-        listModalClasses.add(new CollectListModalClass("544524", "H.no-7-11, Prakash Nagar, Miyapur. 500050"));
-        collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
-        if (listModalClasses.size() == 0) {
-            no_lists.setVisibility(View.VISIBLE);
-            Log.e("TAG", "onCreateView: " + listModalClasses.size());
-        }
-        recyclerViewCollectList.setAdapter(collectListAdapter);
-
+//        listModalClasses.add(new CollectListModalClass("544524", "H.no-7-11, Prakash Nagar, Miyapur. 500050"));
+//        collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
+//        if (listModalClasses.size() == 0) {
+//            no_lists.setVisibility(View.VISIBLE);
+//            Log.e("TAG", "onCreateView: " + listModalClasses.size());
+//        }
+//        recyclerViewCollectList.setAdapter(collectListAdapter);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +112,6 @@ public class Collect extends Fragment implements BackFragment {
             @Override
             public void onClick(View v) {
                 DigitalColleta();
-                //Utils.DialogClass(getContext(), "Title", "Message", "Ok");
             }
         });
 
@@ -158,28 +155,28 @@ public class Collect extends Fragment implements BackFragment {
         alert.show();
     }
 
-    private void ValidateQRCode() {
-        String s = prefernces.getQRCode();
-        if (s.equals("null")) {
-
-        } else {
-            String[] item = s.split("\\|");
-            if (item.length < 10) {
-                Utils.DialogClass(requireContext(), "Erro", "Inválido", "OK");
-            } else {
-                Utils.DialogClass(requireContext(), "Sucesso", "Coleta " + item[2] + " lido com sucesso", "OK");
-                TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14]);
-                boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
-                System.out.println(success);
-            }
-        }
-    }
-
     private class QRCodeValidator extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ValidateQRCode();
+            ColetaLists();
+            no_lists.setVisibility(View.GONE);
+        }
+    }
+
+    private void ColetaLists() {
+        Cursor data = mDatabaseHelper.GetDataFromTableFive();
+        listModalClasses = new ArrayList<>();
+        if (data.getCount() == 0) {
+            no_lists.setVisibility(View.VISIBLE);
+        } else {
+            while (data.moveToNext()) {
+                listModalClasses.add(new CollectListModalClass(data.getString(1), data.getString(2) + ", " + data.getString(3) +
+                        ", " + data.getString(4) + ", " + data.getString(5) + ", " + data.getString(6), data.getString(7)));
+            }
+            collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
+            recyclerViewCollectList.setAdapter(collectListAdapter);
+            collectListAdapter.notifyDataSetChanged();
         }
     }
 

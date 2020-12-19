@@ -14,16 +14,6 @@ public class AppPrefernces {
         preference = context.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE);
         editor = preference.edit();
     }
-
-    public void setLanding(String pwd) {
-        editor.putString("gmail", pwd);
-        editor.apply();
-    }
-
-    public String getLanding() {
-        return preference.getString("gmail", "N/A");
-    }
-
     //login response store
 
     public void setID(String id) {
@@ -32,7 +22,7 @@ public class AppPrefernces {
     }
 
     public String getID() {
-        return preference.getString("LoginID", " ");
+        return preference.getString("LoginID", "ggg");
     }
 
     public void setUserName(String userName) {
@@ -156,13 +146,5 @@ public class AppPrefernces {
 
     //Collect Screen preferences
 
-    public void setQRCode(String qrCode) {
-        editor.putString("QRCode", qrCode);
-        editor.apply();
-    }
-
-    public String getQRCode() {
-        return preference.getString("QRCode", " ");
-    }
 
 }

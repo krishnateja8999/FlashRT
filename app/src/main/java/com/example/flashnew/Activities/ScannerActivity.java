@@ -1,12 +1,14 @@
 package com.example.flashnew.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +19,8 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.example.flashnew.Fragments.Collect;
 import com.example.flashnew.HelperClasses.AppPrefernces;
+import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.Utils;
 import com.google.zxing.Result;
@@ -24,6 +28,7 @@ import com.google.zxing.Result;
 public class ScannerActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
     private AppPrefernces prefernces;
+    private DatabaseHelper mDatabaseHelper;
 
 
     @Override
@@ -33,7 +38,7 @@ public class ScannerActivity extends AppCompatActivity {
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
         mCodeScanner = new CodeScanner(this, scannerView);
         prefernces = new AppPrefernces(this);
-        prefernces.setQRCode("null");
+        mDatabaseHelper = new DatabaseHelper(this);
 
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
@@ -42,17 +47,66 @@ public class ScannerActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         String Qcode = result.getText();
-                        prefernces.setQRCode(Qcode);
-                        Intent intent = new Intent("qr_code_validate");
-                        LocalBroadcastManager.getInstance(ScannerActivity.this).sendBroadcast(intent);
-                        finish();
-//                        String[] item = Qcode.split("\\|");
-//                        if (item.length<10){
-//                            Utils.DialogClass(ScannerActivity.this,"Erro", "Inválido", "OK" );
-//                        }else {
-//                            Toast.makeText(ScannerActivity.this, result.getText(), Toast.LENGTH_LONG).show();
-//                            finish();
-//                        }
+
+                        String[] item = Qcode.split("\\|");
+                        boolean check = false;
+                        try {
+                            check = mDatabaseHelper.CheckColetaData(item[2]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (item.length < 10) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(ScannerActivity.this);
+                            builder1.setTitle("Erro");
+                            builder1.setMessage("Inválido");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                    finish();
+                                }
+                            });
+                            //Creating dialog box
+                            AlertDialog alert1 = builder1.create();
+                            alert1.show();
+                        } else if (check) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(ScannerActivity.this);
+                            builder1.setTitle(getResources().getString(R.string.Login_screen1));
+                            builder1.setMessage("Coleta " + item[2] + " já escaneado");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                    finish();
+                                }
+                            });
+                            //Creating dialog box
+                            AlertDialog alert1 = builder1.create();
+                            alert1.show();
+                        } else {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(ScannerActivity.this);
+                            builder1.setTitle("Sucesso");
+                            builder1.setMessage("Coleta " + item[2] + " lido com sucesso");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                    Intent intent = new Intent("qr_code_validate");
+                                    LocalBroadcastManager.getInstance(ScannerActivity.this).sendBroadcast(intent);
+                                    finish();
+                                }
+                            });
+                            //Creating dialog box
+                            AlertDialog alert1 = builder1.create();
+                            alert1.show();
+                            //Utils.DialogClass(requireContext(), "Sucesso", "Coleta " + item[2] + " lido com sucesso", "OK");
+                            TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14]);
+                            boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
+                            System.out.println(success);
+                        }
 
                     }
                 });
@@ -79,3 +133,8 @@ public class ScannerActivity extends AppCompatActivity {
         super.onPause();
     }
 }
+
+// prefernces.setQRCode(Qcode);
+//                        Intent intent = new Intent("qr_code_validate");
+//                        LocalBroadcastManager.getInstance(ScannerActivity.this).sendBroadcast(intent);
+//                        finish();
