@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".Activities.DashBoard">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:id="@+id/layout1"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/toolbar" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginEnd="2dp"
+                    android:visibility="gone"
+                    android:background="@drawable/notification_bg"
+                    android:id="@+id/notifications" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lista"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="10dp" />
+
+
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.Toolbar android:id="@+id/search_toolbar"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            app:collapseIcon="@drawable/ic_back"
+            app:titleTextColor="@color/black"
+            android:layout_gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:visibility="gone" />
+    </FrameLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/layout1"
+        android:id="@+id/layout2"
+        android:background="@color/grey_solid" />
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="25dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/actionBar">
+
+        <LinearLayout
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:id="@+id/tabla_cuerpo"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent">
+
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/textView1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_entregues" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaEntregues"
+                        android:layout_width="100dp"
+                        android:gravity="center_horizontal"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:layout_weight="1"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/textView4"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:layout_weight="1"
+                        android:text="@string/lista_devolvidas" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaDevolvidos"
+                        android:layout_width="100dp"
+                        android:gravity="center_horizontal"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:layout_weight="1"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/textView7"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:textColor="#000"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/lista_pendentes" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaPendentes"
+                        android:layout_width="100dp"
+                        android:gravity="center_horizontal"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/textView10"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_aguardando_sincronizar" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaAguardandoSincronizar"
+                        android:layout_width="100dp"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/textView11"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_aguardando_sincronizar_imagens" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaAguardandoSincronizarImagens"
+                        android:layout_width="100dp"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_coletas_pendente" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaColetasPendentes"
+                        android:layout_width="100dp"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_coletas_feitas" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaColetasFeitas"
+                        android:layout_width="100dp"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_coletas_aguardando_sincronizar" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaColetasAguardandoSincronizar"
+                        android:layout_width="100dp"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_coletas_aguardando_sincronizar_imagens" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaColetasAguardandoSincronizarImagem"
+                        android:layout_width="100dp"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="Pesquisas pendentes" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaPesquisaPendente"
+                        android:layout_width="100dp"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="Pesquisas\naguardando sincronizar" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaPesquisaAguardandoSincronizar"
+                        android:layout_width="100dp"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="Fotos de pesquisa\naguardando sincronizar" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaPesquisaFotoAguardandoSincronizar"
+                        android:layout_width="100dp"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="Hawbs com bigdata" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaHawbBigData"
+                        android:layout_width="100dp"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="Hawbs pendentes com bigdata" />
+
+                    <TextView
+                        android:background="@drawable/cell_shape"
+                        android:padding="5dp"
+                        android:id="@+id/listaHawbBigDataPendente"
+                        android:layout_width="100dp"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000"
+                        android:text="@string/lista_default" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

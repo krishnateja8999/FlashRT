@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -16,12 +17,16 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,6 +52,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Fragments.Collect;
@@ -89,6 +95,7 @@ public class Landing_Screen extends AppCompatActivity {
     private DatabaseHelper databaseHelper;
     private RequestQueue queue;
     private InternetConnectionChecker internetChecker;
+    private LocationManager locationManager;
 
 
     @SuppressLint({"MissingPermission", "HardwareIds"})
@@ -125,12 +132,11 @@ public class Landing_Screen extends AppCompatActivity {
         }
 
         if (Build.VERSION.SDK_INT <= 24) {
-            // preferences.setIMEI(telephonyManager.getDeviceId());
+            //preferences.setIMEI(telephonyManager.getDeviceId());
             preferences.setIMEI(getDeviceUniqueID(this));
         } else {
             preferences.setIMEI(getDeviceUniqueID(this));
         }
-
         navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -146,6 +152,13 @@ public class Landing_Screen extends AppCompatActivity {
                     case R.id.about:
                         // startActivity(new Intent(Landing_Screen.this,About.class));
                         Log.e(TAG, "onClick: " + preferences.getListID().toString());
+                        return true;
+
+                    case R.id.dashBoard:
+
+                        Intent i = new Intent(Landing_Screen.this, DashBoard.class);
+                        startActivity(i);
+
                         return true;
 
                     case R.id.list_delete:

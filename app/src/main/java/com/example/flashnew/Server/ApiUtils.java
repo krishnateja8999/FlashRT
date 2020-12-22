@@ -1,8 +1,6 @@
 package com.example.flashnew.Server;
 
 import com.example.flashnew.BuildConfig;
-import com.example.flashnew.Server.retrofitRelated.APIservice;
-import com.example.flashnew.Server.retrofitRelated.RetrofitClient;
 
 import static com.example.flashnew.BuildConfig.BASE_URL;
 
@@ -13,9 +11,7 @@ public class ApiUtils {
 
     public static final String LOGIN = BASE_URL + "/FlashPegasus/api/rt/login/v1/authenticate";
     public static final String GET_LIST = BASE_URL + "/FlashPegasus/api/rt/lista/v1/";
-
-    public static APIservice getAPIService() {
-        return RetrofitClient.getClient(BASE_URL).create(APIservice.class);
-    }
+    public static final String GET_COLETA = BASE_URL + "/FlashOnline/rest/coleta/getconsulta";
+    public static final String POST_COLETA = BASE_URL + "/FlashOnline/rest/rt/baixar/coleta";
 
 }

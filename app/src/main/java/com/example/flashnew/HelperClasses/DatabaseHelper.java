@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.Modals.TableOneDelivererModal;
+import com.example.flashnew.Modals.TableSevenNotCollectedModal;
 import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
@@ -33,6 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_HAWB_CODES = "tbl_hawb_code";
     private static final String TABLE_SCANNER_DETAILS = "tbl_scanner_details";
     private static final String TABLE_COLETA_DETAILS = "tbl_coleta_details";
+    private static final String TABLE_NOT_COLLECTED_DETAILS = "tbl_not_collected_details";
 
 
     //Table 1 columns & query:
@@ -99,8 +101,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLETA_ID + " TEXT, " + RECIPIENT_NAME + " TEXT, " + IDENTIFICATION_NO + " TEXT, " + DATE_TIME + " TEXT," + TYPE_PROCESS + " TEXT," +
             LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER)";
 
-    private ByteArrayOutputStream objectByteArrayOutputStream;
-    private byte[] imageInByte;
+
+    //Table 7 columns & query
+    public static final String COLLECT_IMAGE = "collect_image";
+    public static final String CREATE_TABLE_NOT_COLLECTED_DETAILS = "CREATE TABLE " + TABLE_NOT_COLLECTED_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLETA_ID + " TEXT, " + DATE_TIME + " TEXT," + TYPE_PROCESS + " TEXT," + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " BLOB)";
+
+    private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
+    private byte[] imageInByte, imageInByte2;
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -115,6 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_HAWB_CODES);
         db.execSQL(CREATE_TABLE_SCANNER_DETAILS);
         db.execSQL(CREATE_TABLE_COLETA_DETAILS);
+        db.execSQL(CREATE_TABLE_NOT_COLLECTED_DETAILS);
     }
 
     @Override
@@ -126,6 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HAWB_CODES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCANNER_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLETA_DETAILS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOT_COLLECTED_DETAILS);
         //create new tables on upgrade
         onCreate(db);
     }
@@ -138,6 +148,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_HAWB_CODES);
         db.execSQL("DELETE FROM " + TABLE_SCANNER_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_COLETA_DETAILS);
+        db.execSQL("DELETE FROM " + TABLE_NOT_COLLECTED_DETAILS);
         db.close();
     }
 
@@ -366,6 +377,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(BATTERY_LEVEL, collectModal.getBatteryPercentage());
 
         long result = db.insert(TABLE_COLETA_DETAILS, null, contentValues);
+        db.close();
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //Table seven
+    public boolean AddDataToTableSeven(TableSevenNotCollectedModal notCollectedModal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        Bitmap imageToStoreBitmap = notCollectedModal.getImage();
+        objectByteArrayOutputStream2 = new ByteArrayOutputStream();
+        imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG, 100, objectByteArrayOutputStream2);
+        imageInByte2 = objectByteArrayOutputStream2.toByteArray();
+
+        contentValues.put(COLETA_ID, notCollectedModal.getCollectID());
+        contentValues.put(DATE_TIME, notCollectedModal.getDateTime());
+        contentValues.put(TYPE_PROCESS, notCollectedModal.getType());
+        contentValues.put(LATITUDE, notCollectedModal.getLatitude());
+        contentValues.put(LONGITUDE, notCollectedModal.getLongitude());
+        contentValues.put(BATTERY_LEVEL, notCollectedModal.getBatteryPercentage());
+        contentValues.put(COLLECT_IMAGE, imageInByte2);
+
+        long result = db.insert(TABLE_NOT_COLLECTED_DETAILS, null, contentValues);
         db.close();
         if (result == -1) {
             return false;

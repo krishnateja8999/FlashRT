@@ -147,6 +147,7 @@ public class List extends Fragment implements LocationListener {
         ausente = getResources().getStringArray(R.array.motivo_ausente);
         nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
         outros = getResources().getStringArray(R.array.motivo_outros);
+        getLocation();
         listCodeUpdater = new ListCodeUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listCodeUpdater, new IntentFilter("list_code_status"));
         listScreenUpdater = new ListScreenUpdater();
@@ -158,7 +159,7 @@ public class List extends Fragment implements LocationListener {
             preferences.clearListID();
         }
         Log.e(TAG, "onCreateView: " + OutImage);
-
+        getLocation();
         hawb.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -504,7 +505,7 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void storeDeliveryData() {
-        try {
+
             BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
             int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
             Calendar c = Calendar.getInstance();
@@ -517,9 +518,6 @@ public class List extends Fragment implements LocationListener {
             mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinnerID,
                     attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
 
-        } catch (Exception e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void EmptyDataInTableFourDialog() {
@@ -641,7 +639,6 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void JsonParseListScreen2() {
-        try {
             ListScreenProgressBar.setVisibility(View.VISIBLE);
             final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
                 @Override
@@ -718,14 +715,9 @@ public class List extends Fragment implements LocationListener {
                 }
             };
             queue.add(request);
-
-        } catch (Exception e) {
-
-        }
     }
 
     private void JsonParseListScreen3() {
-        try {
             ListScreenProgressBar.setVisibility(View.VISIBLE);
             final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
                 @Override
@@ -804,10 +796,6 @@ public class List extends Fragment implements LocationListener {
                 }
             };
             queue.add(request);
-
-        } catch (Exception e) {
-
-        }
     }
 
     public void PutJsonRequest() {
@@ -1015,15 +1003,20 @@ public class List extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-//        Log.e(TAG, "onLocationChanged: " + location.getLatitude() + ", " + location.getLongitude());
+        Log.e(TAG, "onLocationChangedList: " + location.getLatitude() + ", " + location.getLongitude());
         preferences.setLatitude(String.valueOf(location.getLatitude()));
         preferences.setLongitude(String.valueOf(location.getLongitude()));
     }
 
     @Override
+    public void onProviderEnabled(@NonNull String provider) {
+
+    }
+
+    @Override
     public void onProviderDisabled(@NonNull String provider) {
         //Toast.makeText(context, "Habilite o GPS e a Internet", Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "onProviderDisabled: ");
+        //Log.e(TAG, "onProviderDisabled: ");
     }
 
     @Override

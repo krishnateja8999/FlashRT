@@ -30,8 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.Server.ApiUtils;
-import com.example.flashnew.Server.retrofitRelated.APIservice;
-import com.google.gson.JsonElement;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         dialog1 = new androidx.appcompat.app.AlertDialog.Builder(this);
         preferences = new AppPrefernces(this);
         checkbox = findViewById(R.id.checkbox);
-        preferences.setID("ggg");
 
         if (preferences.isLoggedIn()) {
             Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
@@ -90,14 +88,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (masterPasswordEditText.getText().toString().length() <= 0) {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen9), Toast.LENGTH_LONG).show();
                     masterPasswordEditText.setText("");
-                    //masterPasswordEditText.setError(getResources().getString(R.string.Login_screen9));
                 } else if (masterPasswordEditText.getText().toString().equals(getResources().getString(R.string.lista_coletas_feitass))) {
                     masterPasswordDialog1.setVisibility(View.GONE);
                     masterPasswordDialog2.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen10), Toast.LENGTH_LONG).show();
                     masterPasswordEditText.setText("");
-                    //masterPasswordEditText.setError(getResources().getString(R.string.Login_screen10));
                 }
             }
         });
@@ -141,15 +137,12 @@ public class LoginActivity extends AppCompatActivity {
                     if (identification.getText().toString().length() <= 0) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen5), Toast.LENGTH_LONG).show();
                         identification.requestFocus();
-                        //identification.setError(getResources().getString(R.string.Login_screen5));
                     } else if (userName.getText().toString().length() <= 0) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen6), Toast.LENGTH_LONG).show();
                         userName.requestFocus();
-                        //userName.setError(getResources().getString(R.string.Login_screen6));
                     } else if (password.getText().toString().length() <= 0) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen7), Toast.LENGTH_LONG).show();
                         password.requestFocus();
-                        //password.setError(getResources().getString(R.string.Login_screen7));
                     } else if (!checkbox.isChecked()) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen11), Toast.LENGTH_LONG).show();
                     } else {

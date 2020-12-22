@@ -1,17 +1,31 @@
 package com.example.flashnew.Fragments;
 
+import android.Manifest;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -20,26 +34,44 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.StringRequest;
+import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.Modals.TableSevenNotCollectedModal;
 import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.R;
+
+import net.skoumal.fragmentback.BackFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.BATTERY_SERVICE;
 import static com.android.volley.VolleyLog.TAG;
+import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 public class CollectDetails extends Fragment {
     private TextView title, imei;
-    private Spinner spinner;
+    private Spinner spinner, spinner2, spinner3;
     private EditText nameColeta;
     private EditText coletaIdenti;
     private DatabaseHelper mDatabaseHelper;
     private String strtext;
     private AppPrefernces prefernces;
     private Button buttonConfirmCollect, buttonCancelCollect;
+    private Context mContext;
+    private Button buttonPhotoAR;
+    private String[] values2, enderec, ausente, nao_visitado, outros;
+    private Bitmap photo;
+    private Bitmap OutImage;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,29 +85,100 @@ public class CollectDetails extends Fragment {
         coletaIdenti = view.findViewById(R.id.coletaIdenti);
         buttonConfirmCollect = view.findViewById(R.id.buttonConfirmCollect);
         buttonCancelCollect = view.findViewById(R.id.buttonCancelCollect);
+        buttonPhotoAR = view.findViewById(R.id.buttonPhotoAR);
+        spinner2 = view.findViewById(R.id.targetOptions2);
+        spinner3 = view.findViewById(R.id.targetOptions3);
+        values2 = getResources().getStringArray(R.array.motivo_grupo);
+        enderec = getResources().getStringArray(R.array.motivo_dev);
+        ausente = getResources().getStringArray(R.array.motivo_ausente);
+        nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
+        outros = getResources().getStringArray(R.array.motivo_outros);
         mDatabaseHelper = new DatabaseHelper(getContext());
-        prefernces = new AppPrefernces(getContext());
+        prefernces = new AppPrefernces(mContext);
         title.setVisibility(View.GONE);
         strtext = getArguments().getString("CID");
         imei.setText("Coleta: " + strtext);
-        String[] values1 = {"Selecione Coletar", "Coletado", "Não coletado"};
+        String[] values1 = {"-- Selecione Coletar --", "Coletado", "Não coletado"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter1);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    spinner2.setVisibility(View.GONE);
+                    nameColeta.setVisibility(View.VISIBLE);
+                    coletaIdenti.setVisibility(View.VISIBLE);
+                    buttonPhotoAR.setVisibility(View.GONE);
+                    spinner3.setVisibility(View.GONE);
+                    spinner2.setSelection(0);
+                } else if (position == 1) {
+                    spinner2.setVisibility(View.GONE);
+                    nameColeta.setVisibility(View.VISIBLE);
+                    coletaIdenti.setVisibility(View.VISIBLE);
+                    buttonPhotoAR.setVisibility(View.GONE);
+                    spinner3.setVisibility(View.GONE);
+                    spinner2.setSelection(0);
+                } else if (position == 2) {
+                    spinner2.setVisibility(View.VISIBLE);
+                    nameColeta.setVisibility(View.GONE);
+                    coletaIdenti.setVisibility(View.GONE);
+                    buttonPhotoAR.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values2);
+        adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner2.setAdapter(adapter2);
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    spinner3.setVisibility(View.GONE);
+                } else if (position == 1) {
+                    spinner3.setVisibility(View.VISIBLE);
+                    spinner3.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, enderec);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spinner3.setAdapter(adapter2);
+                } else if (position == 2) {
+                    spinner3.setVisibility(View.VISIBLE);
+                    spinner3.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, ausente);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spinner3.setAdapter(adapter2);
+
+                } else if (position == 3) {
+                    spinner3.setVisibility(View.VISIBLE);
+                    spinner3.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, nao_visitado);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spinner3.setAdapter(adapter2);
+                } else if (position == 4) {
+                    spinner3.setVisibility(View.VISIBLE);
+                    spinner3.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, outros);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spinner3.setAdapter(adapter2);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         buttonConfirmCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (spinner.getSelectedItem().toString().equals("Selecione Coletar")) {
-                    Toast.makeText(getContext(), "Selecione a Coletar", Toast.LENGTH_SHORT).show();
-                } else if (nameColeta.getText().toString().length() == 0) {
-                    Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
-                } else if (coletaIdenti.getText().toString().length() == 0) {
-                    Toast.makeText(getContext(), "Por favor insira um rg", Toast.LENGTH_SHORT).show();
-                } else {
-                    mDatabaseHelper.CheckTickMarkInTableFive(strtext);
-                    SuccessDialog();
-                }
+                ConfirmCollected();
             }
         });
 
@@ -89,14 +192,110 @@ public class CollectDetails extends Fragment {
             }
         });
 
+        buttonPhotoAR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        });
+
         return view;
     }
 
     private void SuccessDialog() {
         StoreColetaDetails();
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
-        builder1.setTitle("Sucesso");
-        builder1.setMessage("Colleta com sucesso");
+        SuccessDialog1("Sucesso", "Colleta com sucesso");
+    }
+
+    private void NotCollectedSuccessDialog() {
+        StoreNotColetaDetails();
+        SuccessDialog1("Sucesso", "Colleta com sucesso");
+    }
+
+    private void StoreColetaDetails() {
+        BatteryManager bm = (BatteryManager) mContext.getSystemService(BATTERY_SERVICE);
+        int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+        Log.e(TAG, "StoreColetaDetails: " + batLevel);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
+        String spinnerValue = spinner.getSelectedItem().toString();
+
+        TableSixCollectModal sixCollectModal = new TableSixCollectModal(strtext, nameColeta.getText().toString(), coletaIdenti.getText().toString(),
+                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel);
+        boolean success = mDatabaseHelper.AddDataToTableSix(sixCollectModal);
+        System.out.println(success);
+        Fragment fr = new Collect();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content, fr);
+        ft.commit();
+    }
+
+    private void StoreNotColetaDetails() {
+        BatteryManager bm = (BatteryManager) mContext.getSystemService(BATTERY_SERVICE);
+        int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+        Log.e(TAG, "StoreColetaDetails: " + batLevel);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
+        String spinnerValue = spinner.getSelectedItem().toString();
+
+        TableSevenNotCollectedModal sevenCollectModal = new TableSevenNotCollectedModal(strtext,
+                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, OutImage);
+        boolean success = mDatabaseHelper.AddDataToTableSeven(sevenCollectModal);
+        System.out.println(success);
+        Fragment fr = new Collect();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content, fr);
+        ft.commit();
+    }
+
+    private void ConfirmCollected() {
+        if (spinner.getSelectedItem().toString().equals("-- Selecione Coletar --")) {
+            Toast.makeText(getContext(), "Selecione a Coletar", Toast.LENGTH_SHORT).show();
+        } else if (spinner.getSelectedItem().toString().equals("Coletado")) {
+            if (nameColeta.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
+            } else if (coletaIdenti.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um rg", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                SuccessDialog();
+            }
+        } else if (spinner.getSelectedItem().toString().equals("Não coletado")) {
+            if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
+            } else if (OutImage == null) {
+                Toast.makeText(mContext, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                NotCollectedSuccessDialog();
+            }
+
+        }
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            photo = (Bitmap) data.getExtras().get("data");
+            OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
+            Log.e(ContentValues.TAG, "onActivityResult: " + OutImage);
+            buttonPhotoAR.setText("Tirar foto do local" + "   ✔");
+            Toast.makeText(mContext, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void SuccessDialog1(String title, String message) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
+        builder1.setTitle(title);
+        builder1.setMessage(message);
         builder1.setCancelable(false);
         builder1.setPositiveButton(
                 "OK",
@@ -108,26 +307,5 @@ public class CollectDetails extends Fragment {
         //Creating dialog box
         AlertDialog alert1 = builder1.create();
         alert1.show();
-    }
-
-    private void StoreColetaDetails() {
-        BatteryManager bm = (BatteryManager) getActivity().getSystemService(BATTERY_SERVICE);
-        int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String formattedDate = df.format(c.getTime());
-
-        String spinnerValue = spinner.getSelectedItem().toString();
-
-        TableSixCollectModal sixCollectModal = new TableSixCollectModal(strtext, nameColeta.getText().toString(), coletaIdenti.getText().toString(),
-                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel);
-        Log.e(TAG, "StoreColetaDetails: " + sixCollectModal);
-        boolean success = mDatabaseHelper.AddDataToTableSix(sixCollectModal);
-        System.out.println(success);
-        Fragment fr = new Collect();
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content, fr);
-        ft.commit();
     }
 }

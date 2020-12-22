@@ -2,25 +2,23 @@ package com.example.flashnew.Modals;
 
 import android.graphics.Bitmap;
 
-public class TableSixCollectModal {
+public class TableSevenNotCollectedModal {
     String collectID;
-    String name;
-    String identification;
     String dateTime;
     String type;
     String latitude;
     String longitude;
     int batteryPercentage;
+    Bitmap image;
 
-    public TableSixCollectModal(String collectID, String name, String identification, String dateTime, String type, String latitude, String longitude, int batteryPercentage) {
+    public TableSevenNotCollectedModal(String collectID, String dateTime, String type, String latitude, String longitude, int batteryPercentage, Bitmap image) {
         this.collectID = collectID;
-        this.name = name;
-        this.identification = identification;
         this.dateTime = dateTime;
         this.type = type;
         this.latitude = latitude;
         this.longitude = longitude;
         this.batteryPercentage = batteryPercentage;
+        this.image = image;
     }
 
     public String getCollectID() {
@@ -29,22 +27,6 @@ public class TableSixCollectModal {
 
     public void setCollectID(String collectID) {
         this.collectID = collectID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIdentification() {
-        return identification;
-    }
-
-    public void setIdentification(String identification) {
-        this.identification = identification;
     }
 
     public String getDateTime() {
@@ -85,5 +67,13 @@ public class TableSixCollectModal {
 
     public void setBatteryPercentage(int batteryPercentage) {
         this.batteryPercentage = batteryPercentage;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
 }
