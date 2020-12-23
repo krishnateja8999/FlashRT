@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,17 +35,31 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.Modals.TableSevenNotCollectedModal;
 import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.R;
+import com.example.flashnew.Server.ApiUtils;
+import com.example.flashnew.Server.InternetConnectionChecker;
+import com.example.flashnew.Server.Utils;
 
 import net.skoumal.fragmentback.BackFragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import static android.app.Activity.RESULT_OK;
@@ -66,6 +81,8 @@ public class CollectDetails extends Fragment {
     private String[] values2, enderec, ausente, nao_visitado, outros;
     private Bitmap photo;
     private Bitmap OutImage;
+    private RequestQueue queue;
+    private InternetConnectionChecker internetChecker;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -94,11 +111,13 @@ public class CollectDetails extends Fragment {
         nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
         outros = getResources().getStringArray(R.array.motivo_outros);
         mDatabaseHelper = new DatabaseHelper(getContext());
+        queue = Volley.newRequestQueue(mContext);
         prefernces = new AppPrefernces(mContext);
+        internetChecker = new InternetConnectionChecker(mContext);
         title.setVisibility(View.GONE);
         strtext = getArguments().getString("CID");
         imei.setText("Coleta: " + strtext);
-        String[] values1 = {"-- Selecione Coletar --", "Coletado", "Não coletado"};
+        String[] values1 = {"-- Selecione Coletar --", "COLETADO", "NAO_COLETADO"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter1);
@@ -256,7 +275,7 @@ public class CollectDetails extends Fragment {
     private void ConfirmCollected() {
         if (spinner.getSelectedItem().toString().equals("-- Selecione Coletar --")) {
             Toast.makeText(getContext(), "Selecione a Coletar", Toast.LENGTH_SHORT).show();
-        } else if (spinner.getSelectedItem().toString().equals("Coletado")) {
+        } else if (spinner.getSelectedItem().toString().equals("COLETADO")) {
             if (nameColeta.getText().toString().length() == 0) {
                 Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
             } else if (coletaIdenti.getText().toString().length() == 0) {
@@ -264,8 +283,11 @@ public class CollectDetails extends Fragment {
             } else {
                 mDatabaseHelper.CheckTickMarkInTableFive(strtext);
                 SuccessDialog();
+                if (internetChecker.checkInternetConnection()) {
+                    PostCollectData();
+                }
             }
-        } else if (spinner.getSelectedItem().toString().equals("Não coletado")) {
+        } else if (spinner.getSelectedItem().toString().equals("NAO_COLETADO")) {
             if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
                 Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
             } else if (OutImage == null) {
@@ -273,11 +295,11 @@ public class CollectDetails extends Fragment {
             } else {
                 mDatabaseHelper.CheckTickMarkInTableFive(strtext);
                 NotCollectedSuccessDialog();
+                if (internetChecker.checkInternetConnection()) {
+                    PostNotCollectData();
+                }
             }
-
         }
-
-
     }
 
     @Override
@@ -307,5 +329,180 @@ public class CollectDetails extends Fragment {
         //Creating dialog box
         AlertDialog alert1 = builder1.create();
         alert1.show();
+    }
+
+    private void DeleteDataUponSyncOrUpload() {
+        Cursor data = mDatabaseHelper.GetDataFromTableSix(); //table6
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                mDatabaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
+                list.clear();
+            }
+        }
+    }
+
+    private void DeleteDataUponSyncOrUpload1() {
+        Cursor data = mDatabaseHelper.GetDataFromTableSeven(); //table7
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                mDatabaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
+                list.clear();
+            }
+        }
+    }
+
+    private void PostCollectData() {
+        Cursor data = mDatabaseHelper.GetDataFromTableSix(); //table6
+        ArrayList<String> coletaID = new ArrayList<String>();
+        ArrayList<String> name = new ArrayList<String>();
+        ArrayList<String> identification = new ArrayList<String>();
+        ArrayList<String> dateTime = new ArrayList<String>();
+        ArrayList<String> typeProcess = new ArrayList<String>();
+        ArrayList<String> latitude = new ArrayList<String>();
+        ArrayList<String> longitude = new ArrayList<String>();
+        ArrayList<String> batteryLevel = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "PostCollect: No Data");
+        } else {
+            while (data.moveToNext()) {
+                coletaID.add(data.getString(1));
+                name.add(data.getString(2));
+                identification.add(data.getString(3));
+                dateTime.add(data.getString(4));
+                typeProcess.add(data.getString(5));
+                latitude.add(data.getString(6));
+                longitude.add(data.getString(7));
+                batteryLevel.add(data.getString(8));
+
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObj = new JSONObject();
+                JSONObject jsonObj1 = new JSONObject();
+
+                try {
+                    jsonObj.put("codColeta", Utils.ConvertArrayListToString(coletaID));
+                    jsonObj.put("recebedor", Utils.ConvertArrayListToString(name));
+                    jsonObj.put("rg", Utils.ConvertArrayListToString(identification));
+                    jsonObj.put("dataProcesso", Utils.ConvertArrayListToString(dateTime));
+                    jsonObj.put("tipoProcesso", Utils.ConvertArrayListToString(typeProcess));
+                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
+                    jsonArray.put(jsonObj);
+
+                    jsonObj1.put("usuario", "sao.ricardos");
+                    jsonObj1.put("password", "123");
+                    jsonObj1.put("imei", prefernces.getIMEI());
+                    jsonObj1.put("coleta", jsonArray);
+
+                    Log.e(ContentValues.TAG, "PostCollectData: " + jsonObj1);
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                        }
+                    });
+                    queue.add(request);
+
+                    coletaID.clear();
+                    name.clear();
+                    identification.clear();
+                    dateTime.clear();
+                    typeProcess.clear();
+                    latitude.clear();
+                    longitude.clear();
+                    batteryLevel.clear();
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            DeleteDataUponSyncOrUpload();
+            mDatabaseHelper.DeleteFromTableSixUponSync();
+        }
+    }
+
+    private void PostNotCollectData() {
+        Cursor data = mDatabaseHelper.GetDataFromTableSeven(); //table7
+        ArrayList<String> coletaID = new ArrayList<String>();
+        ArrayList<String> dateTime = new ArrayList<String>();
+        ArrayList<String> typeProcess = new ArrayList<String>();
+        ArrayList<String> latitude = new ArrayList<String>();
+        ArrayList<String> longitude = new ArrayList<String>();
+        ArrayList<String> batteryLevel = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "PostNotCollect: No Data");
+        } else {
+            while (data.moveToNext()) {
+                coletaID.add(data.getString(1));
+                dateTime.add(data.getString(2));
+                typeProcess.add(data.getString(3));
+                latitude.add(data.getString(4));
+                longitude.add(data.getString(5));
+                batteryLevel.add(data.getString(6));
+
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObj = new JSONObject();
+                JSONObject jsonObj1 = new JSONObject();
+
+                try {
+                    jsonObj.put("codColeta", Utils.ConvertArrayListToString(coletaID));
+                    jsonObj.put("dataProcesso", Utils.ConvertArrayListToString(dateTime));
+                    jsonObj.put("tipoProcesso", Utils.ConvertArrayListToString(typeProcess));
+                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
+                    jsonArray.put(jsonObj);
+
+                    jsonObj1.put("usuario", "sao.ricardos");
+                    jsonObj1.put("password", "123");
+                    jsonObj1.put("imei", prefernces.getIMEI());
+                    jsonObj1.put("coleta", jsonArray);
+
+                    Log.e(ContentValues.TAG, "PostNotCollectData: " + jsonObj1);
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                        }
+                    });
+                    queue.add(request);
+
+                    coletaID.clear();
+                    dateTime.clear();
+                    typeProcess.clear();
+                    latitude.clear();
+                    longitude.clear();
+                    batteryLevel.clear();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            DeleteDataUponSyncOrUpload1();
+            mDatabaseHelper.DeleteFromTableSevenUponSync();//Table7
+        }
     }
 }

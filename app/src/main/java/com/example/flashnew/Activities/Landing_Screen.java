@@ -204,10 +204,10 @@ public class Landing_Screen extends AppCompatActivity {
                 return false;
             }
         });
+
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setSelectedItemId(R.id.list);
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNavigationView.getChildAt(0);
-
         final View iconView =
                 menuView.getChildAt(2).findViewById(com.google.android.material.R.id.icon);
         iconView.setScaleY(1.5f);
@@ -229,20 +229,10 @@ public class Landing_Screen extends AppCompatActivity {
                     case R.id.nav_dashboard:
                         if (internetChecker.checkInternetConnection()) {
                             Cursor data = databaseHelper.getDeliveryData(); //table3
-                            if (data.getCount() == 0) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
-                                builder1.setTitle(getResources().getString(R.string.Login_screen1));
-                                builder1.setMessage("Sem listas para sincronizar");
-                                builder1.setCancelable(true);
-                                builder1.setPositiveButton(
-                                        "OK",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                dialog.cancel();
-                                            }
-                                        });
-                                AlertDialog alert1 = builder1.create();
-                                alert1.show();
+                            Cursor data2 = databaseHelper.GetDataFromTableSix(); //table6
+                            Cursor data3 = databaseHelper.GetDataFromTableSeven(); //table7
+                            if (data.getCount() == 0 && data2.getCount() == 0 && data3.getCount() == 0) {
+                                NoListsToSync();
                             } else {
                                 progressDialog = new ProgressDialog(Landing_Screen.this);
                                 progressDialog.setTitle("Carregando dados");
@@ -254,11 +244,16 @@ public class Landing_Screen extends AppCompatActivity {
                                     public void run() {
                                         try {
                                             PutJsonRequest();
+                                            PostCollectData();
+                                            PostNotCollectData();
                                             Intent intent = new Intent("list_code_status");
                                             LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
 
                                             Intent intent1 = new Intent("list_screen");
                                             LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent1);
+
+                                            Intent intent2 = new Intent("qr_code_validate");
+                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent2);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -271,6 +266,7 @@ public class Landing_Screen extends AppCompatActivity {
                         }
 
                         return true;
+
                     case R.id.list:
                         changeFragment(new List());
                         return true;
@@ -574,6 +570,197 @@ public class Landing_Screen extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void NoListsToSync() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
+        builder1.setTitle(getResources().getString(R.string.Login_screen1));
+        builder1.setMessage("Sem listas para sincronizar");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+    }
+
+    private void DeleteDataUponSyncOrUpload2() {
+        Cursor data = databaseHelper.GetDataFromTableSix(); //table6
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                databaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
+                list.clear();
+            }
+        }
+    }
+
+    private void DeleteDataUponSyncOrUpload1() {
+        Cursor data = databaseHelper.GetDataFromTableSeven(); //table7
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                databaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
+                list.clear();
+            }
+        }
+    }
+
+    private void PostCollectData() {
+        Cursor data = databaseHelper.GetDataFromTableSix(); //table6
+        ArrayList<String> coletaID = new ArrayList<String>();
+        ArrayList<String> name = new ArrayList<String>();
+        ArrayList<String> identification = new ArrayList<String>();
+        ArrayList<String> dateTime = new ArrayList<String>();
+        ArrayList<String> typeProcess = new ArrayList<String>();
+        ArrayList<String> latitude = new ArrayList<String>();
+        ArrayList<String> longitude = new ArrayList<String>();
+        ArrayList<String> batteryLevel = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "PostCollect: No Data");
+        } else {
+            while (data.moveToNext()) {
+                coletaID.add(data.getString(1));
+                name.add(data.getString(2));
+                identification.add(data.getString(3));
+                dateTime.add(data.getString(4));
+                typeProcess.add(data.getString(5));
+                latitude.add(data.getString(6));
+                longitude.add(data.getString(7));
+                batteryLevel.add(data.getString(8));
+
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObj = new JSONObject();
+                JSONObject jsonObj1 = new JSONObject();
+
+                try {
+                    jsonObj.put("codColeta", Utils.ConvertArrayListToString(coletaID));
+                    jsonObj.put("recebedor", Utils.ConvertArrayListToString(name));
+                    jsonObj.put("rg", Utils.ConvertArrayListToString(identification));
+                    jsonObj.put("dataProcesso", Utils.ConvertArrayListToString(dateTime));
+                    jsonObj.put("tipoProcesso", Utils.ConvertArrayListToString(typeProcess));
+                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
+                    jsonArray.put(jsonObj);
+
+                    jsonObj1.put("usuario", "sao.ricardos");
+                    jsonObj1.put("password", "123");
+                    jsonObj1.put("imei", preferences.getIMEI());
+                    jsonObj1.put("coleta", jsonArray);
+
+                    Log.e(ContentValues.TAG, "PostCollectData: " + jsonObj1);
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                        }
+                    });
+                    queue.add(request);
+
+                    coletaID.clear();
+                    name.clear();
+                    identification.clear();
+                    dateTime.clear();
+                    typeProcess.clear();
+                    latitude.clear();
+                    longitude.clear();
+                    batteryLevel.clear();
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            DeleteDataUponSyncOrUpload2();
+            databaseHelper.DeleteFromTableSixUponSync();
+        }
+    }
+
+    private void PostNotCollectData() {
+        Cursor data = databaseHelper.GetDataFromTableSeven(); //table7
+        ArrayList<String> coletaID = new ArrayList<String>();
+        ArrayList<String> dateTime = new ArrayList<String>();
+        ArrayList<String> typeProcess = new ArrayList<String>();
+        ArrayList<String> latitude = new ArrayList<String>();
+        ArrayList<String> longitude = new ArrayList<String>();
+        ArrayList<String> batteryLevel = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "PostNotCollect: No Data");
+        } else {
+            while (data.moveToNext()) {
+                coletaID.add(data.getString(1));
+                dateTime.add(data.getString(2));
+                typeProcess.add(data.getString(3));
+                latitude.add(data.getString(4));
+                longitude.add(data.getString(5));
+                batteryLevel.add(data.getString(6));
+
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObj = new JSONObject();
+                JSONObject jsonObj1 = new JSONObject();
+
+                try {
+                    jsonObj.put("codColeta", Utils.ConvertArrayListToString(coletaID));
+                    jsonObj.put("dataProcesso", Utils.ConvertArrayListToString(dateTime));
+                    jsonObj.put("tipoProcesso", Utils.ConvertArrayListToString(typeProcess));
+                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
+                    jsonArray.put(jsonObj);
+
+                    jsonObj1.put("usuario", "sao.ricardos");
+                    jsonObj1.put("password", "123");
+                    jsonObj1.put("imei", preferences.getIMEI());
+                    jsonObj1.put("coleta", jsonArray);
+
+                    Log.e(ContentValues.TAG, "PostNotCollectData: " + jsonObj1);
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                        }
+                    });
+                    queue.add(request);
+
+                    coletaID.clear();
+                    dateTime.clear();
+                    typeProcess.clear();
+                    latitude.clear();
+                    longitude.clear();
+                    batteryLevel.clear();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            DeleteDataUponSyncOrUpload1();
+            databaseHelper.DeleteFromTableSevenUponSync();//Table7
+        }
     }
 
     @Override

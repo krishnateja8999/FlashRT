@@ -105,7 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Table 7 columns & query
     public static final String COLLECT_IMAGE = "collect_image";
     public static final String CREATE_TABLE_NOT_COLLECTED_DETAILS = "CREATE TABLE " + TABLE_NOT_COLLECTED_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            COLETA_ID + " TEXT, " + DATE_TIME + " TEXT," + TYPE_PROCESS + " TEXT," + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " BLOB)";
+            COLETA_ID + " TEXT, " + DATE_TIME + " TEXT, " + TYPE_PROCESS + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " BLOB)";
 
     private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
     private byte[] imageInByte, imageInByte2;
@@ -206,8 +206,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getData() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_TOTAL_LIST_DETAILS;
-        Cursor data = db.rawQuery(query, null);
-        return data;
+        return db.rawQuery(query, null);
     }
 
     public void ValidateDataWithSecondTable(String code) {
@@ -265,8 +264,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getDeliveryData() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_DELIVERY_DETAILS;
-        Cursor data = db.rawQuery(query, null);
-        return data;
+        return db.rawQuery(query, null);
     }
 
     public void DeleteFromTableThreeUponSync() {
@@ -340,8 +338,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor GetDataFromTableFive() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_SCANNER_DETAILS;
-        Cursor data = db.rawQuery(query, null);
-        return data;
+        return db.rawQuery(query, null);
     }
 
     public boolean CheckColetaData(String coletaID) {
@@ -359,6 +356,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void CheckTickMarkInTableFive(String tick) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "UPDATE " + TABLE_SCANNER_DETAILS + " SET " + TICK_MARK + "=' true  ' WHERE " + COLETA_ID + " ='" + tick + "'";
+        db.execSQL(query);
+    }
+
+    public void DeleteFromTableFiveUponUpload(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_SCANNER_DETAILS + " WHERE " + COLETA_ID + " = '" + id + "'";
         db.execSQL(query);
     }
 
@@ -383,6 +386,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             return true;
         }
+    }
+
+    public Cursor GetDataFromTableSix() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_COLETA_DETAILS;
+        return db.rawQuery(query, null);
+    }
+
+    public void DeleteFromTableSixUponSync() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_COLETA_DETAILS;
+        db.execSQL(query);
     }
 
     //Table seven
@@ -410,4 +425,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+
+    public Cursor GetDataFromTableSeven() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_NOT_COLLECTED_DETAILS;
+        return db.rawQuery(query, null);
+    }
+
+    public void DeleteFromTableSevenUponSync() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_NOT_COLLECTED_DETAILS;
+        db.execSQL(query);
+    }
+
 }

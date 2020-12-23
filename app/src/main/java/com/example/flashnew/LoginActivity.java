@@ -75,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         dialog1 = new androidx.appcompat.app.AlertDialog.Builder(this);
         preferences = new AppPrefernces(this);
         checkbox = findViewById(R.id.checkbox);
+        preferences.setID("gggg");
 
         if (preferences.isLoggedIn()) {
             Intent i = new Intent(LoginActivity.this, Landing_Screen.class);

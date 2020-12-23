@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.util.Xml;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +35,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.ScannerActivity;
@@ -40,15 +43,22 @@ import com.example.flashnew.Adapters.CollectListAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.Modals.CollectListModalClass;
+import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
+import com.example.flashnew.Server.InternetConnectionChecker;
+import com.example.flashnew.Server.Utils;
 
 import net.skoumal.fragmentback.BackFragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,6 +77,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import fr.arnaudguyon.xmltojsonlib.XmlToJson;
+
+import static android.content.ContentValues.TAG;
+
 
 public class Collect extends Fragment implements BackFragment {
     private TextView title, imei;
@@ -80,7 +94,9 @@ public class Collect extends Fragment implements BackFragment {
     private TextView no_lists;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
-    // private RequestQueue queue;
+    private RequestQueue queue;
+    private InternetConnectionChecker internetChecker;
+
 
     @Nullable
     @Override
@@ -92,8 +108,9 @@ public class Collect extends Fragment implements BackFragment {
         prefernces = new AppPrefernces(getContext());
         coletaDigit = view.findViewById(R.id.coletaDigit);
         no_lists = view.findViewById(R.id.no_lists);
-        //queue = Volley.newRequestQueue(getContext());
+        queue = Volley.newRequestQueue(getContext());
         mDatabaseHelper = new DatabaseHelper(getContext());
+        internetChecker = new InternetConnectionChecker(getContext());
         title.setText("Coletas");
         imei.setText("IMEI : " + prefernces.getIMEI());
         qrCodeValidator = new QRCodeValidator();
@@ -133,13 +150,11 @@ public class Collect extends Fragment implements BackFragment {
     }
 
     private void DigitalColleta() {
-        InJson();
-        //oldFile();
-        // UsingRetrofit();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         final EditText edittext = new EditText(getContext());
         edittext.setBackgroundResource(R.drawable.edit_text_border);
         edittext.setPadding(30, 30, 30, 30);
+        edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
         TextView title = new TextView(getContext());
         title.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
@@ -150,13 +165,17 @@ public class Collect extends Fragment implements BackFragment {
         title.setLayoutParams(lp);
         title.setText("Digite o Codigo da coleta");
         builder.setCustomTitle(title);
-        //builder.setTitle("Digite o Codigo da coleta");
         builder.setCancelable(true);
         builder.setView(edittext);
         builder.setPositiveButton(
                 "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        if (internetChecker.checkInternetConnection()) {
+                            InJson(Integer.parseInt(edittext.getText().toString()));
+                        } else {
+                            Toast.makeText(getContext(), "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+                        }
                         dialog.cancel();
                     }
                 });
@@ -170,15 +189,6 @@ public class Collect extends Fragment implements BackFragment {
         //Creating dialog box
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    private class QRCodeValidator extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ColetaLists();
-            no_lists.setVisibility(View.GONE);
-        }
     }
 
     private void ColetaLists() {
@@ -197,28 +207,68 @@ public class Collect extends Fragment implements BackFragment {
         }
     }
 
-    private void InJson() {
+    private void InJson(int code) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        final int c = 856846;
-
         StringRequest request = new StringRequest(Request.Method.POST, ApiUtils.GET_COLETA, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.e("TAG", "onResponse: " + response);
-
-                InputStream is = convertStringToDocument(response);
-                XmlPullParser parser = Xml.newPullParser();
+                String s = String.valueOf(response);
+                XmlToJson xmlToJson = new XmlToJson.Builder(s).build();
+                Log.e("TAG", "XMLtoJson: " + xmlToJson);
+                JSONObject s1 = xmlToJson.toJson();
                 try {
-                    parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-                    parser.setInput(is, null);
-                    parser.nextTag();
-                    Log.e("TAG", "onResponse2: " + parser);
+                    JSONObject object = s1.getJSONObject("coleta");
+                    String s9 = object.getString("statusRetorno");
+                    if (s9.equals("00")) {
+                        String s2 = object.getString("coletaId");
+                        String s3 = object.getString("bairro");
+                        String s4 = object.getString("numEnd");
+                        String s5 = object.getString("cidade");
+                        String s6 = object.getString("uf");
+                        String s7 = object.getString("cep");
 
-                } catch (XmlPullParserException | IOException e) {
+                        boolean check = mDatabaseHelper.CheckColetaData(s2);
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                        if (check) {
+                            builder1.setTitle(getResources().getString(R.string.Login_screen1));
+                            builder1.setMessage("Coleta " + s2 + " já escaneado");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                            //Creating dialog box
+                            AlertDialog alert1 = builder1.create();
+                            alert1.show();
+                        } else {
+                            builder1.setTitle("Sucesso");
+                            builder1.setMessage("Coleta " + s2 + " lido com sucesso");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                    Intent intent = new Intent("qr_code_validate");
+                                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                                }
+                            });
+                            //Creating dialog box
+                            AlertDialog alert1 = builder1.create();
+                            alert1.show();
+                            //Utils.DialogClass(requireContext(), "Sucesso", "Coleta " + item[2] + " lido com sucesso", "OK");
+                            TableFiveModel tableFiveModel = new TableFiveModel(s2, s3, s4, s5, s6, s7);
+                            boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
+                            System.out.println(success);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Code not Valid", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -235,7 +285,8 @@ public class Collect extends Fragment implements BackFragment {
             @Override
             public byte[] getBody() throws AuthFailureError {
 
-                String body = getXML(c, prefernces.getUserName(), prefernces.getPaso());
+                //String body = getXML(code, prefernces.getUserName(), prefernces.getPaso());
+                String body = getXML(code, "sao.ricardos", "123");
                 return body.getBytes();
             }
 
@@ -253,22 +304,13 @@ public class Collect extends Fragment implements BackFragment {
         return result;
     }
 
-    private static InputStream convertStringToDocument(String xmlStr) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
-        try {
-            builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(new StringReader(xmlStr)));
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Source xmlSource = new DOMSource(doc);
-            Result outputTarget = new StreamResult(outputStream);
-            TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
-            InputStream is = new ByteArrayInputStream(outputStream.toByteArray());
-            return is;
-        } catch (Exception e) {
-            e.printStackTrace();
+    private class QRCodeValidator extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ColetaLists();
+            no_lists.setVisibility(View.GONE);
         }
-        return null;
     }
 
     @Override
@@ -288,4 +330,5 @@ public class Collect extends Fragment implements BackFragment {
     public int getBackPriority() {
         return NORMAL_BACK_PRIORITY;
     }
+
 }

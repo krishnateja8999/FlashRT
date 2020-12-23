@@ -538,14 +538,14 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void DeleteDataUponSyncOrUpload() {
-        Cursor data = mDatabaseHelper.getDeliveryData();
+        Cursor data = mDatabaseHelper.getDeliveryData();//Table3
         ArrayList<String> list = new ArrayList<String>();
         if (data.getCount() == 0) {
             Log.e(TAG, "DeleteDataUponSyncOrUpload: No Data");
         } else {
             while (data.moveToNext()) {
                 list.add(data.getString(1));
-                mDatabaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));
+                mDatabaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));//Table2
                 list.clear();
             }
         }
@@ -799,9 +799,8 @@ public class List extends Fragment implements LocationListener {
     }
 
     public void PutJsonRequest() {
-
         Cursor data = mDatabaseHelper.getDeliveryData(); //table3
-        Cursor data1 = mDatabaseHelper.getDataFromTableFour();
+        Cursor data1 = mDatabaseHelper.getDataFromTableFour();//Table4
         ArrayList<String> codHawb = new ArrayList<String>();
         ArrayList<String> dataHoraBaixa = new ArrayList<String>();
         ArrayList<String> latitude = new ArrayList<String>();
@@ -810,7 +809,6 @@ public class List extends Fragment implements LocationListener {
         ArrayList<String> tipoBaixa = new ArrayList<String>();
         ArrayList<String> foto = new ArrayList<String>();
         ArrayList<String> relationID = new ArrayList<String>();
-
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -902,7 +900,7 @@ public class List extends Fragment implements LocationListener {
             }
         }
         DeleteDataUponSyncOrUpload();
-        mDatabaseHelper.DeleteFromTableThreeUponSync();
+        mDatabaseHelper.DeleteFromTableThreeUponSync();//Table 3
         Log.e(TAG, "getDeliveryData: " + data.getCount());
         Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
         if (data.getCount() == 0 && data1.getCount() == 0) {
