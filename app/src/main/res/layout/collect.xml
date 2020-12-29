@@ -40,11 +40,19 @@
                 android:textColor="@color/white"
                 android:text="Sem coletas" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:visibility="visible"
-                android:id="@+id/collectRecyclerView"
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:id="@+id/swipe_collect">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:visibility="visible"
+                    android:id="@+id/collectRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             <ScrollView
                 android:layout_width="match_parent"

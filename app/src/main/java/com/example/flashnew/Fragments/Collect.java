@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -82,7 +83,7 @@ import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 import static android.content.ContentValues.TAG;
 
 
-public class Collect extends Fragment implements BackFragment {
+public class Collect extends Fragment implements BackFragment, SwipeRefreshLayout.OnRefreshListener {
     private TextView title, imei;
     private Button coletaDigit, button;
     private ArrayList<CollectListModalClass> listModalClasses;
@@ -91,11 +92,13 @@ public class Collect extends Fragment implements BackFragment {
     private CollectListAdapter collectListAdapter;
     private String strtext = "null";
     private QRCodeValidator qrCodeValidator;
+    private ListUpdater listUpdater;
     private TextView no_lists;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
     private RequestQueue queue;
     private InternetConnectionChecker internetChecker;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Nullable
@@ -108,13 +111,21 @@ public class Collect extends Fragment implements BackFragment {
         prefernces = new AppPrefernces(getContext());
         coletaDigit = view.findViewById(R.id.coletaDigit);
         no_lists = view.findViewById(R.id.no_lists);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_collect);
         queue = Volley.newRequestQueue(getContext());
         mDatabaseHelper = new DatabaseHelper(getContext());
         internetChecker = new InternetConnectionChecker(getContext());
         title.setText("Coletas");
         imei.setText("IMEI : " + prefernces.getIMEI());
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
         qrCodeValidator = new QRCodeValidator();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(qrCodeValidator, new IntentFilter("qr_code_validate"));
+        listUpdater = new ListUpdater();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listUpdater, new IntentFilter("list_updater"));
 
         recyclerViewCollectList = view.findViewById(R.id.collectRecyclerView);
         listModalClasses = new ArrayList<>();
@@ -195,8 +206,10 @@ public class Collect extends Fragment implements BackFragment {
         Cursor data = mDatabaseHelper.GetDataFromTableFive();
         listModalClasses = new ArrayList<>();
         if (data.getCount() == 0) {
+            swipeRefreshLayout.setVisibility(View.GONE);
             no_lists.setVisibility(View.VISIBLE);
         } else {
+            swipeRefreshLayout.setVisibility(View.VISIBLE);
             while (data.moveToNext()) {
                 listModalClasses.add(new CollectListModalClass(data.getString(1), data.getString(2) + ", " + data.getString(3) +
                         ", " + data.getString(4) + ", " + data.getString(5) + ", " + data.getString(6), data.getString(7)));
@@ -204,12 +217,15 @@ public class Collect extends Fragment implements BackFragment {
             collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
             recyclerViewCollectList.setAdapter(collectListAdapter);
             collectListAdapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
     private void InJson(int code) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest request = new StringRequest(Request.Method.POST, ApiUtils.GET_COLETA, new Response.Listener<String>() {
+        String url1 = ApiUtils.GET_COLETA;
+        String url2 = prefernces.getHostUrl() + ApiUtils.GET_COLETA1;
+        StringRequest request = new StringRequest(Request.Method.POST, url2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.e("TAG", "onResponse: " + response);
@@ -264,7 +280,7 @@ public class Collect extends Fragment implements BackFragment {
                             System.out.println(success);
                         }
                     } else {
-                        Toast.makeText(getContext(), "Code not Valid", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Coleta não encontrada", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -285,11 +301,10 @@ public class Collect extends Fragment implements BackFragment {
             @Override
             public byte[] getBody() throws AuthFailureError {
 
-                //String body = getXML(code, prefernces.getUserName(), prefernces.getPaso());
-                String body = getXML(code, "sao.ricardos", "123");
+                String body = getXML(code, prefernces.getUserName(), prefernces.getPaso());
+                //String body = getXML(code, "sao.ricardos", "123");
                 return body.getBytes();
             }
-
         };
         queue.add(request);
     }
@@ -304,12 +319,27 @@ public class Collect extends Fragment implements BackFragment {
         return result;
     }
 
+    @Override
+    public void onRefresh() {
+        ColetaLists();
+    }
+
     private class QRCodeValidator extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             ColetaLists();
             no_lists.setVisibility(View.GONE);
+        }
+    }
+
+    private class ListUpdater extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ColetaLists();
+            Log.e(TAG, "onReceive: Collect" + intent);
+            no_lists.setVisibility(View.VISIBLE);
         }
     }
 

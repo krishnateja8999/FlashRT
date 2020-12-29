@@ -398,14 +398,17 @@ public class CollectDetails extends Fragment {
                     jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
                     jsonArray.put(jsonObj);
 
-                    jsonObj1.put("usuario", "sao.ricardos");
-                    jsonObj1.put("password", "123");
+                    jsonObj1.put("usuario", prefernces.getUserName());
+                    jsonObj1.put("password", prefernces.getPaso());
                     jsonObj1.put("imei", prefernces.getIMEI());
                     jsonObj1.put("coleta", jsonArray);
 
                     Log.e(ContentValues.TAG, "PostCollectData: " + jsonObj1);
 
-                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                    String url1 = ApiUtils.POST_COLETA;
+                    String url2 = prefernces.getHostUrl() + ApiUtils.POST_COLETA1;
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
@@ -470,14 +473,17 @@ public class CollectDetails extends Fragment {
                     jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
                     jsonArray.put(jsonObj);
 
-                    jsonObj1.put("usuario", "sao.ricardos");
-                    jsonObj1.put("password", "123");
+                    jsonObj1.put("usuario", prefernces.getUserName());
+                    jsonObj1.put("password", prefernces.getPaso());
                     jsonObj1.put("imei", prefernces.getIMEI());
                     jsonObj1.put("coleta", jsonArray);
 
                     Log.e(ContentValues.TAG, "PostNotCollectData: " + jsonObj1);
 
-                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                    String url1 = ApiUtils.POST_COLETA;
+                    String url2 = prefernces.getHostUrl() + ApiUtils.POST_COLETA1;
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);

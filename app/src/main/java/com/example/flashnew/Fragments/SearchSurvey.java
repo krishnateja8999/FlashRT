@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -26,7 +27,8 @@ public class SearchSurvey extends Fragment {
     private Button button_abrir, confirm_enviar;
     private RadioButton radio1, radio2, radio3, radio4;
     private RadioGroup radioGroup, radioGroup1;
-    private Spinner spi;
+    private Spinner spi, spi2;
+    private String[] values1, enderec, ausente, nao_visitado, outros;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,11 +48,52 @@ public class SearchSurvey extends Fragment {
         radioGroup = view.findViewById(R.id.radioGroup);
         radioGroup1 = view.findViewById(R.id.radioGroup1);
         spi = view.findViewById(R.id.spi);
-        String[] values1 =
-                {"Selecione o motivo", "Endereçando", "Ausente", "Não visitou", "Outras"};
+        spi2 = view.findViewById(R.id.spi2);
+        values1 = getResources().getStringArray(R.array.motivo_grupo);
+        enderec = getResources().getStringArray(R.array.motivo_dev);
+        ausente = getResources().getStringArray(R.array.motivo_ausente);
+        nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
+        outros = getResources().getStringArray(R.array.motivo_outros);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spi.setAdapter(adapter1);
+        spi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    spi2.setVisibility(View.GONE);
+                } else if (position == 1) {
+                    spi2.setVisibility(View.VISIBLE);
+                    spi2.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, enderec);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spi2.setAdapter(adapter2);
+                } else if (position == 2) {
+                    spi2.setVisibility(View.VISIBLE);
+                    spi2.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, ausente);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spi2.setAdapter(adapter2);
+                } else if (position == 3) {
+                    spi2.setVisibility(View.VISIBLE);
+                    spi2.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, nao_visitado);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spi2.setAdapter(adapter2);
+                } else if (position == 4) {
+                    spi2.setVisibility(View.VISIBLE);
+                    spi2.performClick();
+                    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, outros);
+                    adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    spi2.setAdapter(adapter2);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //This overrides the radiogroup onCheckListener
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -91,8 +134,6 @@ public class SearchSurvey extends Fragment {
                 }
             }
         });
-
-
         return view;
     }
 

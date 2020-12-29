@@ -73,18 +73,20 @@
         android:id="@+id/layout2"
         android:background="@color/grey_solid" />
 
-    <include
-        android:id="@+id/actionBar"
-        layout="@layout/actionbar"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/imeiText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="25dp" />
+        android:layout_below="@id/layout1"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:layout_centerHorizontal="true"
+        android:text="IMEI: " />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/actionBar">
+        android:layout_below="@id/imeiText">
 
         <LinearLayout
             android:layout_width="360dp"
@@ -94,6 +96,7 @@
 
             <TableLayout
                 android:id="@+id/tabla_cuerpo"
+                android:layout_marginTop="25dp"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent">
 
@@ -174,7 +177,7 @@
                     <TextView
                         android:background="@drawable/cell_shape"
                         android:padding="5dp"
-                        android:id="@+id/listaPendentes"
+                        android:id="@+id/pendingHawbLists"
                         android:layout_width="100dp"
                         android:gravity="center_horizontal"
                         android:layout_height="fill_parent"

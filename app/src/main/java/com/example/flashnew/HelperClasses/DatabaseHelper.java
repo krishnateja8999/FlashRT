@@ -16,6 +16,7 @@ import com.example.flashnew.Modals.TableSevenNotCollectedModal;
 import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
+import com.google.zxing.common.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 
@@ -155,7 +156,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * TABLE QUERYING START
      */
-    //List screen
     //Table one
     public boolean addDataToTableOne(TableOneDelivererModal delivererModal) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -177,6 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    //List screen
     //Table two
     public boolean addDataToTableTwo(TableTwoListModal twoListModal) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -311,6 +312,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public void DeleteTableFour() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_HAWB_CODES;
+        db.execSQL(query);
+    }
+
     //Collect Screen
     //Table five
     public boolean AddDateToTableFive(TableFiveModel tableFiveModel) {
@@ -429,7 +436,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor GetDataFromTableSeven() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_NOT_COLLECTED_DETAILS;
-        return db.rawQuery(query, null);
+        Cursor data = db.rawQuery(query, null);
+        //return db.rawQuery(query, null);
+        return data;
     }
 
     public void DeleteFromTableSevenUponSync() {

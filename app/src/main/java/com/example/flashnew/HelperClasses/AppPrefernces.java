@@ -52,9 +52,22 @@ public class AppPrefernces {
         return preference.getString("Paso", " ");
     }
 
+    public void setHostUrl(String url) {
+        editor.putString("HostURL", url);
+        editor.apply();
+    }
+
+    public String getHostUrl() {
+        return preference.getString("HostURL", " ");
+    }
+
     //this method will checker whether user is already logged in or not
     public boolean isLoggedIn() {
         return preference.getString("LoginID", null) != null;
+    }
+
+    public boolean isLoggedIn1() {
+        return preference.getString("HostURL", null) != null;
     }
 
     //this method will logout the user

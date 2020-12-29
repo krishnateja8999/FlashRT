@@ -303,10 +303,15 @@ public class List extends Fragment implements LocationListener {
             rl1.setVisibility(View.VISIBLE);
             hawb.setText("");
             spinner.setSelection(0);
+            spinner2.setVisibility(View.GONE);
             attemptsDropDown.setSelection(0);
             conf.setText("Entrega");
             camera.setText("Selecione a foto");
             OutImage = null;
+            String[] tab_names = getResources().getStringArray(R.array.grau_relacionamento);
+            ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, tab_names);
+            adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+            spinner.setAdapter(adapter1);
             //preferences.clearListID();
             preferences.setLowType("ENTREGA");
             preferences.setPhotoBoolean("false");
@@ -554,7 +559,9 @@ public class List extends Fragment implements LocationListener {
 
     private void JsonParseListScreen() {
         ListScreenProgressBar.setVisibility(View.VISIBLE);
-        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
+        String url1 = ApiUtils.GET_LIST;
+        String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.e(TAG, "ListScreen1: " + response);
@@ -639,18 +646,20 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void JsonParseListScreen2() {
-            ListScreenProgressBar.setVisibility(View.VISIBLE);
-            final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.e(TAG, "ListScreen1: " + response);
+        ListScreenProgressBar.setVisibility(View.VISIBLE);
+        String url1 = ApiUtils.GET_LIST;
+        String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "ListScreen1: " + response);
 
-                    try {
-                        String franchiseName = response.getString("franquia");
-                        String system = response.getString("sistema");
-                        int lists = response.getInt("lista");
-                        int deliveryID = response.getInt("idEntregador");
-                        String delivererName = response.getString("nomeEntregador");
+                try {
+                    String franchiseName = response.getString("franquia");
+                    String system = response.getString("sistema");
+                    int lists = response.getInt("lista");
+                    int deliveryID = response.getInt("idEntregador");
+                    String delivererName = response.getString("nomeEntregador");
                         int totalDocuments = response.getInt("quantidadeDocumentos");
 
                         preferences.setFranchise(franchiseName);
@@ -718,18 +727,20 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void JsonParseListScreen3() {
-            ListScreenProgressBar.setVisibility(View.VISIBLE);
-            final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUtils.GET_LIST + preferences.getListID(), null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.e(TAG, "ListScreen1: " + response);
+        ListScreenProgressBar.setVisibility(View.VISIBLE);
+        String url1 = ApiUtils.GET_LIST;
+        String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "ListScreen1: " + response);
 
-                    try {
-                        String franchiseName = response.getString("franquia");
-                        String system = response.getString("sistema");
-                        int lists = response.getInt("lista");
-                        int deliveryID = response.getInt("idEntregador");
-                        String delivererName = response.getString("nomeEntregador");
+                try {
+                    String franchiseName = response.getString("franquia");
+                    String system = response.getString("sistema");
+                    int lists = response.getInt("lista");
+                    int deliveryID = response.getInt("idEntregador");
+                    String delivererName = response.getString("nomeEntregador");
                         int totalDocuments = response.getInt("quantidadeDocumentos");
 
                         preferences.setFranchise(franchiseName);
@@ -847,7 +858,10 @@ public class List extends Fragment implements LocationListener {
 
                 Log.e(TAG, "PutJsonRequest: " + jsonObj1);
 
-                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ApiUtils.GET_LIST + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                String url1 = ApiUtils.GET_LIST;
+                String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+
+                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(TAG, "PUTonResponse: " + response);

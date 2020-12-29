@@ -35,7 +35,6 @@ import java.util.Objects;
 import static com.example.flashnew.Server.Utils.TAG;
 
 public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    //implements SwipeRefreshLayout.OnRefreshListener
     private TextView title, imei;
     private ArrayList<com.example.flashnew.Modals.HawbLists> hawbListsArrayList;
     private RecyclerView recyclerViewHawbList;
@@ -45,7 +44,7 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
     private AppPrefernces prefernces;
     private ListViewUpdater listViewUpdater;
     private Landing_Screen context;
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView textView;
     private FragmentManager fm;
 
@@ -94,7 +93,7 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
             FragmentTransaction fragmentTransaction = fm.beginTransaction();
             fragmentTransaction.replace(R.id.content, fragment);
             fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
 
         } else {
             while (data.moveToNext()) {

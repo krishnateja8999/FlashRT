@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.Server.ApiUtils;
+import com.example.flashnew.Server.InternetConnectionChecker;
 
 
 import org.json.JSONException;
@@ -53,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     private androidx.appcompat.app.AlertDialog.Builder dialog1;
     private AppPrefernces preferences;
     private CheckBox checkbox;
+    private InternetConnectionChecker internetChecker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +78,9 @@ public class LoginActivity extends AppCompatActivity {
         dialog1 = new androidx.appcompat.app.AlertDialog.Builder(this);
         preferences = new AppPrefernces(this);
         checkbox = findViewById(R.id.checkbox);
-        preferences.setID("gggg");
+        internetChecker = new InternetConnectionChecker(this);
 
-        if (preferences.isLoggedIn()) {
+        if (preferences.isLoggedIn() && preferences.isLoggedIn1()) {
             Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
             startActivity(i);
             finish();
@@ -132,23 +135,36 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                hostserverUrl.setEnabled(isChecked);
+            }
+        });
+
+
         confirm_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if (identification.getText().toString().length() <= 0) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen5), Toast.LENGTH_LONG).show();
-                        identification.requestFocus();
-                    } else if (userName.getText().toString().length() <= 0) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen6), Toast.LENGTH_LONG).show();
-                        userName.requestFocus();
+                if (identification.getText().toString().length() <= 0) {
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen5), Toast.LENGTH_LONG).show();
+                    identification.requestFocus();
+                } else if (userName.getText().toString().length() <= 0) {
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen6), Toast.LENGTH_LONG).show();
+                    userName.requestFocus();
                     } else if (password.getText().toString().length() <= 0) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen7), Toast.LENGTH_LONG).show();
                         password.requestFocus();
                     } else if (!checkbox.isChecked()) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen11), Toast.LENGTH_LONG).show();
                     } else {
+                    if (internetChecker.checkInternetConnection()) {
                         jsonParse();
+                    } else {
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen12), Toast.LENGTH_LONG).show();
                     }
+
+                }
             }
         });
 
@@ -162,22 +178,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void jsonParse() {
-            loginProgressBar.setVisibility(View.VISIBLE);
-            StringRequest request = new StringRequest(Request.Method.GET, ApiUtils.LOGIN, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.d("TAG", "LoginActivityJson: " + response);
-                    try {
-                        JSONObject object = new JSONObject(response);
-                        String id = object.getString("id");
-                        String login = object.getString("login");
-                        String name = object.getString("nome");
+        loginProgressBar.setVisibility(View.VISIBLE);
+        String url1 = ApiUtils.LOGIN;
+        String url2 = hostserverUrl.getText().toString() + ApiUtils.LOGIN1;
+        Log.e("TAG", "jsonParseLogin: " + url2);
+        StringRequest request = new StringRequest(Request.Method.GET, url2, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("TAG", "LoginActivityJson: " + response);
+                try {
+                    JSONObject object = new JSONObject(response);
+                    String id = object.getString("id");
+                    String login = object.getString("login");
+                    String name = object.getString("nome");
 
-                        Log.d("TAG", "LoginResponse: " + login);
+                    Log.d("TAG", "LoginResponse: " + login);
                         preferences.setID(id);
                         preferences.setUserName(login);
                         preferences.setName(name);
-                        preferences.setPaso(password.getText().toString());
+                    preferences.setPaso(password.getText().toString());
+                    preferences.setHostUrl(hostserverUrl.getText().toString());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -227,4 +247,3 @@ public class LoginActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 }
-//This is a test

@@ -11,6 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class ScannerActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         String Qcode = result.getText();
+                        Log.e("TAG", "run: " + Qcode);
 
                         String[] item = Qcode.split("\\|");
                         boolean check = false;

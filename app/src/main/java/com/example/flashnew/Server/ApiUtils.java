@@ -14,4 +14,9 @@ public class ApiUtils {
     public static final String GET_COLETA = BASE_URL + "/FlashOnline/rest/coleta/getconsulta";
     public static final String POST_COLETA = BASE_URL + "/FlashOnline/rest/rt/baixar/coleta";
 
+    public static final String LOGIN1 = "/FlashPegasus/api/rt/login/v1/authenticate";
+    public static final String GET_LIST1 = "/FlashPegasus/api/rt/lista/v1/";
+    public static final String GET_COLETA1 = "/FlashOnline/rest/coleta/getconsulta";
+    public static final String POST_COLETA1 = "/FlashOnline/rest/rt/baixar/coleta";
+
 }

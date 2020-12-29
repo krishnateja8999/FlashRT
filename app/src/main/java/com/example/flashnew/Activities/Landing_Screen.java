@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
@@ -162,7 +163,9 @@ public class Landing_Screen extends AppCompatActivity {
                         return true;
 
                     case R.id.list_delete:
-                        if (preferences.getListID().equals("") || preferences.getListID().equals(" ")) {
+                        Cursor data = databaseHelper.GetDataFromTableFive();
+                        Log.e(TAG, "onNavigationItemSelected: " + data.getCount());
+                        if (preferences.getListID().equals("") || preferences.getListID().equals(" ") && data.getCount() == 0) {
                             Toast.makeText(Landing_Screen.this, "Sem listas", Toast.LENGTH_SHORT).show();
                         } else {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
@@ -243,17 +246,26 @@ public class Landing_Screen extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         try {
-                                            PutJsonRequest();
-                                            PostCollectData();
-                                            PostNotCollectData();
+                                            if (data.getCount() != 0) {
+                                                PutJsonRequest();
+                                            } else {
+                                                Log.e(TAG, "SyncList: Sem listas");
+                                            }
+                                            if (data2.getCount() != 0 || data3.getCount() != 0) {
+                                                PostCollectData();
+                                                PostNotCollectData();
+                                            } else {
+                                                Log.e(TAG, "SyncCollect: Sem listas Collect");
+                                            }
                                             Intent intent = new Intent("list_code_status");
                                             LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
 
                                             Intent intent1 = new Intent("list_screen");
                                             LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent1);
 
-                                            Intent intent2 = new Intent("qr_code_validate");
+                                            Intent intent2 = new Intent("list_updater");
                                             LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent2);
+                                            SyncFinished();
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -340,17 +352,30 @@ public class Landing_Screen extends AppCompatActivity {
         builder.setMessage("Digite o código da lista para excluir");
         builder.setCancelable(false);
         builder.setView(edittext);
-
         builder.setPositiveButton(
                 "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        boolean check = databaseHelper.CheckColetaData(edittext.getText().toString());
                         //preferences.setListID(edittext.getText().toString());
                         if (preferences.getListID().equals(edittext.getText().toString())) {
                             databaseHelper.DeleteDataFromTableTwo();
+                            databaseHelper.DeleteTableFour();
                             preferences.clearListID();
                             Intent intent = new Intent("list_code_status");
                             LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
+                            Intent intent2 = new Intent("list_view_updater");
+                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent2);
+                            CodeDeletedDialog(edittext.getText().toString());
+                        } else if (check) {
+                            databaseHelper.DeleteFromTableFiveUponUpload(edittext.getText().toString());
+                            Intent intent3 = new Intent("list_updater");
+                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent3);
+                            Fragment fr = new Collect();
+                            FragmentTransaction ft = Landing_Screen.this.getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content, fr);
+                            ft.commit();
+                            CodeDeletedDialog(edittext.getText().toString());
                         } else {
                             Toast.makeText(Landing_Screen.this, "O código da lista inserido está errado", Toast.LENGTH_SHORT).show();
                         }
@@ -474,7 +499,10 @@ public class Landing_Screen extends AppCompatActivity {
 
                 Log.e(TAG, "PutJsonRequest: " + jsonObj1);
 
-                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ApiUtils.GET_LIST + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                String url1 = ApiUtils.GET_LIST;
+                String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+
+                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(TAG, "PUTonResponse: " + response);
@@ -529,7 +557,6 @@ public class Landing_Screen extends AppCompatActivity {
         }
         DeleteDataUponSyncOrUpload();
         databaseHelper.DeleteFromTableThreeUponSync();
-        SyncFinished();
         Intent intent = new Intent("list_view_updater");
         LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
         Log.e(TAG, "getDeliveryData: " + data.getCount());
@@ -655,14 +682,17 @@ public class Landing_Screen extends AppCompatActivity {
                     jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
                     jsonArray.put(jsonObj);
 
-                    jsonObj1.put("usuario", "sao.ricardos");
-                    jsonObj1.put("password", "123");
+                    jsonObj1.put("usuario", preferences.getUserName());
+                    jsonObj1.put("password", preferences.getPaso());
                     jsonObj1.put("imei", preferences.getIMEI());
                     jsonObj1.put("coleta", jsonArray);
 
                     Log.e(ContentValues.TAG, "PostCollectData: " + jsonObj1);
 
-                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                    String url1 = ApiUtils.POST_COLETA;
+                    String url2 = preferences.getHostUrl() + ApiUtils.POST_COLETA1;
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
@@ -727,14 +757,17 @@ public class Landing_Screen extends AppCompatActivity {
                     jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(batteryLevel));
                     jsonArray.put(jsonObj);
 
-                    jsonObj1.put("usuario", "sao.ricardos");
-                    jsonObj1.put("password", "123");
+                    jsonObj1.put("usuario", preferences.getUserName());
+                    jsonObj1.put("password", preferences.getPaso());
                     jsonObj1.put("imei", preferences.getIMEI());
                     jsonObj1.put("coleta", jsonArray);
 
                     Log.e(ContentValues.TAG, "PostNotCollectData: " + jsonObj1);
 
-                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ApiUtils.POST_COLETA, jsonObj1, new Response.Listener<JSONObject>() {
+                    String url1 = ApiUtils.POST_COLETA;
+                    String url2 = preferences.getHostUrl() + ApiUtils.POST_COLETA1;
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
@@ -761,6 +794,22 @@ public class Landing_Screen extends AppCompatActivity {
             DeleteDataUponSyncOrUpload1();
             databaseHelper.DeleteFromTableSevenUponSync();//Table7
         }
+    }
+
+    private void CodeDeletedDialog(String code) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setTitle("Sucesso");
+        builder1.setMessage("Lista " + code + " excluída");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
     }
 
     @Override
