@@ -1,5 +1,6 @@
 package com.example.flashnew.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,17 +22,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.flashnew.Adapters.SearchListAdapter;
+import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.Modals.SearchListModalClass;
 import com.example.flashnew.R;
 
 import java.util.ArrayList;
 
 public class Search extends Fragment {
-    TextView title, imei;
+    private TextView title, imei;
     private ArrayList<SearchListModalClass> searchListModalClasses;
     private RecyclerView recyclerViewSearchList;
     private LinearLayoutManager layoutManager;
     private SearchListAdapter searchAdapter;
+    private Context context;
+    private AppPrefernces prefernces;
 
 
     @Nullable
@@ -40,6 +44,9 @@ public class Search extends Fragment {
         final View view = inflater.inflate(R.layout.search, container, false);
         title = view.findViewById(R.id.actionbarTitle);
         imei = view.findViewById(R.id.actionbarImei);
+        prefernces = new AppPrefernces(context);
+        title.setText("Pesquisa");
+        imei.setText("IMEI: " + prefernces.getIMEI());
         searchListModalClasses = new ArrayList<>();
         recyclerViewSearchList = view.findViewById(R.id.recyclerViewSearchList);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -127,4 +134,11 @@ public class Search extends Fragment {
 //
 //            }
 //        });
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 }

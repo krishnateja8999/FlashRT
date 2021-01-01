@@ -79,6 +79,8 @@ public class LoginActivity extends AppCompatActivity {
         preferences = new AppPrefernces(this);
         checkbox = findViewById(R.id.checkbox);
         internetChecker = new InternetConnectionChecker(this);
+//        preferences.setID("dfgg");
+//        preferences.setHostUrl("gfdg");l
 
         if (preferences.isLoggedIn() && preferences.isLoggedIn1()) {
             Intent i = new Intent(LoginActivity.this, Landing_Screen.class);

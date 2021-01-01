@@ -35,7 +35,7 @@ public class Utils {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(title);
         builder1.setMessage(message);
-        builder1.setCancelable(true);
+        builder1.setCancelable(false);
         builder1.setPositiveButton(positiveBtn, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

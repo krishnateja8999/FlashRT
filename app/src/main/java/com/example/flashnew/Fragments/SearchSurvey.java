@@ -1,11 +1,17 @@
 package com.example.flashnew.Fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +19,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.flashnew.Adapters.MyStepperAdapter;
 import com.example.flashnew.R;
+import com.stepstone.stepper.StepperLayout;
 
 
 public class SearchSurvey extends Fragment {
@@ -29,6 +40,12 @@ public class SearchSurvey extends Fragment {
     private RadioGroup radioGroup, radioGroup1;
     private Spinner spi, spi2;
     private String[] values1, enderec, ausente, nao_visitado, outros;
+    private String researchName;
+    private Context context;
+    private TextView researchHawb;
+    private StepperLayout mStepperLayout;
+    private LinearLayout bl1, actions_lay1;
+    private MyStepperAdapter mStepperAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,6 +66,15 @@ public class SearchSurvey extends Fragment {
         radioGroup1 = view.findViewById(R.id.radioGroup1);
         spi = view.findViewById(R.id.spi);
         spi2 = view.findViewById(R.id.spi2);
+        bl1 = view.findViewById(R.id.bl1);
+        actions_lay1 = view.findViewById(R.id.actions_lay1);
+        assert getArguments() != null;
+        researchName = getArguments().getString("Research");
+        researchHawb = view.findViewById(R.id.researchHawb);
+        researchHawb.setText("Pesquisa: " + researchName);
+        mStepperLayout = (StepperLayout) view.findViewById(R.id.stepperLayout);
+        mStepperAdapter = new MyStepperAdapter(getChildFragmentManager(), context);
+        mStepperLayout.setAdapter(mStepperAdapter);
         values1 = getResources().getStringArray(R.array.motivo_grupo);
         enderec = getResources().getStringArray(R.array.motivo_dev);
         ausente = getResources().getStringArray(R.array.motivo_ausente);
@@ -134,7 +160,27 @@ public class SearchSurvey extends Fragment {
                 }
             }
         });
+
+        button_abrir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bl1.setVisibility(View.GONE);
+                actions_lay1.setVisibility(View.GONE);
+                mStepperLayout.setVisibility(View.VISIBLE);
+//                Fragment fr = new StepperTabs();
+//                FragmentTransaction fragmentTransaction = ((AppCompatActivity) context)
+//                        .getSupportFragmentManager().beginTransaction();
+//                fragmentTransaction.replace(R.id.content, fr);
+//                fragmentTransaction.commit();
+            }
+        });
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Override

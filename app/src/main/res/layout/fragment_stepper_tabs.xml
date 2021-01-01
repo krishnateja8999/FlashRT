@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    tools:context=".Fragments.StepperTabs">
+
+    <TextView
+        android:id="@+id/researchHawb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="Pesquisa: 00000000000"
+        android:textColor="@color/white"
+        android:textSize="23sp" />
+
+    <com.stepstone.stepper.StepperLayout
+        android:id="@+id/stepperLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        app:ms_backButtonBackground="@drawable/stepper_back_bg"
+        app:ms_backButtonColor="@color/black"
+        app:ms_bottomNavigationBackground="@drawable/stepper_bg"
+        app:ms_completeButtonBackground="@drawable/stepper_complete_bg"
+        app:ms_completeButtonColor="@color/white"
+        app:ms_nextButtonBackground="@drawable/stepper_next_bg"
+        app:ms_stepperType="tabs" />
+
+</LinearLayout>

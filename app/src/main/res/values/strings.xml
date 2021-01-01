@@ -87,6 +87,28 @@
     <string name="list_screen4">Foto salvo com sucesso</string>
     <string name="list_screen5">Nenhuma lista para entregar, sincronize para atualizar as listas</string>
 
+    <!-- Research Screen-->
+    <string name="check_list1"> TODAS AS ENTRADAS, SAÍDAS, AMBIENTES DE MANUSEIO E CUSTÓDIA SÃO MONITORADOS PERMANENTEMENTE? *</string>
+    <string name="check_list2">FOTOGRAFE UMA ENTRADA, SAÍDA, AMBIENTE DE MANUSEIO OU CUSTÓDIA COM MONITORAMENTO *</string>
+    <string name="check_list3">POSSUI SISTEMA DE CFTV COM GRAVAÇÃO DE IMAGENS? *</string>
+    <string name="check_list4">FOTOGRAFE O SETOR DE MONITORAMENTO DAS IMAGENS *</string>
+    <string name="check_list5">POSSUI VIGILÂNCIA? *</string>
+    <string name="check_list6">QUANTIDADE DE VIGILANTES</string>
+    <string name="check_list7">POSTOS DE OBSERVAÇÃO</string>
+    <string name="check_list8">FOTOGRAFE O ESQUEMA DE VIGILÂNCIA EM FUNCIONAMENTO</string>
+    <string name="check_list9">OS FUNCIONÁRIOS CIRCULAM LIVREMENTE ENTRE OS AMBIENTES? *</string>
+    <string name="check_list10">A(S) ENTRADA(S) E SAÍDA(S) DE VEÍCULOS POSSUI PORTÕES COM SISTEMA DE ECLUSA/ENCLAUSURAMENTO? *</string>
+    <string name="check_list11">FOTOGRAFE A ENTRADA/SAÍDA DE VEÍCULOS *</string>
+    <string name="check_list12">EXISTE UM PCN(PLANO DE CONTINUIDADE DE NEGÓCIO) APROVADO E TESTADO? *</string>
+    <string name="check_list13">SE SIM, ENCAMINHAR/ANEXAR DOCUMENTO COMPROBATÓRIO/TESTES</string>
+    <string name="check_list14">COMENTÁRIOS/OBSERVAÇÕES</string>
+
+    <string name="respondente1">RESPONSÁVEL PELAS INFORMAÇÕES DESTA PESQUISA *</string>
+    <string name="respondente2">AS INFORMAÇÕES NESTA PESQUISA FORAM PRESTADAS COM VERACIDADE E ASSUMO INTEGRAL RESPONSABILIDADE PELAS MESMAS.
+    DECLARO ESTAR CIENTE DE QUE A FALSIDADE NAS INFORMAÇÕES IMPLICARA NAS PENALIDADES CABÍVEIS COMPROMETO-ME A COMUNICAR
+    A TICKET QUAISQUER ALTERAÇÕES NESTAS INFORMAÇÕES NUM PRAZO MAXIMO DE 07 DIAS.</string>
+    <string name="respondente3">ASSINATURA DO GERENTE/DIRETOR RESPONSAVEL *</string>
+    <string name="respondente4">Clique para assinar</string>
 
     <string-array name="device_type">
         <item>Corporativo</item>
@@ -138,7 +160,7 @@
         <item>53 - Garagem</item>
     </string-array>
 
-    <string-array name="motivo_dev">
+    <string-array name="motivo_endereco_errado">
         <item>509 - Desconhecido (Destinatário / Interlocutor)</item>
         <item>501 - Recusado (Destinatário / Interlocutor)</item>
         <item>507 - Não existe número indicado</item>
@@ -188,7 +210,7 @@
         <item>OUTROS</item>
     </string-array>
 
-    <string-array name="motivo_endereco_errado">
+    <string-array name="motivo_dev">
         <item>521 - Número não existe</item>
         <item>522 - Rua Não Existe</item>
         <item>523 - Falta o Número</item>

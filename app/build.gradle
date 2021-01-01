@@ -51,24 +51,18 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-
-
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
-
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
-
     implementation 'net.skoumal.fragmentback:fragment-back:0.2.3'
-
     implementation 'com.budiyev.android:code-scanner:2.1.0'
-
     implementation 'com.google.zxing:core:3.3.3'
     implementation 'com.github.smart-fun:XmlToJson:1.4.5'
+    implementation 'com.stepstone.stepper:material-stepper:4.3.1'
 }
 

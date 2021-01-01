@@ -2,6 +2,7 @@ package com.example.flashnew.Adapters;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.flashnew.Fragments.CollectDetails;
 import com.example.flashnew.Fragments.HawbLists;
 import com.example.flashnew.Fragments.List;
 import com.example.flashnew.Fragments.SearchSurvey;
@@ -49,9 +51,14 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
         holder.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Fragment fr = new SearchSurvey();
                 FragmentTransaction fragmentTransaction = ((AppCompatActivity) context)
                         .getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.content, new SearchSurvey());
+                Bundle args = new Bundle();
+                args.putString("Research", listModalClasses.get(holder.getAdapterPosition()).getName());
+                fr.setArguments(args);
+                fragmentTransaction.replace(R.id.content, fr);
+                fragmentTransaction.addToBackStack("this");
                 fragmentTransaction.commit();
             }
         });

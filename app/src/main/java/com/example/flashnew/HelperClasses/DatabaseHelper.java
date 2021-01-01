@@ -26,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private Context context;
     private static final String DATABASE_NAME = "Flash.db";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     //Table names
     private static final String TABLE_DELIVER_DETAILS = "tbl_deliverer_details";
@@ -82,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Table 4 query:
     private static final String CREATE_TABLE_HAWB_CODES = "CREATE TABLE " + TABLE_HAWB_CODES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            HAWB_CODE + " TEXT)";
+            HAWB_CODE + " TEXT, " + CLIENT_NUMBER + " TEXT)";
 
     //Table 5 columns & query:
     private static final String COLETA_ID = "coleta_id";
@@ -212,7 +212,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void ValidateDataWithSecondTable(String code) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "UPDATE " + TABLE_TOTAL_LIST_DETAILS + " SET " + TICK_MARK + "=' true  ' WHERE " + HAWB_CODE + " ='" + code + "'";
+        String query = "UPDATE " + TABLE_TOTAL_LIST_DETAILS + " SET " + TICK_MARK + "= 'true' WHERE " + HAWB_CODE + " ='" + code + "' OR " +
+                CLIENT_NUMBER + " ='" + code + "'";
         db.execSQL(query);
     }
 
@@ -224,7 +225,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void DeleteDataUponUpload(String code_hawb) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "DELETE FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " = '" + code_hawb + "'";
+        String query = "DELETE FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " = '" + code_hawb + "' OR " +
+                CLIENT_NUMBER + " ='" + code_hawb + "'";
         db.execSQL(query);
     }
 
@@ -275,10 +277,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //Table four
-    public boolean addDataToTableFour(String item) {
+    public boolean addDataToTableFour(String item, String clientNumber) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(HAWB_CODE, item);
+        contentValues.put(CLIENT_NUMBER, clientNumber);
         long result = db.insert(TABLE_HAWB_CODES, null, contentValues);
         db.close();
         if (result == -1) {
@@ -296,13 +299,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteHawbFromTableFour(String h_code) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "DELETE FROM " + TABLE_HAWB_CODES + " WHERE " + HAWB_CODE + " = '" + h_code + "'";
+        String query = "DELETE FROM " + TABLE_HAWB_CODES + " WHERE " + HAWB_CODE + " = '" + h_code + "' OR " + CLIENT_NUMBER + " = '" + h_code + "'";
         db.execSQL(query);
     }
 
     public boolean CheckHawbCode(String cod) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_HAWB_CODES + " WHERE " + HAWB_CODE + " = '" + cod + "'";
+        String query = "SELECT * FROM " + TABLE_HAWB_CODES + " WHERE " + HAWB_CODE + " = '" + cod + "' OR " + CLIENT_NUMBER + " = '" + cod + "'";
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
@@ -317,6 +320,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "DELETE FROM " + TABLE_HAWB_CODES;
         db.execSQL(query);
     }
+
+    public String CheckClientNumber(String cli_num) {
+        String text = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT " + HAWB_CODE + " FROM " + TABLE_HAWB_CODES + " WHERE " + CLIENT_NUMBER + " = '" + cli_num + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                text = cursor.getString(cursor.getColumnIndex(HAWB_CODE));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return text;
+    }
+
+    public boolean CheckHawbCode1(String cod) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_HAWB_CODES + " WHERE " + HAWB_CODE + " = '" + cod + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
 
     //Collect Screen
     //Table five
@@ -362,7 +393,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void CheckTickMarkInTableFive(String tick) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "UPDATE " + TABLE_SCANNER_DETAILS + " SET " + TICK_MARK + "=' true  ' WHERE " + COLETA_ID + " ='" + tick + "'";
+        String query = "UPDATE " + TABLE_SCANNER_DETAILS + " SET " + TICK_MARK + "= 'true' WHERE " + COLETA_ID + " ='" + tick + "'";
         db.execSQL(query);
     }
 

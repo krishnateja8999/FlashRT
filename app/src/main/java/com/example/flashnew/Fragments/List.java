@@ -221,52 +221,46 @@ public class List extends Fragment implements LocationListener {
             @Override
             public void onClick(View view) {
                 boolean check = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
-
-                if (hawb.getText().toString().length() == 0) {
-                    Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
-                    hawb.requestFocus();
-                    //hawb.setError("Selecione um Hawb");
-                } else if (!check) {
-                    Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
-                } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
-                    Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
-                } else if (OutImage == null) {
-                    Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
-                } else {
-                    storeDeliveryData();
-
-                    if (internetChecker.checkInternetConnection()) {
-                        PutJsonRequest();
+                if (preferences.getLowType().equals("ENTREGA")) {
+                    if (hawb.getText().toString().length() == 0) {
+                        Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+                        hawb.requestFocus();
+                        //hawb.setError("Selecione um Hawb");
+                    } else if (!check) {
+                        Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+                    } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
+                        Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+                    } else if (OutImage == null) {
+                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                    } else {
+                        storeDeliveryData();
+                        if (internetChecker.checkInternetConnection()) {
+                            PutJsonRequest();
+                        }
+                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        ConfirmSuccessDialog("entregue");
                     }
-                    mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
-                    mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
-                    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat time = new SimpleDateFormat("HH:mm");
-                    Calendar c = Calendar.getInstance();
-                    String formattedDate = df.format(c.getTime());
-                    String formatTime = time.format(c.getTime());
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle("Sucesso");
-                    //Setting message manually and performing action on button click
-                    builder.setMessage("Hawb entregue com sucesso em " + formattedDate + " as " + formatTime)
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                    title.setText("Lista : " + preferences.getListID());
-                                    imei.setText("IMEI : " + preferences.getIMEI());
-                                    rl2.setVisibility(View.VISIBLE);
-                                    rl1.setVisibility(View.GONE);
-                                    spinner.setSelection(0);
-                                    Intent intent = new Intent("list_screen");
-                                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                                }
-                            });
-                    //Creating dialog box
-                    AlertDialog alert = builder.create();
-                    //Setting the title manually
-                    alert.setTitle("Atenção");
-                    alert.show();
+                } else {
+                    if (hawb.getText().toString().length() == 0) {
+                        Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+                        hawb.requestFocus();
+                        //hawb.setError("Selecione um Hawb");
+                    } else if (!check) {
+                        Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+                    } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
+                        Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+                    } else if (OutImage == null) {
+                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                    } else {
+                        storeDeliveryData();
+                        if (internetChecker.checkInternetConnection()) {
+                            PutJsonRequest();
+                        }
+                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        ConfirmSuccessDialog("devolvida");
+                    }
                 }
             }
         });
@@ -487,7 +481,6 @@ public class List extends Fragment implements LocationListener {
         alert.show();
     }
 
-
     private void HawbStringArray() {
         Cursor data = mDatabaseHelper.getDataFromTableFour();
         ArrayList<String> list = new ArrayList<String>();
@@ -496,33 +489,36 @@ public class List extends Fragment implements LocationListener {
         } else {
             while (data.moveToNext()) {
                 list.add(data.getString(1));
+                list.add(data.getString(2));
             }
             String[] str = Utils.GetStringArray(list);
             Log.e(TAG, "HawbStringArray: " + Arrays.toString(str));
             AutoSuggestAdapter adapter1 = new AutoSuggestAdapter(context, android.R.layout.simple_list_item_1, list);
             hawb.setAdapter(adapter1);
             hawb.setThreshold(1);
-//            ArrayAdapter<String> adapter = new ArrayAdapter<String>
-//                    (getContext(), android.R.layout.select_dialog_item, str);
-//            hawb.setThreshold(1);//will start working from first character
-//            hawb.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
         }
     }
 
     private void storeDeliveryData() {
 
-            BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
-            int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-            Calendar c = Calendar.getInstance();
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            String formattedDate = df.format(c.getTime());
+        BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
+        int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
 
-            String spinnerValue = spinner.getSelectedItem().toString();
-            int spinnerID = Integer.parseInt(spinnerValue.replaceAll("[^0-9]", ""));
+        String spinnerValue = spinner.getSelectedItem().toString();
+        int spinnerID = Integer.parseInt(spinnerValue.replaceAll("[^0-9]", ""));
 
+        String clientNumber = mDatabaseHelper.CheckClientNumber(hawb.getText().toString());
+        boolean HawbChecker = mDatabaseHelper.CheckHawbCode1(clientNumber);
+        if (HawbChecker) {
+            mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(clientNumber, spinnerID,
+                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
+        } else {
             mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinnerID,
                     attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
-
+        }
     }
 
     private void EmptyDataInTableFourDialog() {
@@ -606,7 +602,7 @@ public class List extends Fragment implements LocationListener {
                         boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
                         System.out.println(success);
 
-                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
+                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
                         System.out.println(tableFourHawbCode);
 
                         FragmentTransaction fragmentTransaction = context
@@ -660,70 +656,70 @@ public class List extends Fragment implements LocationListener {
                     int lists = response.getInt("lista");
                     int deliveryID = response.getInt("idEntregador");
                     String delivererName = response.getString("nomeEntregador");
-                        int totalDocuments = response.getInt("quantidadeDocumentos");
+                    int totalDocuments = response.getInt("quantidadeDocumentos");
 
-                        preferences.setFranchise(franchiseName);
-                        preferences.setSystem(system);
+                    preferences.setFranchise(franchiseName);
+                    preferences.setSystem(system);
 
-                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
-                                deliveryID, delivererName, totalDocuments);
-                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                        Log.e(TAG, "ListScreen3: " + success1);
+                    TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                            deliveryID, delivererName, totalDocuments);
+                    boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                    Log.e(TAG, "ListScreen3: " + success1);
 
-                        JSONArray array = response.getJSONArray("documentos");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            Log.e(TAG, "ListScreen4: " + object);
+                    JSONArray array = response.getJSONArray("documentos");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject object = array.getJSONObject(i);
+                        Log.e(TAG, "ListScreen4: " + object);
 
-                            int customerID = object.getInt("idCliente");
-                            int contractID = object.getInt("idContrato");
-                            String hawbCode = object.getString("codHawb");
-                            String numberOrder = object.getString("numeroEncomandaCliente");
-                            String recipientName = object.getString("nomeDestinatario");
-                            int dna = object.getInt("dna");
-                            int attempts = object.getInt("tentativas");
-                            String specialPhoto = object.getString("idCCusto");
-                            int score = object.getInt("score");
-                            String clientNumber = object.getString("numeroEncomandaCliente");
+                        int customerID = object.getInt("idCliente");
+                        int contractID = object.getInt("idContrato");
+                        String hawbCode = object.getString("codHawb");
+                        String numberOrder = object.getString("numeroEncomandaCliente");
+                        String recipientName = object.getString("nomeDestinatario");
+                        int dna = object.getInt("dna");
+                        int attempts = object.getInt("tentativas");
+                        String specialPhoto = object.getString("idCCusto");
+                        int score = object.getInt("score");
+                        String clientNumber = object.getString("numeroEncomandaCliente");
 
-                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                            System.out.println(success);
+                        TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
+                        boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                        System.out.println(success);
 
-                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
-                            System.out.println(tableFourHawbCode);
-                            Delivery();
+                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                        System.out.println(tableFourHawbCode);
+                        Delivery();
 //                            setSuccessDialog();
-                        }
-                        Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
-                        ListScreenProgressBar.setVisibility(View.GONE);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
                     ListScreenProgressBar.setVisibility(View.GONE);
-                    Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
-                    preferences.clearListID();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    String auth1 = "Basic "
-                            + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
-                            Base64.NO_WRAP);
-                    params.put("Authorization", auth1);
-                    params.put("x-versao-rt", "3.8.10");
-                    params.put("x-rastreador", "ricardo");
-                    return params;
-                }
-            };
-            queue.add(request);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ListScreenProgressBar.setVisibility(View.GONE);
+                Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
+                preferences.clearListID();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String auth1 = "Basic "
+                        + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                        Base64.NO_WRAP);
+                params.put("Authorization", auth1);
+                params.put("x-versao-rt", "3.8.10");
+                params.put("x-rastreador", "ricardo");
+                return params;
+            }
+        };
+        queue.add(request);
     }
 
     private void JsonParseListScreen3() {
@@ -741,72 +737,72 @@ public class List extends Fragment implements LocationListener {
                     int lists = response.getInt("lista");
                     int deliveryID = response.getInt("idEntregador");
                     String delivererName = response.getString("nomeEntregador");
-                        int totalDocuments = response.getInt("quantidadeDocumentos");
+                    int totalDocuments = response.getInt("quantidadeDocumentos");
 
-                        preferences.setFranchise(franchiseName);
-                        preferences.setSystem(system);
+                    preferences.setFranchise(franchiseName);
+                    preferences.setSystem(system);
 
-                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
-                                deliveryID, delivererName, totalDocuments);
-                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                        Log.e(TAG, "ListScreen3: " + success1);
+                    TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                            deliveryID, delivererName, totalDocuments);
+                    boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                    Log.e(TAG, "ListScreen3: " + success1);
 
-                        JSONArray array = response.getJSONArray("documentos");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            Log.e(TAG, "ListScreen4: " + object);
+                    JSONArray array = response.getJSONArray("documentos");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject object = array.getJSONObject(i);
+                        Log.e(TAG, "ListScreen4: " + object);
 
-                            int customerID = object.getInt("idCliente");
-                            int contractID = object.getInt("idContrato");
-                            String hawbCode = object.getString("codHawb");
-                            String numberOrder = object.getString("numeroEncomandaCliente");
-                            String recipientName = object.getString("nomeDestinatario");
-                            int dna = object.getInt("dna");
-                            int attempts = object.getInt("tentativas");
-                            String specialPhoto = object.getString("idCCusto");
-                            int score = object.getInt("score");
-                            String clientNumber = object.getString("numeroEncomandaCliente");
+                        int customerID = object.getInt("idCliente");
+                        int contractID = object.getInt("idContrato");
+                        String hawbCode = object.getString("codHawb");
+                        String numberOrder = object.getString("numeroEncomandaCliente");
+                        String recipientName = object.getString("nomeDestinatario");
+                        int dna = object.getInt("dna");
+                        int attempts = object.getInt("tentativas");
+                        String specialPhoto = object.getString("idCCusto");
+                        int score = object.getInt("score");
+                        String clientNumber = object.getString("numeroEncomandaCliente");
 
-                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                            System.out.println(success);
+                        TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
+                        boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                        System.out.println(success);
 
-                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode);
-                            System.out.println(tableFourHawbCode);
-                            Returns();
+                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                        System.out.println(tableFourHawbCode);
+                        Returns();
 //                            setSuccessDialog();
-                        }
-                        Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
-
-
-                        ListScreenProgressBar.setVisibility(View.GONE);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
+
+
                     ListScreenProgressBar.setVisibility(View.GONE);
-                    Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
-                    preferences.clearListID();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    String auth1 = "Basic "
-                            + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
-                            Base64.NO_WRAP);
-                    params.put("Authorization", auth1);
-                    params.put("x-versao-rt", "3.8.10");
-                    params.put("x-rastreador", "ricardo");
-                    return params;
-                }
-            };
-            queue.add(request);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ListScreenProgressBar.setVisibility(View.GONE);
+                Toast.makeText(context, getResources().getString(R.string.list_screen1), Toast.LENGTH_LONG).show();
+                preferences.clearListID();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String auth1 = "Basic "
+                        + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                        Base64.NO_WRAP);
+                params.put("Authorization", auth1);
+                params.put("x-versao-rt", "3.8.10");
+                params.put("x-rastreador", "ricardo");
+                return params;
+            }
+        };
+        queue.add(request);
     }
 
     public void PutJsonRequest() {
@@ -923,6 +919,36 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
+    private void ConfirmSuccessDialog(String type) {
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat time = new SimpleDateFormat("HH:mm");
+        Calendar c = Calendar.getInstance();
+        String formattedDate = df.format(c.getTime());
+        String formatTime = time.format(c.getTime());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Sucesso");
+        //Setting message manually and performing action on button click
+        builder.setMessage("Hawb " + type + " com sucesso em " + formattedDate + " as " + formatTime)
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        title.setText("Lista : " + preferences.getListID());
+                        imei.setText("IMEI : " + preferences.getIMEI());
+                        rl2.setVisibility(View.VISIBLE);
+                        rl1.setVisibility(View.GONE);
+                        spinner.setSelection(0);
+                        Intent intent = new Intent("list_screen");
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        //Setting the title manually
+        alert.setTitle("Atenção");
+        alert.show();
+
+    }
 
     private void checkDB() {
         if (internetChecker.checkInternetConnection()) {
@@ -956,7 +982,6 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -970,7 +995,6 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
-
     private class ListCodeUpdater extends BroadcastReceiver {
         @Override
         public void onReceive(Context i, Intent intent) {
@@ -979,7 +1003,6 @@ public class List extends Fragment implements LocationListener {
     }
 
     private class ListScreenUpdater extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             Cursor data = mDatabaseHelper.getDeliveryData(); //table3
@@ -992,7 +1015,6 @@ public class List extends Fragment implements LocationListener {
     }
 
     // Location
-
     private void getLocation() {
         try {
             locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
