@@ -24,7 +24,7 @@ import static android.content.ContentValues.TAG;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private Context context;
+    private final Context context;
     private static final String DATABASE_NAME = "Flash.db";
     private static final int VERSION = 2;
 
@@ -36,7 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_SCANNER_DETAILS = "tbl_scanner_details";
     private static final String TABLE_COLETA_DETAILS = "tbl_coleta_details";
     private static final String TABLE_NOT_COLLECTED_DETAILS = "tbl_not_collected_details";
-
+    private static final String TABLE_TOTAL_DELIVERY_RETURNS = "tbl_total_delivery_returns";
+    private static final String TABLE_TOTAL_COLLECT_DONE = "tbl_total_collect_done";
 
     //Table 1 columns & query:
     private static final String ID = "id";
@@ -108,6 +109,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String CREATE_TABLE_NOT_COLLECTED_DETAILS = "CREATE TABLE " + TABLE_NOT_COLLECTED_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLETA_ID + " TEXT, " + DATE_TIME + " TEXT, " + TYPE_PROCESS + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " BLOB)";
 
+    //Table 8 columns & query
+    public static final String TOTAL_LIST_COUNT = "list_count";
+    public static final String CREATE_TABLE_TOTAL_DELIVERY_RETURNS = "CREATE TABLE " + TABLE_TOTAL_DELIVERY_RETURNS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            TOTAL_LIST_COUNT + " TEXT)";
+
+    //Table 9 columns & query
+    public static final String TOTAL_COLLECT_COUNT = "collect_count";
+    public static final String CREATE_TABLE_TOTAL_COLLECT_DONE = "CREATE TABLE " + TABLE_TOTAL_COLLECT_DONE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            TOTAL_COLLECT_COUNT + " TEXT)";
+
     private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
     private byte[] imageInByte, imageInByte2;
 
@@ -125,6 +136,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_SCANNER_DETAILS);
         db.execSQL(CREATE_TABLE_COLETA_DETAILS);
         db.execSQL(CREATE_TABLE_NOT_COLLECTED_DETAILS);
+        db.execSQL(CREATE_TABLE_TOTAL_DELIVERY_RETURNS);
+        db.execSQL(CREATE_TABLE_TOTAL_COLLECT_DONE);
     }
 
     @Override
@@ -137,6 +150,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCANNER_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLETA_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOT_COLLECTED_DETAILS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_DELIVERY_RETURNS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_COLLECT_DONE);
         //create new tables on upgrade
         onCreate(db);
     }
@@ -150,6 +165,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_SCANNER_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_COLETA_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_NOT_COLLECTED_DETAILS);
+        db.execSQL("DELETE FROM " + TABLE_TOTAL_DELIVERY_RETURNS);
+        db.execSQL("DELETE FROM " + TABLE_TOTAL_COLLECT_DONE);
         db.close();
     }
 
@@ -169,11 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_DELIVER_DETAILS, null, contentValues);
         db.close();
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
 
     }
 
@@ -197,11 +210,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_TOTAL_LIST_DETAILS, null, contentValues);
         db.close();
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
     }
 
     public Cursor getData() {
@@ -228,6 +237,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "DELETE FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " = '" + code_hawb + "' OR " +
                 CLIENT_NUMBER + " ='" + code_hawb + "'";
         db.execSQL(query);
+    }
+
+    public int DashSyncCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + TICK_MARK + " = 'true' ";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
     }
 
     //Table three
@@ -276,6 +294,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
     }
 
+    public void DeleteTheHawbDetailsThree(String c_hawb) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_DELIVERY_DETAILS + " WHERE " + H_CODE + " = '" + c_hawb + "'";
+        db.execSQL(query);
+    }
+
+    public int DashImageSync() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " + DELIVERY_IMAGE + " FROM " + TABLE_DELIVERY_DETAILS;
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
     //Table four
     public boolean addDataToTableFour(String item, String clientNumber) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -284,11 +317,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(CLIENT_NUMBER, clientNumber);
         long result = db.insert(TABLE_HAWB_CODES, null, contentValues);
         db.close();
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
     }
 
     public Cursor getDataFromTableFour() {
@@ -366,11 +395,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long result = db.insert(TABLE_SCANNER_DETAILS, null, contentValues);
 
         db.close();
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
     }
 
     public Cursor GetDataFromTableFive() {
@@ -403,6 +428,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
     }
 
+    public int DashCollectSyncCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_SCANNER_DETAILS + " WHERE " + TICK_MARK + " = 'true' ";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
     //Table six
     public boolean AddDataToTableSix(TableSixCollectModal collectModal) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -419,11 +453,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_COLETA_DETAILS, null, contentValues);
         db.close();
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
     }
 
     public Cursor GetDataFromTableSix() {
@@ -457,24 +487,89 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_NOT_COLLECTED_DETAILS, null, contentValues);
         db.close();
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
     }
 
     public Cursor GetDataFromTableSeven() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_NOT_COLLECTED_DETAILS;
-        Cursor data = db.rawQuery(query, null);
-        //return db.rawQuery(query, null);
-        return data;
+        return db.rawQuery(query, null);
     }
 
     public void DeleteFromTableSevenUponSync() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_NOT_COLLECTED_DETAILS;
+        db.execSQL(query);
+    }
+
+    public int DashNotCollectImageSync() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " + COLLECT_IMAGE + " FROM " + TABLE_NOT_COLLECTED_DETAILS;
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    //Dashboard Screen
+    //Table eight
+    public boolean AddDeliveryType(String d_type) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TOTAL_LIST_COUNT, d_type);
+
+        long result = db.insert(TABLE_TOTAL_DELIVERY_RETURNS, null, contentValues);
+        db.close();
+        return result != -1;
+    }
+
+    public int TotalDeliveryCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_TOTAL_DELIVERY_RETURNS + " WHERE " + TOTAL_LIST_COUNT + " = 'ENTREGA'";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    public int TotalReturnCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_TOTAL_DELIVERY_RETURNS + " WHERE " + TOTAL_LIST_COUNT + " = 'DEVOLUCAO'";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    public void DeleteTableEight() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_TOTAL_DELIVERY_RETURNS;
+        db.execSQL(query);
+    }
+
+    //Table nine
+    public boolean AddCollectsForCount(String c_type) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TOTAL_COLLECT_COUNT, c_type);
+
+        long result = db.insert(TABLE_TOTAL_COLLECT_DONE, null, contentValues);
+        db.close();
+        return result != -1;
+    }
+
+    public int TotalCollectCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_TOTAL_COLLECT_DONE + " WHERE " + TOTAL_COLLECT_COUNT + " = 'COLECTA'";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    public void DeleteTableNine() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_TOTAL_COLLECT_DONE;
         db.execSQL(query);
     }
 

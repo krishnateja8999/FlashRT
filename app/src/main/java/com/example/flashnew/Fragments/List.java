@@ -12,9 +12,11 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputType;
@@ -44,6 +46,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -72,10 +75,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,6 +112,8 @@ public class List extends Fragment implements LocationListener {
     private InternetConnectionChecker internetChecker;
     private ListCodeUpdater listCodeUpdater;
     private ListScreenUpdater listScreenUpdater;
+    private File photoFile = null;
+    private String currentPhotoPath;
 
     @Nullable
     @Override
@@ -154,11 +162,14 @@ public class List extends Fragment implements LocationListener {
         LocalBroadcastManager.getInstance(context).registerReceiver(listScreenUpdater, new IntentFilter("list_screen"));
         Cursor data = mDatabaseHelper.getDeliveryData(); //table3
         Cursor data1 = mDatabaseHelper.getDataFromTableFour();
+        Cursor data2 = mDatabaseHelper.getData();//Table 2
         if (data.getCount() == 0 && data1.getCount() == 0) {
             mDatabaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
         }
-        Log.e(TAG, "onCreateView: " + OutImage);
+        if (data2.getCount() == 0) {
+            mDatabaseHelper.DeleteTableEight();
+        }
         getLocation();
         hawb.addTextChangedListener(new TextWatcher() {
             @Override
@@ -239,6 +250,8 @@ public class List extends Fragment implements LocationListener {
                         }
                         mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
                         mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+                        System.out.println(AddDeliveryType);
                         ConfirmSuccessDialog("entregue");
                     }
                 } else {
@@ -259,6 +272,8 @@ public class List extends Fragment implements LocationListener {
                         }
                         mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
                         mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+                        System.out.println(AddDeliveryType);
                         ConfirmSuccessDialog("devolvida");
                     }
                 }
@@ -289,7 +304,7 @@ public class List extends Fragment implements LocationListener {
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
             listDownloadDialogForDelivery();
         } else if (data.getCount() == 0 && data1.getCount() != 0) {
-            EmptyDataInTableFourDialog();
+            EmptyDataInTableFourDialog("entregar");
         } else {
             title.setText("Entrega");
             imei.setText("IMEI : " + preferences.getIMEI());
@@ -311,9 +326,6 @@ public class List extends Fragment implements LocationListener {
             preferences.setPhotoBoolean("false");
             HawbStringArray();
             getLocation();
-//                checkDB();
-            Log.e(TAG, "checkInternetConnection: " + internetChecker.checkInternetConnection());
-
         }
     }
 
@@ -322,7 +334,7 @@ public class List extends Fragment implements LocationListener {
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
             listDownloadDialogForReturn();
         } else if (data.getCount() == 0) {
-            EmptyDataInTableFourDialog();
+            EmptyDataInTableFourDialog("devolvida");
         } else {
             spinner.setVisibility(View.GONE);
             spinner2.setVisibility(View.VISIBLE);
@@ -383,7 +395,6 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void listDownloadDialog() {
-        Log.e(TAG, "listDownloadDialog: ");
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final EditText edittext = new EditText(context);
         edittext.setBackgroundResource(R.drawable.edit_text_border);
@@ -416,7 +427,6 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void listDownloadDialogForDelivery() {
-        Log.e(TAG, "listDownloadDialog: ");
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final EditText edittext = new EditText(context);
         edittext.setBackgroundResource(R.drawable.edit_text_border);
@@ -449,7 +459,6 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void listDownloadDialogForReturn() {
-        Log.e(TAG, "listDownloadDialog: ");
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final EditText edittext = new EditText(context);
         edittext.setBackgroundResource(R.drawable.edit_text_border);
@@ -485,7 +494,7 @@ public class List extends Fragment implements LocationListener {
         Cursor data = mDatabaseHelper.getDataFromTableFour();
         ArrayList<String> list = new ArrayList<String>();
         if (data.getCount() == 0) {
-            Log.e(TAG, "HawbStringArray: ");
+            Log.e(TAG, "HawbStringArray: No Data");
         } else {
             while (data.moveToNext()) {
                 list.add(data.getString(1));
@@ -500,7 +509,6 @@ public class List extends Fragment implements LocationListener {
     }
 
     private void storeDeliveryData() {
-
         BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
         int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
         Calendar c = Calendar.getInstance();
@@ -521,10 +529,10 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
-    private void EmptyDataInTableFourDialog() {
+    private void EmptyDataInTableFourDialog(String type) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(getResources().getString(R.string.Login_screen1));
-        builder1.setMessage(getResources().getString(R.string.list_screen5));
+        builder1.setMessage("Nenhuma lista para " + type + ", sincronize para atualizar as listas");
         builder1.setCancelable(false);
         builder1.setPositiveButton(
                 "OK",
@@ -560,8 +568,7 @@ public class List extends Fragment implements LocationListener {
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.e(TAG, "ListScreen1: " + response);
-
+                Log.e(TAG, "JsonParseListScreen: " + response);
                 try {
                     String franchiseName = response.getString("franquia");
                     String system = response.getString("sistema");
@@ -576,13 +583,12 @@ public class List extends Fragment implements LocationListener {
                     TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
                             deliveryID, delivererName, totalDocuments);
                     boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                    Log.e(TAG, "ListScreen3: " + success1);
+                    System.out.println(success1);
 
                     JSONArray array = response.getJSONArray("documentos");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject object = array.getJSONObject(i);
-                        Log.e(TAG, "ListScreen4: " + object);
-                        Log.e(TAG, "ListScreen4.2: " + i);
+                        Log.e(TAG, "JsonParseListScreenArray: " + object);
 
                         int customerID = object.getInt("idCliente");
                         int contractID = object.getInt("idContrato");
@@ -648,7 +654,7 @@ public class List extends Fragment implements LocationListener {
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.e(TAG, "ListScreen1: " + response);
+                Log.e(TAG, "JsonParseListScreen: " + response);
 
                 try {
                     String franchiseName = response.getString("franquia");
@@ -664,12 +670,12 @@ public class List extends Fragment implements LocationListener {
                     TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
                             deliveryID, delivererName, totalDocuments);
                     boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                    Log.e(TAG, "ListScreen3: " + success1);
+                    System.out.println(success1);
 
                     JSONArray array = response.getJSONArray("documentos");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject object = array.getJSONObject(i);
-                        Log.e(TAG, "ListScreen4: " + object);
+                        Log.e(TAG, "JsonParseListScreenArray: " + object);
 
                         int customerID = object.getInt("idCliente");
                         int contractID = object.getInt("idContrato");
@@ -729,7 +735,7 @@ public class List extends Fragment implements LocationListener {
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.e(TAG, "ListScreen1: " + response);
+                Log.e(TAG, "JsonParseListScreen: " + response);
 
                 try {
                     String franchiseName = response.getString("franquia");
@@ -745,12 +751,12 @@ public class List extends Fragment implements LocationListener {
                     TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
                             deliveryID, delivererName, totalDocuments);
                     boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                    Log.e(TAG, "ListScreen3: " + success1);
+                    System.out.println(success1);
 
                     JSONArray array = response.getJSONArray("documentos");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject object = array.getJSONObject(i);
-                        Log.e(TAG, "ListScreen4: " + object);
+                        Log.e(TAG, "JsonParseListScreenArray: " + object);
 
                         int customerID = object.getInt("idCliente");
                         int contractID = object.getInt("idContrato");
@@ -982,13 +988,44 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            photoFile = createImageFile();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(context, context.getPackageName(), photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        String fileName = "temp";
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(fileName, ".jpg");
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        String a = image.getName();
+
+        Log.d("TAG", "createImageFileList: " + currentPhotoPath);
+        Log.d("TAG", "createImageFileList: " + a);
+
+        return image;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             photo = (Bitmap) data.getExtras().get("data");
             OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
-            Log.e(TAG, "onActivityResult: " + OutImage);
             preferences.setPhotoBoolean("true");
             camera.setText("Selecione a foto" + "   ✔");
             Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();

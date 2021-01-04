@@ -154,6 +154,8 @@ public class Landing_Screen extends AppCompatActivity {
                         return true;
                     case R.id.about:
                         // startActivity(new Intent(Landing_Screen.this,About.class));
+                        int count = databaseHelper.DashCollectSyncCount();
+                        Log.e(TAG, "DashCount: " + count);
                         Log.e(TAG, "onClick: " + preferences.getListID().toString());
                         return true;
 
@@ -452,8 +454,7 @@ public class Landing_Screen extends AppCompatActivity {
         }
     }
 
-    public void PutJsonRequest() {
-
+    public void PutJsonRequest() throws JSONException {
         Cursor data = databaseHelper.getDeliveryData(); //table3
         Cursor data1 = databaseHelper.getDataFromTableFour();
         ArrayList<String> codHawb = new ArrayList<String>();
@@ -481,7 +482,6 @@ public class Landing_Screen extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObj = new JSONObject();
             JSONObject jsonObj1 = new JSONObject();
-            try {
 
                 jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
                 jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
@@ -513,13 +513,15 @@ public class Landing_Screen extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "PUTonResponseError: " + error);
-
+                        String finalResponseCode = error.toString();
+                        Toast.makeText(Landing_Screen.this, "Error", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "ErrorCodeString: " + finalResponseCode);
+                        //ErrorCodeString: com.android.volley.TimeoutError
                     }
                 }) {
                     @Override
@@ -535,7 +537,6 @@ public class Landing_Screen extends AppCompatActivity {
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
                     }
-
                     @Override
                     public String getBodyContentType() {
                         return "application/json; charset=utf-8";
@@ -544,25 +545,19 @@ public class Landing_Screen extends AppCompatActivity {
                 request.setTag(TAG);
                 queue.add(request);
 
-
-                codHawb.clear();
-                dataHoraBaixa.clear();
-                latitude.clear();
-                longitude.clear();
-                nivelBateria.clear();
-                tipoBaixa.clear();
-                foto.clear();
-                relationID.clear();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            codHawb.clear();
+            dataHoraBaixa.clear();
+            latitude.clear();
+            longitude.clear();
+            nivelBateria.clear();
+            tipoBaixa.clear();
+            foto.clear();
+            relationID.clear();
         }
-        DeleteDataUponSyncOrUpload();
-        databaseHelper.DeleteFromTableThreeUponSync();
+        DeleteDataUponSyncOrUpload();//Table3
+        databaseHelper.DeleteFromTableThreeUponSync();//Table3
         Intent intent = new Intent("list_view_updater");
         LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
-        Log.e(TAG, "getDeliveryData: " + data.getCount());
-        Log.e(TAG, "getDataFromTableFour: " + data1.getCount());
         if (data.getCount() == 0 && data1.getCount() == 0) {
             databaseHelper.DeleteDataFromTableTwo();
             preferences.clearListID();
@@ -587,14 +582,14 @@ public class Landing_Screen extends AppCompatActivity {
     }
 
     private void DeleteDataUponSyncOrUpload() {
-        Cursor data = databaseHelper.getDeliveryData();
+        Cursor data = databaseHelper.getDeliveryData();//Table3
         ArrayList<String> list = new ArrayList<String>();
         if (data.getCount() == 0) {
             Log.e(TAG, "HawbStringArray: ");
         } else {
             while (data.moveToNext()) {
                 list.add(data.getString(1));
-                databaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));
+                databaseHelper.DeleteDataUponUpload(Utils.ConvertArrayListToString(list));//Table2
                 list.clear();
             }
         }

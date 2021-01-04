@@ -206,7 +206,7 @@
                     <TextView
                         android:background="@drawable/cell_shape"
                         android:padding="5dp"
-                        android:id="@+id/listaAguardandoSincronizar"
+                        android:id="@+id/syncHawb"
                         android:layout_width="100dp"
                         android:gravity="center_horizontal"
                         android:layout_weight="1"

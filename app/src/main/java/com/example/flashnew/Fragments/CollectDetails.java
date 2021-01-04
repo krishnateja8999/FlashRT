@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 
@@ -18,9 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,9 +61,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.BATTERY_SERVICE;
@@ -83,6 +89,8 @@ public class CollectDetails extends Fragment {
     private Bitmap OutImage;
     private RequestQueue queue;
     private InternetConnectionChecker internetChecker;
+    private File photoFile = null;
+    private String currentPhotoPath;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -172,7 +180,6 @@ public class CollectDetails extends Fragment {
                     ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, ausente);
                     adapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     spinner3.setAdapter(adapter2);
-
                 } else if (position == 3) {
                     spinner3.setVisibility(View.VISIBLE);
                     spinner3.performClick();
@@ -256,7 +263,6 @@ public class CollectDetails extends Fragment {
         BatteryManager bm = (BatteryManager) mContext.getSystemService(BATTERY_SERVICE);
         int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
-        Log.e(TAG, "StoreColetaDetails: " + batLevel);
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String formattedDate = df.format(c.getTime());
@@ -283,6 +289,8 @@ public class CollectDetails extends Fragment {
             } else {
                 mDatabaseHelper.CheckTickMarkInTableFive(strtext);
                 SuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println(AddCollectForCount);
                 if (internetChecker.checkInternetConnection()) {
                     PostCollectData();
                 }
@@ -295,11 +303,44 @@ public class CollectDetails extends Fragment {
             } else {
                 mDatabaseHelper.CheckTickMarkInTableFive(strtext);
                 NotCollectedSuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println(AddCollectForCount);
                 if (internetChecker.checkInternetConnection()) {
                     PostNotCollectData();
                 }
             }
         }
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            photoFile = createImageFile();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(getActivity(), getContext().getPackageName(), photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        String fileName = "temp";
+        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(fileName, ".jpg");
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        String a = image.getName();
+
+        Log.d("TAG", "createImageFileCollect: " + currentPhotoPath);
+        Log.d("TAG", "createImageFileCollect: " + a);
+        return image;
     }
 
     @Override
@@ -308,7 +349,6 @@ public class CollectDetails extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             photo = (Bitmap) data.getExtras().get("data");
             OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
-            Log.e(ContentValues.TAG, "onActivityResult: " + OutImage);
             buttonPhotoAR.setText("Tirar foto do local" + "   ✔");
             Toast.makeText(mContext, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
         }

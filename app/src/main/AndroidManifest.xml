@@ -47,9 +47,6 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".Fragments.StepperTabs"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".WelcomeScreen"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">

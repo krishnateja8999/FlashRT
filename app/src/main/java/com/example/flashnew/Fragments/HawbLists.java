@@ -81,7 +81,6 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
 
     private void ListsView() {
         Cursor data = mDatabaseHelper.getData();
-        Log.e(TAG, "ListsView: ");
         hawbListsArrayList = new ArrayList<>();
 
         if (data.getCount() == 0) {
@@ -101,7 +100,6 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
                         data.getString(10), data.getString(11)));
             }
             adapter = new HawbListAdapter(getContext(), hawbListsArrayList);
-            Log.e(TAG, "ListsView2: " + hawbListsArrayList);
             recyclerViewHawbList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
@@ -118,7 +116,6 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
 
         @Override
         public void onReceive(Context c, Intent intent) {
-            Log.e(TAG, "ListViewUpdater: ");
             ListsView();
 //            assert getFragmentManager() != null;
 //            Fragment frg = getFragmentManager ().findFragmentByTag("unique_tag");

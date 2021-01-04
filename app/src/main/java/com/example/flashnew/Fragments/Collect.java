@@ -131,8 +131,11 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         listModalClasses = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerViewCollectList.setLayoutManager(layoutManager);
+        Cursor data = mDatabaseHelper.getDataFromTableFour();
+        if (data.getCount() == 0) {
+            mDatabaseHelper.DeleteTableNine();
+        }
         ColetaLists();
-
 //        listModalClasses.add(new CollectListModalClass("544524", "H.no-7-11, Prakash Nagar, Miyapur. 500050"));
 //        collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
 //        if (listModalClasses.size() == 0) {
@@ -152,7 +155,6 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         coletaDigit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 DigitalColleta();
             }
         });
@@ -228,7 +230,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         StringRequest request = new StringRequest(Request.Method.POST, url2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.e("TAG", "onResponse: " + response);
+                Log.e("TAG", "CollectListDownloadResponse: " + response);
                 String s = String.valueOf(response);
                 XmlToJson xmlToJson = new XmlToJson.Builder(s).build();
                 Log.e("TAG", "XMLtoJson: " + xmlToJson);

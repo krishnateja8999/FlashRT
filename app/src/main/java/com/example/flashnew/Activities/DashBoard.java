@@ -22,7 +22,7 @@ import java.util.Collections;
 public class DashBoard extends AppCompatActivity {
     private static final String TAG = "DashBoard";
     private Toolbar toolbar;
-    private TextView imeiText, pendingHawbLists, listaColetasPendentes;
+    private TextView imeiText, pendingHawbLists, listaColetasPendentes, syncHawb, listaColetasAguardandoSincronizar, listaAguardandoSincronizarImagens, listaColetasAguardandoSincronizarImagem, listaEntregues, listaDevolvidos, listaColetasFeitas;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
 
@@ -37,13 +37,19 @@ public class DashBoard extends AppCompatActivity {
         imeiText.setText("IMEI: " + prefernces.getIMEI());
         pendingHawbLists = findViewById(R.id.pendingHawbLists);
         listaColetasPendentes = findViewById(R.id.listaColetasPendentes);
+        syncHawb = findViewById(R.id.syncHawb);
+        listaColetasAguardandoSincronizar = findViewById(R.id.listaColetasAguardandoSincronizar);
+        listaAguardandoSincronizarImagens = findViewById(R.id.listaAguardandoSincronizarImagens);
+        listaColetasAguardandoSincronizarImagem = findViewById(R.id.listaColetasAguardandoSincronizarImagem);
+        listaEntregues = findViewById(R.id.listaEntregues);
+        listaDevolvidos = findViewById(R.id.listaDevolvidos);
+        listaColetasFeitas = findViewById(R.id.listaColetasFeitas);
         mDatabaseHelper = new DatabaseHelper(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(null);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         CheckTotalData();
-
     }
 
     private void CheckTotalData() {
@@ -52,10 +58,23 @@ public class DashBoard extends AppCompatActivity {
 
         String totalHawbsPending = String.valueOf(HawbPending.getCount());
         String totalCollectPending = String.valueOf(CollectPending.getCount());
+        int HawbSync = mDatabaseHelper.DashSyncCount();
+        int CollectSync = mDatabaseHelper.DashCollectSyncCount();
+        int HawbImageSync = mDatabaseHelper.DashImageSync();
+        int NotCollectSync = mDatabaseHelper.DashNotCollectImageSync();
+        int HawbDelivery = mDatabaseHelper.TotalDeliveryCount();
+        int HawbReturn = mDatabaseHelper.TotalReturnCount();
+        int CollectCount = mDatabaseHelper.TotalCollectCount();
 
+        listaEntregues.setText(String.valueOf(HawbDelivery));
+        listaDevolvidos.setText(String.valueOf(HawbReturn));
         pendingHawbLists.setText(totalHawbsPending);
+        syncHawb.setText(String.valueOf(HawbSync));
+        listaAguardandoSincronizarImagens.setText(String.valueOf(HawbImageSync));
         listaColetasPendentes.setText(totalCollectPending);
-
+        listaColetasFeitas.setText(String.valueOf(CollectCount));
+        listaColetasAguardandoSincronizar.setText(String.valueOf(CollectSync));
+        listaColetasAguardandoSincronizarImagem.setText(String.valueOf(NotCollectSync));
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
