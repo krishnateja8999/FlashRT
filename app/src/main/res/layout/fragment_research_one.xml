@@ -20,6 +20,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/baseFile"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -44,6 +45,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/dateOfVerify"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -68,6 +70,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/empresa"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -92,6 +95,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/cnjp"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -116,7 +120,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/fragmentOneET12"
+            android:id="@+id/ResponseBaseFile"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -141,6 +145,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/endereco"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -165,6 +170,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/bairro"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -189,6 +195,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/cidade"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -213,6 +220,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/uf"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -237,6 +245,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/cep"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"

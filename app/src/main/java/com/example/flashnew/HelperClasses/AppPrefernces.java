@@ -3,6 +3,13 @@ package com.example.flashnew.HelperClasses;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class AppPrefernces {
@@ -158,6 +165,33 @@ public class AppPrefernces {
     }
 
     //Collect Screen preferences
+
+    //Profile Screen Preference
+
+    public void setProfileImage(String img) {
+        editor.putString("ProfileImage", img);
+        editor.apply();
+    }
+
+    public String getProfileImage() {
+        return preference.getString("ProfileImage", " ");
+    }
+
+    //Research Screen preferences
+    public void setResearchOne(JSONObject object) {
+        Gson gson = new Gson();
+        String list = gson.toJson(object);
+        editor.putString("ResearchOne", list);
+        editor.apply();
+    }
+
+    public JSONObject getResearchOne() {
+        Gson gson = new Gson();
+        String list = preference.getString("ResearchOne", "N/A");
+        Type type = new TypeToken<JSONObject>() {
+        }.getType();
+        return gson.fromJson(list, type);
+    }
 
 
 }

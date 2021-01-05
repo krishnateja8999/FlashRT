@@ -106,7 +106,6 @@ public class List extends Fragment implements LocationListener {
     private DatabaseHelper mDatabaseHelper;
     private AutoCompleteTextView hawb;
     private Spinner attemptsDropDown;
-    private Bitmap photo;
     private Bitmap OutImage;
     private LocationManager locationManager;
     private InternetConnectionChecker internetChecker;
@@ -209,6 +208,7 @@ public class List extends Fragment implements LocationListener {
                     FragmentTransaction fragmentTransaction = context
                             .getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.content, new HawbLists());
+                    fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }
             }
@@ -285,6 +285,7 @@ public class List extends Fragment implements LocationListener {
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                //dispatchTakePictureIntent();
             }
         });
 
@@ -872,7 +873,6 @@ public class List extends Fragment implements LocationListener {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -1024,11 +1024,16 @@ public class List extends Fragment implements LocationListener {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            photo = (Bitmap) data.getExtras().get("data");
-            OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
-            preferences.setPhotoBoolean("true");
-            camera.setText("Selecione a foto" + "   ✔");
-            Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
+            if (data != null) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
+                preferences.setPhotoBoolean("true");
+                Log.e(TAG, "onActivityResultList: " + OutImage);
+                camera.setText("Selecione a foto" + "   ✔");
+                Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e(TAG, "onActivityResult: Data Null");
+            }
         }
     }
 

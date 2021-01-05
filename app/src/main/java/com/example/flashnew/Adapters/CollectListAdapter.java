@@ -60,6 +60,7 @@ public class CollectListAdapter extends RecyclerView.Adapter<CollectListAdapter.
                 args.putString("CID", listModalClasses.get(holder.getAdapterPosition()).getHawbCode());
                 fr.setArguments(args);
                 fragmentTransaction.replace(R.id.content, fr);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
         });

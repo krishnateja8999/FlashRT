@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -24,6 +25,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -99,6 +102,8 @@ public class Landing_Screen extends AppCompatActivity {
     private RequestQueue queue;
     private InternetConnectionChecker internetChecker;
     private LocationManager locationManager;
+    private TextView nav_name;
+    private ImageView provfile_nav;
 
 
     @SuppressLint({"MissingPermission", "HardwareIds"})
@@ -141,6 +146,11 @@ public class Landing_Screen extends AppCompatActivity {
             preferences.setIMEI(getDeviceUniqueID(this));
         }
         navigationView = findViewById(R.id.nav_view);
+        View hView = navigationView.getHeaderView(0);
+        nav_name = hView.findViewById(R.id.nav_name);
+        provfile_nav = hView.findViewById(R.id.provfile_nav);
+        nav_name.setText(preferences.getUserName());
+        provfile_nav.setImageBitmap(decodeBase64(preferences.getProfileImage()));
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -397,13 +407,6 @@ public class Landing_Screen extends AppCompatActivity {
         androidx.appcompat.app.AlertDialog alert = builder.create();
         alert.show();
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(Landing_Screen.this, Landing_Screen.class);
-        startActivity(intent);
     }
 
     @Override
@@ -809,6 +812,13 @@ public class Landing_Screen extends AppCompatActivity {
         alert1.show();
     }
 
+    // method for base64 to bitmap
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {
@@ -816,6 +826,29 @@ public class Landing_Screen extends AppCompatActivity {
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        FragmentManager fm = getSupportFragmentManager();
+//        for (Fragment frag : fm.getFragments()) {
+//            if (frag.isVisible()) {
+//                FragmentManager childFm = frag.getChildFragmentManager();
+//                if (childFm.getBackStackEntryCount() > 0) {
+//                    childFm.popBackStack();
+//                    return;
+//                }
+//            }
+//        }
+//        super.onBackPressed();
+//        if (!dispatchOnBackPressedToFragments(fm)) {
+//            // if no child fragment consumed the onBackPressed event,
+//            // we execute the default behaviour.
+//            super.onBackPressed();
+//        }
+//        Intent intent = new Intent(Landing_Screen.this, Landing_Screen.class);
+//        startActivity(intent);
     }
 
 }

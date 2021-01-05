@@ -58,7 +58,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
                 args.putString("Research", listModalClasses.get(holder.getAdapterPosition()).getName());
                 fr.setArguments(args);
                 fragmentTransaction.replace(R.id.content, fr);
-                fragmentTransaction.addToBackStack("this");
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
         });

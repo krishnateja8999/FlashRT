@@ -16,7 +16,6 @@ import com.example.flashnew.Modals.TableSevenNotCollectedModal;
 import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
-import com.google.zxing.common.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 

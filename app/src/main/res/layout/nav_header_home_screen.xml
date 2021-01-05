@@ -13,9 +13,9 @@
     <com.mikhaellopez.circularimageview.CircularImageView
         android:layout_width="68dp"
         android:layout_height="68dp"
-        android:id="@+id/iv_profile_auditor"
+        android:id="@+id/provfile_nav"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/profile" />
+        android:src="@drawable/user_img" />
 
     <TextView
         android:id="@+id/nav_name"

@@ -2,11 +2,13 @@ package com.example.flashnew.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -174,6 +176,14 @@ public class SearchSurvey extends Fragment {
 //                fragmentTransaction.commit();
             }
         });
+
+        confirm_enviar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FinalDialog("Confirme as respostas", "Deseja finalizar?");
+            }
+        });
+
         return view;
     }
 
@@ -186,5 +196,49 @@ public class SearchSurvey extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void FinalDialog(String successDialog, String successDesc) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+        builder1.setTitle(successDialog);
+        builder1.setMessage(successDesc);
+        builder1.setCancelable(false);
+        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FinalDialog2("Sucesso", "Pesquisa finalizada com successo");
+            }
+        });
+        builder1.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+    }
+
+    private void FinalDialog2(String successDialog2, String successDesc2) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+        builder1.setTitle(successDialog2);
+        builder1.setMessage(successDesc2);
+        builder1.setCancelable(false);
+        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                changeFragment(new Search());
+
+            }
+        });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+    }
+
+    public void changeFragment(Fragment fragment) {
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
 }
