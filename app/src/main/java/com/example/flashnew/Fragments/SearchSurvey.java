@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,10 +12,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,25 +34,36 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.Adapters.MyStepperAdapter;
 import com.example.flashnew.R;
 import com.stepstone.stepper.StepperLayout;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
+import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 
 public class SearchSurvey extends Fragment {
 
     private CardView client_local, client_alberto, lastCardView;
-    private Button button_abrir, confirm_enviar;
+    private Button button_abrir, confirm_enviar, takePic;
     private RadioButton radio1, radio2, radio3, radio4;
     private RadioGroup radioGroup, radioGroup1;
     private Spinner spi, spi2;
     private String[] values1, enderec, ausente, nao_visitado, outros;
     private String researchName;
-    private Context context;
+    private Landing_Screen context;
     private TextView researchHawb;
     private StepperLayout mStepperLayout;
     private LinearLayout bl1, actions_lay1;
     private MyStepperAdapter mStepperAdapter;
+    private File photoFile = null;
+    private String currentPhotoPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,6 +76,7 @@ public class SearchSurvey extends Fragment {
         lastCardView = view.findViewById(R.id.lastCardView);
         button_abrir = view.findViewById(R.id.button_abrir);
         confirm_enviar = view.findViewById(R.id.confirm_enviar);
+        takePic = view.findViewById(R.id.takePic);
         radio1 = view.findViewById(R.id.radio1);
         radio2 = view.findViewById(R.id.radio2);
         radio3 = view.findViewById(R.id.radio3);
@@ -184,22 +201,64 @@ public class SearchSurvey extends Fragment {
             }
         });
 
+        takePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
+
         return view;
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context = context;
+        this.context = (Landing_Screen) context;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            photoFile = createImageFile();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(context, context.getPackageName(), photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        String fileName = "temp";
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(fileName, ".jpg");
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        String a = image.getName();
+
+        Log.d("TAG", "createImageFileCollect: " + currentPhotoPath);
+        Log.d("TAG", "createImageFileCollect: " + a);
+        return image;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+        }
     }
 
+
     private void FinalDialog(String successDialog, String successDesc) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(successDialog);
         builder1.setMessage(successDesc);
         builder1.setCancelable(false);
@@ -221,7 +280,7 @@ public class SearchSurvey extends Fragment {
     }
 
     private void FinalDialog2(String successDialog2, String successDesc2) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(successDialog2);
         builder1.setMessage(successDesc2);
         builder1.setCancelable(false);
@@ -239,6 +298,6 @@ public class SearchSurvey extends Fragment {
     }
 
     public void changeFragment(Fragment fragment) {
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+        context.getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
 }

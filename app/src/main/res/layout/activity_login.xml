@@ -150,7 +150,7 @@
                         android:background="@drawable/edit_text_grey_border"
                         android:enabled="false"
                         android:padding="5dp"
-                        android:text="http://191.241.243.133:8080" />
+                        android:text="http://191.241.243.133:8081" />
 
                     <CheckBox
                         android:id="@+id/checkbox"

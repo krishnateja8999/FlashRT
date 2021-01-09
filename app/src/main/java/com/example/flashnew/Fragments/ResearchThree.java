@@ -38,6 +38,13 @@ public class ResearchThree extends Fragment implements Step {
         photo = v.findViewById(R.id.photo);
         image = v.findViewById(R.id.image);
 
+        photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return v;
     }
 

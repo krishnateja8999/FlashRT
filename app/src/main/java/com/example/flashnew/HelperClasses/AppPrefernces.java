@@ -164,7 +164,25 @@ public class AppPrefernces {
         return preference.getString("Longitude", " ");
     }
 
+    public void setImagePath(String path) {
+        editor.putString("ImagePath", path);
+        editor.apply();
+    }
+
+    public String getImagePath() {
+        return preference.getString("ImagePath", " ");
+    }
+
     //Collect Screen preferences
+
+    public void setNotCollectedImage(String path2) {
+        editor.putString("NotCollectImage", path2);
+        editor.apply();
+    }
+
+    public String getNotCollectedImage() {
+        return preference.getString("NotCollectImage", " ");
+    }
 
     //Profile Screen Preference
 

@@ -308,6 +308,971 @@
             android:layout_width="350dp"
             android:layout_height="35dp"
             android:layout_marginStart="5dp"
+            android:text="@string/check_list15"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list16"
+            android:textSize="15sp" />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list17"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list18"
+            android:textSize="15sp" />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list19"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list20"
+            android:textSize="15sp" />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list21"
+            android:textSize="15sp" />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list22"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list23"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list24"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list25"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list26"
+            android:textSize="15sp" />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list27"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list28"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list29"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list30"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list31"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list32"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list33"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list34"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list35"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list36"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list37"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup17"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list38"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup18"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list39"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup19"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list40"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
             android:text="@string/check_list9"
             android:textSize="15sp" />
 

@@ -14,9 +14,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
             android:text="BASE/FILIAL (SIGLA) *"
-            android:layout_marginStart="5dp"
             android:textSize="15sp" />
 
         <EditText
@@ -40,8 +40,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DATE DE VERIFICAÇÃO *"
             android:layout_marginStart="5dp"
+            android:text="DATE DE VERIFICAÇÃO *"
             android:textSize="15sp" />
 
         <EditText
@@ -50,7 +50,7 @@
             android:layout_height="45dp"
             android:layout_gravity="center"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="date"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />
@@ -65,8 +65,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="EMPRESA *"
             android:layout_marginStart="5dp"
+            android:text="EMPRESA *"
             android:textSize="15sp" />
 
         <EditText
@@ -90,8 +90,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CNPJ *"
             android:layout_marginStart="5dp"
+            android:text="CNPJ *"
             android:textSize="15sp" />
 
         <EditText
@@ -100,7 +100,7 @@
             android:layout_height="45dp"
             android:layout_gravity="center"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="number"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />
@@ -115,8 +115,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="RESPONSÁVEL PELA BASE/FILIAL *"
             android:layout_marginStart="5dp"
+            android:text="RESPONSÁVEL PELA BASE/FILIAL *"
             android:textSize="15sp" />
 
         <EditText
@@ -140,8 +140,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ENDEREÇO *"
             android:layout_marginStart="5dp"
+            android:text="ENDEREÇO *"
             android:textSize="15sp" />
 
         <EditText
@@ -165,8 +165,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BAIRRO *"
             android:layout_marginStart="5dp"
+            android:text="BAIRRO *"
             android:textSize="15sp" />
 
         <EditText
@@ -190,8 +190,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CIDADE *"
             android:layout_marginStart="5dp"
+            android:text="CIDADE *"
             android:textSize="15sp" />
 
         <EditText
@@ -215,8 +215,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UF *"
             android:layout_marginStart="5dp"
+            android:text="UF *"
             android:textSize="15sp" />
 
         <EditText
@@ -240,8 +240,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CEP *"
             android:layout_marginStart="5dp"
+            android:text="CEP *"
             android:textSize="15sp" />
 
         <EditText
@@ -249,12 +249,66 @@
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="number"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
-            android:layout_marginBottom="10dp"
             android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="TELEFONE *"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/telePhone"
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="phone"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="EMAIL *"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="textEmailAddress"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+
     </LinearLayout>
 
 

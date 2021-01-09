@@ -82,7 +82,7 @@ public class CollectDetails extends Fragment {
     private String strtext;
     private AppPrefernces prefernces;
     private Button buttonConfirmCollect, buttonCancelCollect;
-    private Context mContext;
+    private Landing_Screen mContext;
     private Button buttonPhotoAR;
     private String[] values2, enderec, ausente, nao_visitado, outros;
     private Bitmap photo;
@@ -95,7 +95,7 @@ public class CollectDetails extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mContext = context;
+        mContext = (Landing_Screen) context;
     }
 
     @Override
@@ -123,8 +123,10 @@ public class CollectDetails extends Fragment {
         prefernces = new AppPrefernces(mContext);
         internetChecker = new InternetConnectionChecker(mContext);
         title.setVisibility(View.GONE);
+        prefernces.setNotCollectedImage(" ");
         strtext = getArguments().getString("CID");
         imei.setText("Coleta: " + strtext);
+        Log.e(TAG, "CollectDetails: " + prefernces.getNotCollectedImage());
         String[] values1 = {"-- Selecione Coletar --", "COLETADO", "NAO_COLETADO"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -212,7 +214,7 @@ public class CollectDetails extends Fragment {
             @Override
             public void onClick(View v) {
                 Fragment fr = new Collect();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction ft = mContext.getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.content, fr);
                 ft.commit();
             }
@@ -221,8 +223,9 @@ public class CollectDetails extends Fragment {
         buttonPhotoAR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                dispatchTakePictureIntent();
             }
         });
 
@@ -254,7 +257,7 @@ public class CollectDetails extends Fragment {
         boolean success = mDatabaseHelper.AddDataToTableSix(sixCollectModal);
         System.out.println(success);
         Fragment fr = new Collect();
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = mContext.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content, fr);
         ft.commit();
     }
@@ -269,11 +272,12 @@ public class CollectDetails extends Fragment {
         String spinnerValue = spinner.getSelectedItem().toString();
 
         TableSevenNotCollectedModal sevenCollectModal = new TableSevenNotCollectedModal(strtext,
-                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, OutImage);
+                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, prefernces.getNotCollectedImage());
         boolean success = mDatabaseHelper.AddDataToTableSeven(sevenCollectModal);
+        Log.e(TAG, "StoreNotColetaDetails: " + prefernces.getNotCollectedImage());
         System.out.println(success);
         Fragment fr = new Collect();
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = mContext.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content, fr);
         ft.commit();
     }
@@ -298,7 +302,7 @@ public class CollectDetails extends Fragment {
         } else if (spinner.getSelectedItem().toString().equals("NAO_COLETADO")) {
             if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
                 Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
-            } else if (OutImage == null) {
+            } else if (prefernces.getNotCollectedImage().equals(" ") || prefernces.getNotCollectedImage().equals("")) {
                 Toast.makeText(mContext, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
             } else {
                 mDatabaseHelper.CheckTickMarkInTableFive(strtext);
@@ -320,7 +324,7 @@ public class CollectDetails extends Fragment {
             ex.printStackTrace();
         }
         if (photoFile != null) {
-            Uri photoURI = FileProvider.getUriForFile(getActivity(), getContext().getPackageName(), photoFile);
+            Uri photoURI = FileProvider.getUriForFile(mContext, mContext.getPackageName(), photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
@@ -331,7 +335,7 @@ public class CollectDetails extends Fragment {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         String fileName = "temp";
-        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(fileName, ".jpg");
 
         // Save a file: path for use with ACTION_VIEW intents
@@ -347,8 +351,9 @@ public class CollectDetails extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            photo = (Bitmap) data.getExtras().get("data");
-            OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
+//            photo = (Bitmap) data.getExtras().get("data");
+//            OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
+            prefernces.setNotCollectedImage(currentPhotoPath);
             buttonPhotoAR.setText("Tirar foto do local" + "   ✔");
             Toast.makeText(mContext, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
         }
@@ -488,6 +493,7 @@ public class CollectDetails extends Fragment {
         ArrayList<String> latitude = new ArrayList<String>();
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> batteryLevel = new ArrayList<String>();
+        ArrayList<String> notCollectImage = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(ContentValues.TAG, "PostNotCollect: No Data");
@@ -499,6 +505,7 @@ public class CollectDetails extends Fragment {
                 latitude.add(data.getString(4));
                 longitude.add(data.getString(5));
                 batteryLevel.add(data.getString(6));
+                notCollectImage.add(data.getString(7));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -536,12 +543,14 @@ public class CollectDetails extends Fragment {
                     });
                     queue.add(request);
 
+                    DeletePhotoPath(Utils.ConvertArrayListToString(notCollectImage));
                     coletaID.clear();
                     dateTime.clear();
                     typeProcess.clear();
                     latitude.clear();
                     longitude.clear();
                     batteryLevel.clear();
+                    notCollectImage.clear();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -549,6 +558,17 @@ public class CollectDetails extends Fragment {
             }
             DeleteDataUponSyncOrUpload1();
             mDatabaseHelper.DeleteFromTableSevenUponSync();//Table7
+        }
+    }
+
+    private void DeletePhotoPath(String path) {
+        File delete = new File(path);
+        if (delete.exists()) {
+            if (delete.delete()) {
+                System.out.println("file Deleted :" + path);
+            } else {
+                System.out.println("file not Deleted :" + path);
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.flashnew.Fragments.CollectDetails;
 import com.example.flashnew.Fragments.SearchSurvey;
+import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.Modals.CollectListModalClass;
 import com.example.flashnew.R;
 

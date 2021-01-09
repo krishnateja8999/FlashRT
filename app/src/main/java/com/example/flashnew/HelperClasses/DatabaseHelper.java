@@ -78,7 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String PERIMETER = "perimeter";
     private static final String PHOTO_BOOLEAN = "photo_boolean";
     private static final String CREATE_TABLE_TABLE_DELIVERY_DETAILS = "CREATE TABLE " + TABLE_DELIVERY_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            H_CODE + " TEXT, " + RELATIONSHIP + " TEXT, " + NO_OF_ATTEMPTS + " INTEGER, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LOW_TYPE + " TEXT, " + PHOTO_BOOLEAN + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + DELIVERY_IMAGE + " BLOB)";
+            H_CODE + " TEXT, " + RELATIONSHIP + " TEXT, " + NO_OF_ATTEMPTS + " INTEGER, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LOW_TYPE + " TEXT, " + PHOTO_BOOLEAN + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + DELIVERY_IMAGE + " TEXT)";
 
     //Table 4 query:
     private static final String CREATE_TABLE_HAWB_CODES = "CREATE TABLE " + TABLE_HAWB_CODES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -251,10 +251,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void addDataToTableThree(TableThreeDeliveryModal deliveryModal) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            Bitmap imageToStoreBitmap = deliveryModal.getImage();
-            objectByteArrayOutputStream = new ByteArrayOutputStream();
-            imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG, 100, objectByteArrayOutputStream);
-            imageInByte = objectByteArrayOutputStream.toByteArray();
+//            Bitmap imageToStoreBitmap = deliveryModal.getImage();
+//            objectByteArrayOutputStream = new ByteArrayOutputStream();
+//            imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG, 100, objectByteArrayOutputStream);
+//            imageInByte = objectByteArrayOutputStream.toByteArray();
 
             ContentValues contentValues = new ContentValues();
             contentValues.put(H_CODE, deliveryModal.getHawbCode());
@@ -266,7 +266,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(PHOTO_BOOLEAN, deliveryModal.getPhotoBoolean());
             contentValues.put(LATITUDE, deliveryModal.getLatitude());
             contentValues.put(LONGITUDE, deliveryModal.getLongitude());
-            contentValues.put(DELIVERY_IMAGE, imageInByte);
+            contentValues.put(DELIVERY_IMAGE, deliveryModal.getImage());
 
             long result = db.insert(TABLE_DELIVERY_DETAILS, null, contentValues);
 
@@ -471,10 +471,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean AddDataToTableSeven(TableSevenNotCollectedModal notCollectedModal) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        Bitmap imageToStoreBitmap = notCollectedModal.getImage();
-        objectByteArrayOutputStream2 = new ByteArrayOutputStream();
-        imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG, 100, objectByteArrayOutputStream2);
-        imageInByte2 = objectByteArrayOutputStream2.toByteArray();
+//        Bitmap imageToStoreBitmap = notCollectedModal.getImage();
+//        objectByteArrayOutputStream2 = new ByteArrayOutputStream();
+//        imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG, 100, objectByteArrayOutputStream2);
+//        imageInByte2 = objectByteArrayOutputStream2.toByteArray();
 
         contentValues.put(COLETA_ID, notCollectedModal.getCollectID());
         contentValues.put(DATE_TIME, notCollectedModal.getDateTime());
@@ -482,7 +482,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(LATITUDE, notCollectedModal.getLatitude());
         contentValues.put(LONGITUDE, notCollectedModal.getLongitude());
         contentValues.put(BATTERY_LEVEL, notCollectedModal.getBatteryPercentage());
-        contentValues.put(COLLECT_IMAGE, imageInByte2);
+        contentValues.put(COLLECT_IMAGE, notCollectedModal.getImage());
 
         long result = db.insert(TABLE_NOT_COLLECTED_DETAILS, null, contentValues);
         db.close();

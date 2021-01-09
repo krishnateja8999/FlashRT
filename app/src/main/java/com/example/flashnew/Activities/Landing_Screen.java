@@ -79,6 +79,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,7 +117,7 @@ public class Landing_Screen extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar_t);
         setSupportActionBar(toolbar);
         preferences = new AppPrefernces(this);
-        permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE};
+        permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -164,8 +165,6 @@ public class Landing_Screen extends AppCompatActivity {
                         return true;
                     case R.id.about:
                         // startActivity(new Intent(Landing_Screen.this,About.class));
-                        int count = databaseHelper.DashCollectSyncCount();
-                        Log.e(TAG, "DashCount: " + count);
                         Log.e(TAG, "onClick: " + preferences.getListID().toString());
                         return true;
 
@@ -448,10 +447,10 @@ public class Landing_Screen extends AppCompatActivity {
 
     private void acceptPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[4]) != PackageManager.PERMISSION_GRANTED)
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[4]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[5]) != PackageManager.PERMISSION_GRANTED)
                 requestPermissions(permissions, PERMISSION_REQ_CODE);
             else {
-                if ((ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED) || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[4]) != PackageManager.PERMISSION_GRANTED)
+                if ((ContextCompat.checkSelfPermission(getApplicationContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[2]) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(), permissions[3]) != PackageManager.PERMISSION_GRANTED) || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[4]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getApplicationContext(), permissions[5]) != PackageManager.PERMISSION_GRANTED)
                     requestPermissions(permissions, PERMISSION_REQ_CODE);
             }
         }
@@ -468,6 +467,7 @@ public class Landing_Screen extends AppCompatActivity {
         ArrayList<String> tipoBaixa = new ArrayList<String>();
         ArrayList<String> foto = new ArrayList<String>();
         ArrayList<String> relationID = new ArrayList<String>();
+        ArrayList<String> imagePath = new ArrayList<>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -481,6 +481,7 @@ public class Landing_Screen extends AppCompatActivity {
             tipoBaixa.add(data.getString(6));
             foto.add(data.getString(7));
             relationID.add(data.getString(2));
+            imagePath.add(data.getString(10));
 
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObj = new JSONObject();
@@ -548,6 +549,7 @@ public class Landing_Screen extends AppCompatActivity {
                 request.setTag(TAG);
                 queue.add(request);
 
+            DeletePhotoPath(Utils.ConvertArrayListToString(imagePath));
             codHawb.clear();
             dataHoraBaixa.clear();
             latitude.clear();
@@ -556,6 +558,7 @@ public class Landing_Screen extends AppCompatActivity {
             tipoBaixa.clear();
             foto.clear();
             relationID.clear();
+            imagePath.clear();
         }
         DeleteDataUponSyncOrUpload();//Table3
         databaseHelper.DeleteFromTableThreeUponSync();//Table3
@@ -817,6 +820,17 @@ public class Landing_Screen extends AppCompatActivity {
         byte[] decodedByte = Base64.decode(input, 0);
         return BitmapFactory
                 .decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
+
+    private void DeletePhotoPath(String path) {
+        File delete = new File(path);
+        if (delete.exists()) {
+            if (delete.delete()) {
+                System.out.println("file Deleted :" + path);
+            } else {
+                System.out.println("file not Deleted :" + path);
+            }
+        }
     }
 
     @Override

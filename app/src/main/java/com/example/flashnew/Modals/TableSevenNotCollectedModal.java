@@ -9,9 +9,9 @@ public class TableSevenNotCollectedModal {
     String latitude;
     String longitude;
     int batteryPercentage;
-    Bitmap image;
+    String image;
 
-    public TableSevenNotCollectedModal(String collectID, String dateTime, String type, String latitude, String longitude, int batteryPercentage, Bitmap image) {
+    public TableSevenNotCollectedModal(String collectID, String dateTime, String type, String latitude, String longitude, int batteryPercentage, String image) {
         this.collectID = collectID;
         this.dateTime = dateTime;
         this.type = type;
@@ -69,11 +69,11 @@ public class TableSevenNotCollectedModal {
         this.batteryPercentage = batteryPercentage;
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

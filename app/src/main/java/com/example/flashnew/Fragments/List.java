@@ -241,7 +241,7 @@ public class List extends Fragment implements LocationListener {
                         Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
                     } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
                         Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
-                    } else if (OutImage == null) {
+                    } else if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
                         Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
                     } else {
                         storeDeliveryData();
@@ -263,7 +263,7 @@ public class List extends Fragment implements LocationListener {
                         Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
                     } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
                         Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
-                    } else if (OutImage == null) {
+                    } else if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
                         Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
                     } else {
                         storeDeliveryData();
@@ -283,9 +283,9 @@ public class List extends Fragment implements LocationListener {
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                //dispatchTakePictureIntent();
+//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                dispatchTakePictureIntent();
             }
         });
 
@@ -318,6 +318,7 @@ public class List extends Fragment implements LocationListener {
             conf.setText("Entrega");
             camera.setText("Selecione a foto");
             OutImage = null;
+            preferences.setImagePath("");
             String[] tab_names = getResources().getStringArray(R.array.grau_relacionamento);
             ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, tab_names);
             adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -388,6 +389,7 @@ public class List extends Fragment implements LocationListener {
             camera.setText("Selecione a foto");
             conf.setText("Devolver");
             OutImage = null;
+            preferences.setImagePath("");
             rl2.setVisibility(View.GONE);
             rl1.setVisibility(View.VISIBLE);
             preferences.setLowType("DEVOLUCAO");
@@ -523,10 +525,10 @@ public class List extends Fragment implements LocationListener {
         boolean HawbChecker = mDatabaseHelper.CheckHawbCode1(clientNumber);
         if (HawbChecker) {
             mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(clientNumber, spinnerID,
-                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
+                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), preferences.getImagePath()));
         } else {
             mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinnerID,
-                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), OutImage));
+                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), preferences.getImagePath()));
         }
     }
 
@@ -823,6 +825,7 @@ public class List extends Fragment implements LocationListener {
         ArrayList<String> tipoBaixa = new ArrayList<String>();
         ArrayList<String> foto = new ArrayList<String>();
         ArrayList<String> relationID = new ArrayList<String>();
+        ArrayList<String> imagePath = new ArrayList<>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -836,7 +839,7 @@ public class List extends Fragment implements LocationListener {
             tipoBaixa.add(data.getString(6));
             foto.add(data.getString(7));
             relationID.add(data.getString(2));
-
+            imagePath.add(data.getString(10));
 
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObj = new JSONObject();
@@ -903,6 +906,7 @@ public class List extends Fragment implements LocationListener {
                 request.setTag(TAG);
                 queue.add(request);
 
+                DeletePhotoPath(Utils.ConvertArrayListToString(imagePath));
                 codHawb.clear();
                 dataHoraBaixa.clear();
                 latitude.clear();
@@ -911,6 +915,7 @@ public class List extends Fragment implements LocationListener {
                 tipoBaixa.clear();
                 foto.clear();
                 relationID.clear();
+                imagePath.clear();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1020,20 +1025,28 @@ public class List extends Fragment implements LocationListener {
         return image;
     }
 
+    private void DeletePhotoPath(String path) {
+        File delete = new File(path);
+        if (delete.exists()) {
+            if (delete.delete()) {
+                System.out.println("file Deleted :" + path);
+            } else {
+                System.out.println("file not Deleted :" + path);
+            }
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            if (data != null) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
-                preferences.setPhotoBoolean("true");
-                Log.e(TAG, "onActivityResultList: " + OutImage);
-                camera.setText("Selecione a foto" + "   ✔");
-                Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
-            } else {
-                Log.e(TAG, "onActivityResult: Data Null");
-            }
+//                Bitmap photo = (Bitmap) data.getExtras().get("data");
+//                OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
+            preferences.setImagePath(currentPhotoPath);
+            preferences.setPhotoBoolean("true");
+            Log.e(TAG, "onActivityResultList: " + OutImage);
+            camera.setText("Selecione a foto" + "   ✔");
+            Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
         }
     }
 
