@@ -19,6 +19,11 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packagingOptions{
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -66,5 +71,8 @@ dependencies {
     implementation 'com.stepstone.stepper:material-stepper:4.3.1'
     implementation 'com.kyanogen.signatureview:signature-view:1.2'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation platform('com.google.cloud:libraries-bom:16.2.1')
+    implementation 'com.google.cloud:google-cloud-storage'
+    implementation 'com.google.cloud:google-cloud-core:1.94.0'
 }
 

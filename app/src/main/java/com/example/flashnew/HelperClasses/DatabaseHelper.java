@@ -10,6 +10,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.flashnew.Fragments.ResearchListModal;
+import com.example.flashnew.Modals.ListImageModal;
 import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.Modals.TableOneDelivererModal;
 import com.example.flashnew.Modals.TableSevenNotCollectedModal;
@@ -18,6 +20,8 @@ import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private final Context context;
     private static final String DATABASE_NAME = "Flash.db";
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
 
     //Table names
     private static final String TABLE_DELIVER_DETAILS = "tbl_deliverer_details";
@@ -37,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_NOT_COLLECTED_DETAILS = "tbl_not_collected_details";
     private static final String TABLE_TOTAL_DELIVERY_RETURNS = "tbl_total_delivery_returns";
     private static final String TABLE_TOTAL_COLLECT_DONE = "tbl_total_collect_done";
+    private static final String TABLE_RESEARCH_LIST = "tbl_research_list";
 
     //Table 1 columns & query:
     private static final String ID = "id";
@@ -77,8 +82,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DELIVERY_IMAGE = "image";
     private static final String PERIMETER = "perimeter";
     private static final String PHOTO_BOOLEAN = "photo_boolean";
+    public static final String IMAGE_NAME = "image_name";
     private static final String CREATE_TABLE_TABLE_DELIVERY_DETAILS = "CREATE TABLE " + TABLE_DELIVERY_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            H_CODE + " TEXT, " + RELATIONSHIP + " TEXT, " + NO_OF_ATTEMPTS + " INTEGER, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LOW_TYPE + " TEXT, " + PHOTO_BOOLEAN + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + DELIVERY_IMAGE + " TEXT)";
+            H_CODE + " TEXT, " + RELATIONSHIP + " TEXT, " + NO_OF_ATTEMPTS + " INTEGER, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LOW_TYPE + " TEXT, " + PHOTO_BOOLEAN + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + DELIVERY_IMAGE + " TEXT, " + IMAGE_NAME + " TEXT)";
 
     //Table 4 query:
     private static final String CREATE_TABLE_HAWB_CODES = "CREATE TABLE " + TABLE_HAWB_CODES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -118,6 +124,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String CREATE_TABLE_TOTAL_COLLECT_DONE = "CREATE TABLE " + TABLE_TOTAL_COLLECT_DONE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             TOTAL_COLLECT_COUNT + " TEXT)";
 
+    //Table 10 columns & query
+    public static final String PUBLIC_PLACE = "public_place";
+    public static final String CREATE_TABLE_RESEARCH_LIST = "CREATE TABLE " + TABLE_RESEARCH_LIST + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, " + APT_NO + " TEXT, " +
+            PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT)";
+
     private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
     private byte[] imageInByte, imageInByte2;
 
@@ -137,6 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_NOT_COLLECTED_DETAILS);
         db.execSQL(CREATE_TABLE_TOTAL_DELIVERY_RETURNS);
         db.execSQL(CREATE_TABLE_TOTAL_COLLECT_DONE);
+        db.execSQL(CREATE_TABLE_RESEARCH_LIST);
     }
 
     @Override
@@ -151,6 +164,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOT_COLLECTED_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_DELIVERY_RETURNS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_COLLECT_DONE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESEARCH_LIST);
         //create new tables on upgrade
         onCreate(db);
     }
@@ -166,6 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_NOT_COLLECTED_DETAILS);
         db.execSQL("DELETE FROM " + TABLE_TOTAL_DELIVERY_RETURNS);
         db.execSQL("DELETE FROM " + TABLE_TOTAL_COLLECT_DONE);
+        db.execSQL("DELETE FROM " + TABLE_RESEARCH_LIST);
         db.close();
     }
 
@@ -247,6 +262,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public List<ListImageModal> GetImgDetails(String codes) {
+        List<ListImageModal> listImage = new ArrayList<ListImageModal>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT " + CUSTOMER_ID + ", " + CONTRACT_ID + ", " + NUMBER_ORDER_CLIENT + " FROM " + TABLE_TOTAL_LIST_DETAILS +
+                " WHERE " + HAWB_CODE + " ='" + codes + "' OR " + NUMBER_ORDER_CLIENT + " ='" + codes + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ListImageModal modal = new ListImageModal();
+                try {
+                    modal.setCustomerCode(Integer.parseInt(cursor.getString(0)));
+                    modal.setContractCode(Integer.parseInt(cursor.getString(1)));
+                    modal.setCustomerNumber(cursor.getString(2));
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "GetImgDetails: " + e.getMessage());
+                }
+                listImage.add(modal);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return listImage;
+    }
+
     //Table three
     public void addDataToTableThree(TableThreeDeliveryModal deliveryModal) {
         try {
@@ -267,6 +305,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(LATITUDE, deliveryModal.getLatitude());
             contentValues.put(LONGITUDE, deliveryModal.getLongitude());
             contentValues.put(DELIVERY_IMAGE, deliveryModal.getImage());
+            contentValues.put(IMAGE_NAME, deliveryModal.getImageName());
 
             long result = db.insert(TABLE_DELIVERY_DETAILS, null, contentValues);
 
@@ -569,6 +608,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void DeleteTableNine() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_TOTAL_COLLECT_DONE;
+        db.execSQL(query);
+    }
+
+    //Research Screen
+    //Table ten
+    public boolean AddResearchList(ResearchListModal listModal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(HAWB_CODE, listModal.getHawbCode());
+        contentValues.put(NUMBER_ORDER_CLIENT, listModal.getClientNumber());
+        contentValues.put(RECIPIENT_NAME, listModal.getRecipientName());
+        contentValues.put(DNA, listModal.getDna());
+        contentValues.put(APT_NO, listModal.getAptNo());
+        contentValues.put(PUBLIC_PLACE, listModal.getPublicPlace());
+        contentValues.put(STREET_NAME, listModal.getStreetName());
+        contentValues.put(CITY, listModal.getCity());
+        contentValues.put(STATE, listModal.getState());
+        contentValues.put(PINCODE, listModal.getPinCode());
+        contentValues.put(TICK_MARK, "false");
+
+        long result = db.insert(TABLE_RESEARCH_LIST, null, contentValues);
+        db.close();
+        return result != -1;
+    }
+
+    public Cursor GetResearchList() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_RESEARCH_LIST;
+        return db.rawQuery(query, null);
+    }
+
+    public void CheckTickMarkInResearchLists() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "UPDATE " + TABLE_RESEARCH_LIST + " SET " + TICK_MARK + "= 'true'";
         db.execSQL(query);
     }
 

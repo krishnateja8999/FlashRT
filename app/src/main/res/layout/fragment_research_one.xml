@@ -49,6 +49,7 @@
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
+            android:cursorVisible="false"
             android:background="@drawable/edit_text_grey_border"
             android:inputType="date"
             android:paddingStart="10dp"

@@ -1,6 +1,7 @@
 package com.example.flashnew.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,6 +24,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -65,7 +67,9 @@ import com.example.flashnew.Fragments.Messages;
 import com.example.flashnew.Fragments.Search;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.HelperClasses.UploadImages;
 import com.example.flashnew.LoginActivity;
+import com.example.flashnew.Modals.ListImageModal;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
 import com.example.flashnew.Server.InternetConnectionChecker;
@@ -73,6 +77,7 @@ import com.example.flashnew.Server.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.cloud.storage.Storage;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.json.JSONArray;
@@ -80,6 +85,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,6 +111,7 @@ public class Landing_Screen extends AppCompatActivity {
     private LocationManager locationManager;
     private TextView nav_name;
     private ImageView provfile_nav;
+    private HeaderProfPicUpdater profPicUpdater;
 
 
     @SuppressLint({"MissingPermission", "HardwareIds"})
@@ -147,11 +154,17 @@ public class Landing_Screen extends AppCompatActivity {
             preferences.setIMEI(getDeviceUniqueID(this));
         }
         navigationView = findViewById(R.id.nav_view);
+        profPicUpdater = new HeaderProfPicUpdater();
+        LocalBroadcastManager.getInstance(this).registerReceiver(profPicUpdater, new IntentFilter("header_pic_update"));
         View hView = navigationView.getHeaderView(0);
         nav_name = hView.findViewById(R.id.nav_name);
         provfile_nav = hView.findViewById(R.id.provfile_nav);
         nav_name.setText(preferences.getUserName());
-        provfile_nav.setImageBitmap(decodeBase64(preferences.getProfileImage()));
+        if (preferences.getProfileImage().equals("") || preferences.getProfileImage().equals(" ")) {
+            Log.e(TAG, "Nav_header_prof_pic: ");
+        } else {
+            provfile_nav.setImageBitmap(decodeBase64(preferences.getProfileImage()));
+        }
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -165,6 +178,10 @@ public class Landing_Screen extends AppCompatActivity {
                         return true;
                     case R.id.about:
                         // startActivity(new Intent(Landing_Screen.this,About.class));
+                        java.util.List<ListImageModal> imageModals = databaseHelper.GetImgDetails("researchOM001");
+                        for (ListImageModal mee : imageModals) {
+                            Log.e(TAG, "About: " + mee.getCustomerCode() + mee.getContractCode() + mee.getCustomerNumber());
+                        }
                         Log.e(TAG, "onClick: " + preferences.getListID().toString());
                         return true;
 
@@ -255,36 +272,60 @@ public class Landing_Screen extends AppCompatActivity {
                                 progressDialog.setMessage("Por favor, espere..");
                                 progressDialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
                                 progressDialog.show();
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            if (data.getCount() != 0) {
-                                                PutJsonRequest();
-                                            } else {
-                                                Log.e(TAG, "SyncList: Sem listas");
-                                            }
-                                            if (data2.getCount() != 0 || data3.getCount() != 0) {
-                                                PostCollectData();
-                                                PostNotCollectData();
-                                            } else {
-                                                Log.e(TAG, "SyncCollect: Sem listas Collect");
-                                            }
-                                            Intent intent = new Intent("list_code_status");
-                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
-
-                                            Intent intent1 = new Intent("list_screen");
-                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent1);
-
-                                            Intent intent2 = new Intent("list_updater");
-                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent2);
-                                            SyncFinished();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        progressDialog.dismiss();
+                                try {
+                                    if (data.getCount() != 0) {
+                                        PutJsonRequest();
+                                    } else {
+                                        Log.e(TAG, "SyncList: Sem listas");
                                     }
-                                }, 3000);
+                                    if (data2.getCount() != 0 || data3.getCount() != 0) {
+                                        PostCollectData();
+                                        PostNotCollectData();
+                                    } else {
+                                        Log.e(TAG, "SyncCollect: Sem listas Collect");
+                                    }
+                                    Intent intent = new Intent("list_code_status");
+                                    LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
+
+                                    Intent intent1 = new Intent("list_screen");
+                                    LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent1);
+
+                                    Intent intent2 = new Intent("list_updater");
+                                    LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent2);
+                                    SyncFinished();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+//                                new Handler().postDelayed(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        try {
+//                                            if (data.getCount() != 0) {
+//                                                PutJsonRequest();
+//                                            } else {
+//                                                Log.e(TAG, "SyncList: Sem listas");
+//                                            }
+//                                            if (data2.getCount() != 0 || data3.getCount() != 0) {
+//                                                PostCollectData();
+//                                                PostNotCollectData();
+//                                            } else {
+//                                                Log.e(TAG, "SyncCollect: Sem listas Collect");
+//                                            }
+//                                            Intent intent = new Intent("list_code_status");
+//                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
+//
+//                                            Intent intent1 = new Intent("list_screen");
+//                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent1);
+//
+//                                            Intent intent2 = new Intent("list_updater");
+//                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent2);
+//                                            SyncFinished();
+//                                        } catch (Exception e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                        progressDialog.dismiss();
+//                                    }
+//                                }, 3000);
                             }
                         } else {
                             Toast.makeText(Landing_Screen.this, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
@@ -456,7 +497,7 @@ public class Landing_Screen extends AppCompatActivity {
         }
     }
 
-    public void PutJsonRequest() throws JSONException {
+    private void PutJsonRequest() throws JSONException, IOException {
         Cursor data = databaseHelper.getDeliveryData(); //table3
         Cursor data1 = databaseHelper.getDataFromTableFour();
         ArrayList<String> codHawb = new ArrayList<String>();
@@ -468,6 +509,7 @@ public class Landing_Screen extends AppCompatActivity {
         ArrayList<String> foto = new ArrayList<String>();
         ArrayList<String> relationID = new ArrayList<String>();
         ArrayList<String> imagePath = new ArrayList<>();
+        ArrayList<String> imageName = new ArrayList<>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -482,74 +524,84 @@ public class Landing_Screen extends AppCompatActivity {
             foto.add(data.getString(7));
             relationID.add(data.getString(2));
             imagePath.add(data.getString(10));
+            imageName.add(data.getString(11));
 
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObj = new JSONObject();
             JSONObject jsonObj1 = new JSONObject();
 
-                jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
-                jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
-                jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
-                jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
-                jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
-                jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
-                jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
-                jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
-                jsonArray.put(jsonObj);
+            jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+            jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+            jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+            jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
+            jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
+            jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+            jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+            jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
+            jsonArray.put(jsonObj);
 
-                jsonObj1.put("imei", preferences.getIMEI());
-                jsonObj1.put("franquia", preferences.getFranchise());
-                jsonObj1.put("sistema", preferences.getSystem());
-                jsonObj1.put("lista", preferences.getListID());
-                jsonObj1.put("entregas", jsonArray);
+            jsonObj1.put("imei", preferences.getIMEI());
+            jsonObj1.put("franquia", preferences.getFranchise());
+            jsonObj1.put("sistema", preferences.getSystem());
+            jsonObj1.put("lista", preferences.getListID());
+            jsonObj1.put("entregas", jsonArray);
 
-                Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+            Storage storage = UploadImages.setCredentials(getAssets().open("key.json"));
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(imagePath), Utils.ConvertArrayListToString(imageName));
+                }
+            });
+            thread.start();
 
-                String url1 = ApiUtils.GET_LIST;
-                String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+            Log.e(TAG, "PutJsonRequest: " + jsonObj1);
 
-                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e(TAG, "PUTonResponse: " + response);
-                        try {
-                            String statusMessage = response.getString("statusMessage");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+            String url1 = ApiUtils.GET_LIST;
+            String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+
+            final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.e(TAG, "PUTonResponse: " + response);
+                    PostResponse();
+                    progressDialog.dismiss();
+                    try {
+                        String statusMessage = response.getString("statusMessage");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "PUTonResponseError: " + error);
-                        String finalResponseCode = error.toString();
-                        Toast.makeText(Landing_Screen.this, "Error", Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "ErrorCodeString: " + finalResponseCode);
-                        //ErrorCodeString: com.android.volley.TimeoutError
-                    }
-                }) {
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        HashMap<String, String> params = new HashMap<String, String>();
-                        String auth1 = "Basic "
-                                + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
-                                Base64.NO_WRAP);
-                        params.put("Authorization", auth1);
-                        params.put("x-versao-rt", "3.8.10");
-                        params.put("x-rastreador", "ricardo");
-//                    params.put("Content-Type", "application/json");
-                        params.put("Content-Type", "application/json; charset=utf-8");
-                        return params;
-                    }
-                    @Override
-                    public String getBodyContentType() {
-                        return "application/json; charset=utf-8";
-                    }
-                };
-                request.setTag(TAG);
-                queue.add(request);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "PUTonResponseError: " + error);
+                    String finalResponseCode = error.toString();
+                    Toast.makeText(Landing_Screen.this, "Erro, tente mais tarde..." + error.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "ErrorCodeString: " + finalResponseCode);
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    String auth1 = "Basic "
+                            + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                            Base64.NO_WRAP);
+                    params.put("Authorization", auth1);
+                    params.put("x-versao-rt", "3.8.10");
+                    params.put("x-rastreador", "ricardo");
+                    params.put("Content-Type", "application/json; charset=utf-8");
+                    return params;
+                }
 
-            DeletePhotoPath(Utils.ConvertArrayListToString(imagePath));
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+            };
+            request.setTag(TAG);
+            queue.add(request);
+
             codHawb.clear();
             dataHoraBaixa.clear();
             latitude.clear();
@@ -559,7 +611,13 @@ public class Landing_Screen extends AppCompatActivity {
             foto.clear();
             relationID.clear();
             imagePath.clear();
+            imageName.clear();
         }
+    }
+
+    private void PostResponse() {
+        Cursor data = databaseHelper.getDeliveryData(); //table3
+        Cursor data1 = databaseHelper.getDataFromTableFour();
         DeleteDataUponSyncOrUpload();//Table3
         databaseHelper.DeleteFromTableThreeUponSync();//Table3
         Intent intent = new Intent("list_view_updater");
@@ -699,11 +757,14 @@ public class Landing_Screen extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                            //PostCollectResponseDeleteData();
+                            progressDialog.dismiss();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                            Toast.makeText(Landing_Screen.this, "Erro, tente mais tarde..." + error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                     queue.add(request);
@@ -716,8 +777,6 @@ public class Landing_Screen extends AppCompatActivity {
                     latitude.clear();
                     longitude.clear();
                     batteryLevel.clear();
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -725,6 +784,11 @@ public class Landing_Screen extends AppCompatActivity {
             DeleteDataUponSyncOrUpload2();
             databaseHelper.DeleteFromTableSixUponSync();
         }
+    }
+
+    private void PostCollectResponseDeleteData() {
+        DeleteDataUponSyncOrUpload();
+        databaseHelper.DeleteFromTableSixUponSync();
     }
 
     private void PostNotCollectData() {
@@ -774,11 +838,14 @@ public class Landing_Screen extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                            //PostNotCollectResponseDeleteData();
+                            progressDialog.dismiss();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                            Toast.makeText(Landing_Screen.this, "Erro, tente mais tarde..." + error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                     queue.add(request);
@@ -797,6 +864,11 @@ public class Landing_Screen extends AppCompatActivity {
             DeleteDataUponSyncOrUpload1();
             databaseHelper.DeleteFromTableSevenUponSync();//Table7
         }
+    }
+
+    private void PostNotCollectResponseDeleteData() {
+        DeleteDataUponSyncOrUpload1();
+        databaseHelper.DeleteFromTableSevenUponSync();//Table7
     }
 
     private void CodeDeletedDialog(String code) {
@@ -822,17 +894,6 @@ public class Landing_Screen extends AppCompatActivity {
                 .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
-    private void DeletePhotoPath(String path) {
-        File delete = new File(path);
-        if (delete.exists()) {
-            if (delete.delete()) {
-                System.out.println("file Deleted :" + path);
-            } else {
-                System.out.println("file not Deleted :" + path);
-            }
-        }
-    }
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {
@@ -840,6 +901,13 @@ public class Landing_Screen extends AppCompatActivity {
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    private class HeaderProfPicUpdater extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            provfile_nav.setImageBitmap(decodeBase64(preferences.getProfileImage()));
+        }
     }
 
     @Override

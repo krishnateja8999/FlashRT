@@ -14,8 +14,9 @@ public class TableThreeDeliveryModal {
     private String latitude;
     private String longitude;
     private String image;
+    private String imageName;
 
-    public TableThreeDeliveryModal(String hawbCode, int relationship, String attempts, String dateTime, int batteryLevel, String lowType, String photoBoolean, String latitude, String longitude, String image) {
+    public TableThreeDeliveryModal(String hawbCode, int relationship, String attempts, String dateTime, int batteryLevel, String lowType, String photoBoolean, String latitude, String longitude, String image, String imageName) {
         this.hawbCode = hawbCode;
         this.relationship = relationship;
         this.attempts = attempts;
@@ -26,6 +27,7 @@ public class TableThreeDeliveryModal {
         this.latitude = latitude;
         this.longitude = longitude;
         this.image = image;
+        this.imageName = imageName;
     }
 
     public String getLowType() {
@@ -106,5 +108,13 @@ public class TableThreeDeliveryModal {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

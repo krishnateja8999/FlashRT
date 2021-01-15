@@ -312,7 +312,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup7"
+            android:id="@+id/researchRGroup4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -379,7 +379,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup8"
+            android:id="@+id/researchRGroup5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -446,7 +446,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup9"
+            android:id="@+id/researchRGroup6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -473,7 +473,6 @@
                 android:text="Não"
                 android:textSize="15sp" />
         </RadioGroup>
-
 
         <View
             android:layout_width="match_parent"
@@ -544,6 +543,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -551,6 +551,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image4"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -573,7 +574,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup10"
+            android:id="@+id/researchRGroup7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -622,6 +623,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -629,6 +631,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image5"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -651,7 +654,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup11"
+            android:id="@+id/researchRGroup8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -678,7 +681,6 @@
                 android:text="Não"
                 android:textSize="15sp" />
         </RadioGroup>
-
 
         <View
             android:layout_width="match_parent"
@@ -725,6 +727,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -732,6 +735,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image6"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -754,7 +758,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup12"
+            android:id="@+id/researchRGroup9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -803,6 +807,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -810,6 +815,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image7"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -832,7 +838,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup13"
+            android:id="@+id/researchRGroup10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -860,7 +866,6 @@
                 android:textSize="15sp" />
         </RadioGroup>
 
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -882,6 +887,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -889,6 +895,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image8"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -911,7 +918,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup14"
+            android:id="@+id/researchRGroup11"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -961,6 +968,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -968,6 +976,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image9"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -990,7 +999,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup15"
+            android:id="@+id/researchRGroup12"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1018,7 +1027,6 @@
                 android:textSize="15sp" />
         </RadioGroup>
 
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -1040,6 +1048,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -1047,6 +1056,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image10"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -1069,7 +1079,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup16"
+            android:id="@+id/researchRGroup13"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1112,7 +1122,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup17"
+            android:id="@+id/researchRGroup14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1155,7 +1165,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup18"
+            android:id="@+id/researchRGroup15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1198,7 +1208,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup19"
+            android:id="@+id/researchRGroup16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1247,6 +1257,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/photo11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -1254,13 +1265,13 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
+                android:id="@+id/image11"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
                 android:layout_marginTop="11dp"
                 android:src="@drawable/ic_time" />
         </LinearLayout>
-
 
         <View
             android:layout_width="match_parent"
@@ -1277,7 +1288,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup4"
+            android:id="@+id/researchRGroup17"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1320,7 +1331,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup5"
+            android:id="@+id/researchRGroup18"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1369,7 +1380,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/photo4"
+                android:id="@+id/photo12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -1377,7 +1388,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
-                android:id="@+id/image4"
+                android:id="@+id/image12"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"
@@ -1400,7 +1411,7 @@
             android:textSize="15sp" />
 
         <RadioGroup
-            android:id="@+id/researchRGroup6"
+            android:id="@+id/researchRGroup19"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -1449,7 +1460,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/photo5"
+                android:id="@+id/photo13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -1457,7 +1468,7 @@
                 android:text="Clique para tirar a foto" />
 
             <ImageView
-                android:id="@+id/image5"
+                android:id="@+id/image13"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="165dp"

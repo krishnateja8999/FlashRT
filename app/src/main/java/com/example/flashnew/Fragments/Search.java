@@ -1,6 +1,7 @@
 package com.example.flashnew.Fragments;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,15 +21,17 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.flashnew.Adapters.SearchListAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
+import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.Modals.SearchListModalClass;
 import com.example.flashnew.R;
 
 import java.util.ArrayList;
 
-public class Search extends Fragment {
+public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private TextView title, imei;
     private ArrayList<SearchListModalClass> searchListModalClasses;
     private RecyclerView recyclerViewSearchList;
@@ -36,6 +39,9 @@ public class Search extends Fragment {
     private SearchListAdapter searchAdapter;
     private Context context;
     private AppPrefernces prefernces;
+    private DatabaseHelper mDatabaseHelper;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView no_pesquisa;
 
 
     @Nullable
@@ -47,98 +53,56 @@ public class Search extends Fragment {
         prefernces = new AppPrefernces(context);
         title.setText("Pesquisa");
         imei.setText("IMEI: " + prefernces.getIMEI());
+        mDatabaseHelper = new DatabaseHelper(context);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_collect_research);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+        no_pesquisa = view.findViewById(R.id.no_pesquisa);
         searchListModalClasses = new ArrayList<>();
         recyclerViewSearchList = view.findViewById(R.id.recyclerViewSearchList);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerViewSearchList.setLayoutManager(layoutManager);
+        ResearchList();
 
-        searchListModalClasses.add(new SearchListModalClass("Augusto Vasquez", "PRAJA DO CERIO 21 VILA PAULISTA, SAO PAULO, SP"));
-        searchAdapter = new SearchListAdapter(getActivity(), searchListModalClasses);
-        recyclerViewSearchList.setAdapter(searchAdapter);
+//        searchListModalClasses.add(new SearchListModalClass("sdf","Augusto Vasquez", "PRAJA DO CERIO 21 VILA PAULISTA, SAO PAULO, SP"));
+//        searchAdapter = new SearchListAdapter(getActivity(), searchListModalClasses);
+//        recyclerViewSearchList.setAdapter(searchAdapter);
 
         return view;
     }
 
-    //        String[] values1 =
-//                {"Selecione o motivo", "Endereçando", "Ausente", "Não visitou", "Outras"};
-//        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
-//        adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-//        spinner.setAdapter(adapter1);
-//        ss = view.findViewById(R.id.ss);
-//        sss1=view.findViewById(R.id.sss1);
-//        title.setText("Pesquisa");
-//        imei.setText("IMEI : 9876543210123");
-//        bl = view.findViewById(R.id.bl);
-//        bl1 = view.findViewById(R.id.bl1);
-//        radioButton1 = view.findViewById(R.id.radio1);
-//        radioButton2 = view.findViewById(R.id.radio2);
-//        radioButton3 = view.findViewById(R.id.radio3);
-//        radioButton4 = view.findViewById(R.id.radio4);
-//        RadioGroup rGroup = view.findViewById(R.id.radioGroup1);
-//// This will get the radiobutton in the radiogroup that is checked
-//        RadioButton checkedRadioButton = (RadioButton) rGroup.findViewById(rGroup.getCheckedRadioButtonId());
-//
-//        // This overrides the radiogroup onCheckListener
-//        rGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                // This will get the radiobutton that has changed in its check state
-//                RadioButton checkedRadioButton = (RadioButton) group.findViewById(checkedId);
-//                // This puts the value (true/false) into the variable
-//                boolean isChecked = checkedRadioButton.isChecked();
-//                // If the radiobutton that has changed in check state is now checked...
-//                if (isChecked) {
-//                    // Changes the textview's text to "Checked: example radiobutton text"
-//                    Toast.makeText(getContext(), checkedRadioButton.getText(), Toast.LENGTH_SHORT).show();
-//                    if (checkedRadioButton.getText().equals("Sim")) {
-//                        cardView.setVisibility(View.VISIBLE);
-//                        lay.setVisibility(View.GONE);
-//                    } else {
-//                        lay.setVisibility(View.VISIBLE);
-//                        cardView.setVisibility(View.GONE);
-//                        ss.setVisibility(View.GONE);
-//                    }
-//                }
-//            }
-//        });
-//        RadioGroup rGroup1 = view.findViewById(R.id.radioGroup1);
-//// This will get the radiobutton in the radiogroup that is checked
-//        RadioButton checkedRadioButton1 = (RadioButton) rGroup.findViewById(rGroup.getCheckedRadioButtonId());
-//
-//        // This overrides the radiogroup onCheckListener
-//        rGroup1.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                // This will get the radiobutton that has changed in its check state
-//                RadioButton checkedRadioButton = (RadioButton) group.findViewById(checkedId);
-//                // This puts the value (true/false) into the variable
-//                boolean isChecked = checkedRadioButton.isChecked();
-//                // If the radiobutton that has changed in check state is now checked...
-//                if (isChecked) {
-//                    // Changes the textview's text to "Checked: example radiobutton text"
-//                    Toast.makeText(getContext(), checkedRadioButton.getText(), Toast.LENGTH_SHORT).show();
-//                    if (checkedRadioButton.getText().equals("Yes")) {
-//                        ss.setVisibility(View.VISIBLE);
-//                    }
-//
-//                }
-//            }
-//        });
-//
-//
-//        start.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                bl.setVisibility(View.GONE);
-//                bl1.setVisibility(View.VISIBLE);
-//
-//
-//            }
-//        });
+    private void ResearchList() {
+        Cursor data = mDatabaseHelper.GetResearchList();
+        searchListModalClasses = new ArrayList<>();
+        if (data.getCount() == 0) {
+            swipeRefreshLayout.setVisibility(View.GONE);
+            no_pesquisa.setVisibility(View.VISIBLE);
+        } else {
+            swipeRefreshLayout.setVisibility(View.VISIBLE);
+            while (data.moveToNext()) {
+                searchListModalClasses.add(new SearchListModalClass(data.getString(1), data.getString(3),
+                        data.getString(5) + ", " + data.getString(6) + ", " + data.getString(7) + ", " + data.getString(8) +
+                                ", " + data.getString(9) + ", " + data.getString(10), data.getString(11)));
+                searchAdapter = new SearchListAdapter(getActivity(), searchListModalClasses);
+                recyclerViewSearchList.setAdapter(searchAdapter);
+                searchAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
 
+        }
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
+    }
+
+    @Override
+    public void onRefresh() {
+        ResearchList();
     }
 }

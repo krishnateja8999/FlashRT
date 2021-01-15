@@ -17,16 +17,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.Utils;
+import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.Step;
+import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
-public class ResearchThree extends Fragment implements Step {
+public class ResearchThree extends Fragment implements BlockingStep {
 
     private EditText responseDesta;
     private TextView photo;
     private ImageView image;
+    private DatabaseHelper mDatabaseHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,6 +41,7 @@ public class ResearchThree extends Fragment implements Step {
         responseDesta = v.findViewById(R.id.responseDesta);
         photo = v.findViewById(R.id.photo);
         image = v.findViewById(R.id.image);
+        mDatabaseHelper = new DatabaseHelper(getContext());
 
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,23 +53,6 @@ public class ResearchThree extends Fragment implements Step {
         return v;
     }
 
-    @Nullable
-    @Override
-    public VerificationError verifyStep() {
-        FinalDialog("Confirme as respostas", "Deseja finalizar?");
-        return null;
-    }
-
-    @Override
-    public void onSelected() {
-
-    }
-
-    @Override
-    public void onError(@NonNull VerificationError error) {
-
-    }
-
     private void FinalDialog(String successDialog, String successDesc) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
         builder1.setTitle(successDialog);
@@ -74,6 +62,7 @@ public class ResearchThree extends Fragment implements Step {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FinalDialog2("Sucesso", "Pesquisa finalizada com successo");
+                mDatabaseHelper.CheckTickMarkInResearchLists();
             }
         });
         builder1.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
@@ -109,5 +98,40 @@ public class ResearchThree extends Fragment implements Step {
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
 
+    private void Validate(StepperLayout.OnCompleteClickedCallback callback) {
+        FinalDialog("Confirme as respostas", "Deseja finalizar?");
+        callback.complete();
+    }
 
+
+    @Override
+    public void onNextClicked(StepperLayout.OnNextClickedCallback callback) {
+
+    }
+
+    @Override
+    public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
+        Validate(callback);
+    }
+
+    @Override
+    public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
+        callback.goToPrevStep();
+    }
+
+    @Nullable
+    @Override
+    public VerificationError verifyStep() {
+        return null;
+    }
+
+    @Override
+    public void onSelected() {
+
+    }
+
+    @Override
+    public void onError(@NonNull VerificationError error) {
+
+    }
 }

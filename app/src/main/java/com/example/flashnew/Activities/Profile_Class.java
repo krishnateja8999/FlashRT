@@ -3,6 +3,7 @@ package com.example.flashnew.Activities;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -74,6 +75,8 @@ public class Profile_Class extends AppCompatActivity {
             OutImage = Bitmap.createScaledBitmap(photo, 300, 400, true);
             imageView.setImageBitmap(OutImage);
             prefernces.setProfileImage(encodeTobase64(OutImage));
+            Intent intent2 = new Intent("header_pic_update");
+            LocalBroadcastManager.getInstance(Profile_Class.this).sendBroadcast(intent2);
         }
     }
 

@@ -36,7 +36,7 @@ public class CollectListAdapter extends RecyclerView.Adapter<CollectListAdapter.
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.collect_lists, parent, false);
-        return new CollectListAdapter.MyViewHolder(v);
+        return new MyViewHolder(v);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class CollectListAdapter extends RecyclerView.Adapter<CollectListAdapter.
         return listModalClasses.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView tickImageCollect;
         private TextView collectID, collectAddress;
         private Button collectStart;

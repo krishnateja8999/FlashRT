@@ -10,4 +10,4 @@
     app:contentInsetLeft="0dp"
     app:titleTextColor="@color/black"
     app:contentInsetStartWithNavigation="0dp"
-    app:theme="@style/ThemeOverlay.AppCompat.Light"></androidx.appcompat.widget.Toolbar>
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />

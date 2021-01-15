@@ -173,6 +173,15 @@ public class AppPrefernces {
         return preference.getString("ImagePath", " ");
     }
 
+    public void setImageType(String imgType) {
+        editor.putString("ImageType", imgType);
+        editor.apply();
+    }
+
+    public String getImageType() {
+        return preference.getString("ImageType", " ");
+    }
+
     //Collect Screen preferences
 
     public void setNotCollectedImage(String path2) {

@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.Adapters.MyStepperAdapter;
+import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.R;
 import com.stepstone.stepper.StepperLayout;
 
@@ -64,6 +65,7 @@ public class SearchSurvey extends Fragment {
     private MyStepperAdapter mStepperAdapter;
     private File photoFile = null;
     private String currentPhotoPath;
+    private DatabaseHelper mDatabaseHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,6 +89,7 @@ public class SearchSurvey extends Fragment {
         spi2 = view.findViewById(R.id.spi2);
         bl1 = view.findViewById(R.id.bl1);
         actions_lay1 = view.findViewById(R.id.actions_lay1);
+        mDatabaseHelper = new DatabaseHelper(context);
         assert getArguments() != null;
         researchName = getArguments().getString("Research");
         researchHawb = view.findViewById(R.id.researchHawb);
@@ -252,7 +255,7 @@ public class SearchSurvey extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-
+            takePic.setText("Tirar fot do local" + "   ✔");
         }
     }
 
@@ -266,6 +269,7 @@ public class SearchSurvey extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FinalDialog2("Sucesso", "Pesquisa finalizada com successo");
+                mDatabaseHelper.CheckTickMarkInResearchLists();
             }
         });
         builder1.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {

@@ -43,10 +43,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -62,7 +64,9 @@ import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.Adapters.AutoSuggestAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.HelperClasses.UploadImages;
 import com.example.flashnew.LoginActivity;
+import com.example.flashnew.Modals.ListImageModal;
 import com.example.flashnew.Modals.TableOneDelivererModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
@@ -70,6 +74,7 @@ import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
 import com.example.flashnew.Server.InternetConnectionChecker;
 import com.example.flashnew.Server.Utils;
+import com.google.cloud.storage.Storage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,6 +82,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -258,7 +264,6 @@ public class List extends Fragment implements LocationListener {
                     if (hawb.getText().toString().length() == 0) {
                         Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
                         hawb.requestFocus();
-                        //hawb.setError("Selecione um Hawb");
                     } else if (!check) {
                         Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
                     } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
@@ -283,8 +288,6 @@ public class List extends Fragment implements LocationListener {
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 dispatchTakePictureIntent();
             }
         });
@@ -325,6 +328,7 @@ public class List extends Fragment implements LocationListener {
             spinner.setAdapter(adapter1);
             //preferences.clearListID();
             preferences.setLowType("ENTREGA");
+            preferences.setImageType("img_ar");
             preferences.setPhotoBoolean("false");
             HawbStringArray();
             getLocation();
@@ -393,6 +397,7 @@ public class List extends Fragment implements LocationListener {
             rl2.setVisibility(View.GONE);
             rl1.setVisibility(View.VISIBLE);
             preferences.setLowType("DEVOLUCAO");
+            preferences.setImageType("img_local");
             HawbStringArray();
         }
     }
@@ -517,18 +522,27 @@ public class List extends Fragment implements LocationListener {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String formattedDate = df.format(c.getTime());
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
         String spinnerValue = spinner.getSelectedItem().toString();
         int spinnerID = Integer.parseInt(spinnerValue.replaceAll("[^0-9]", ""));
+        java.util.List<ListImageModal> imageModals = mDatabaseHelper.GetImgDetails(hawb.getText().toString());
 
         String clientNumber = mDatabaseHelper.CheckClientNumber(hawb.getText().toString());
         boolean HawbChecker = mDatabaseHelper.CheckHawbCode1(clientNumber);
         if (HawbChecker) {
-            mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(clientNumber, spinnerID,
-                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), preferences.getImagePath()));
+            for (ListImageModal list231 : imageModals) {
+                String imageName1 = list231.getCustomerCode() + "_" + list231.getContractCode() + "_" + preferences.getImageType() + "_" + clientNumber + "_img_rt_" + list231.getCustomerNumber() + "_" + timeStamp + ".png";
+                mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(clientNumber, spinnerID,
+                        attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), preferences.getImagePath(), imageName1));
+            }
         } else {
-            mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinnerID,
-                    attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), preferences.getImagePath()));
+            for (ListImageModal list231 : imageModals) {
+                String imageName2 = list231.getCustomerCode() + "_" + list231.getContractCode() + "_" + preferences.getImageType() + "_" + hawb.getText().toString() + "_img_rt_" + list231.getCustomerNumber() + "_" + timeStamp + ".png";
+                Log.e(TAG, "storeDeliveryDataImageName: " + imageName2);
+                mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinnerID,
+                        attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), preferences.getImagePath(), imageName2));
+            }
         }
     }
 
@@ -603,8 +617,24 @@ public class List extends Fragment implements LocationListener {
                         String specialPhoto = object.getString("idCCusto");
                         int score = object.getInt("score");
                         String clientNumber = object.getString("numeroEncomandaCliente");
-//                        float latitude = (float) object.getDouble("latitude");
-//                        float longitude = (float) object.getDouble("longitude");
+
+                        if (object.has("endereco")) {
+                            JSONObject object1 = object.getJSONObject("endereco");
+                            String publicPlace = object1.getString("logradouro");
+                            String aptNo = object1.getString("numero");
+                            String neighbourHood = object1.getString("bairro");
+                            String city = object1.getString("cidade");
+                            String state = object1.getString("UF");
+                            int pinCode = object1.getInt("CEP");
+
+                            ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                    aptNo, publicPlace, neighbourHood, city, state, pinCode);
+                            boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                            System.out.println("Data Added to ResearchList Table " + success);
+                            Log.e(TAG, "exists: ");
+                        } else {
+                            Log.e(TAG, "doesn't exist: ");
+                        }
 
                         TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
                                 hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
@@ -691,6 +721,24 @@ public class List extends Fragment implements LocationListener {
                         int score = object.getInt("score");
                         String clientNumber = object.getString("numeroEncomandaCliente");
 
+                        if (object.has("endereco")) {
+                            JSONObject object1 = object.getJSONObject("endereco");
+                            String publicPlace = object1.getString("logradouro");
+                            String aptNo = object1.getString("numero");
+                            String neighbourHood = object1.getString("bairro");
+                            String city = object1.getString("cidade");
+                            String state = object1.getString("UF");
+                            int pinCode = object1.getInt("CEP");
+
+                            ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                    aptNo, publicPlace, neighbourHood, city, state, pinCode);
+                            boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                            System.out.println("Data Added to ResearchList Table " + success);
+                            Log.e(TAG, "exists: ");
+                        } else {
+                            Log.e(TAG, "doesn't exist: ");
+                        }
+
                         TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
                                 hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
                         boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
@@ -772,6 +820,24 @@ public class List extends Fragment implements LocationListener {
                         int score = object.getInt("score");
                         String clientNumber = object.getString("numeroEncomandaCliente");
 
+                        if (object.has("endereco")) {
+                            JSONObject object1 = object.getJSONObject("endereco");
+                            String publicPlace = object1.getString("logradouro");
+                            String aptNo = object1.getString("numero");
+                            String neighbourHood = object1.getString("bairro");
+                            String city = object1.getString("cidade");
+                            String state = object1.getString("UF");
+                            int pinCode = object1.getInt("CEP");
+
+                            ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                    aptNo, publicPlace, neighbourHood, city, state, pinCode);
+                            boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                            System.out.println("Data Added to ResearchList Table " + success);
+                            Log.e(TAG, "exists: ");
+                        } else {
+                            Log.e(TAG, "doesn't exist: ");
+                        }
+
                         TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
                                 hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
                         boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
@@ -826,6 +892,7 @@ public class List extends Fragment implements LocationListener {
         ArrayList<String> foto = new ArrayList<String>();
         ArrayList<String> relationID = new ArrayList<String>();
         ArrayList<String> imagePath = new ArrayList<>();
+        ArrayList<String> imageName = new ArrayList<>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -840,11 +907,20 @@ public class List extends Fragment implements LocationListener {
             foto.add(data.getString(7));
             relationID.add(data.getString(2));
             imagePath.add(data.getString(10));
+            imageName.add(data.getString(11));
 
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObj = new JSONObject();
             JSONObject jsonObj1 = new JSONObject();
             try {
+                Storage storage = UploadImages.setCredentials(context.getAssets().open("key.json"));
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(imagePath), Utils.ConvertArrayListToString(imageName));
+                    }
+                });
+                thread.start();
 
                 jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
                 jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
@@ -870,6 +946,7 @@ public class List extends Fragment implements LocationListener {
                 final JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        PostResposne();
                         Log.e(TAG, "PUTonResponse: " + response);
                         try {
                             String statusMessage = response.getString("statusMessage");
@@ -906,7 +983,6 @@ public class List extends Fragment implements LocationListener {
                 request.setTag(TAG);
                 queue.add(request);
 
-                DeletePhotoPath(Utils.ConvertArrayListToString(imagePath));
                 codHawb.clear();
                 dataHoraBaixa.clear();
                 latitude.clear();
@@ -916,10 +992,16 @@ public class List extends Fragment implements LocationListener {
                 foto.clear();
                 relationID.clear();
                 imagePath.clear();
+                imageName.clear();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void PostResposne() {
+        Cursor data = mDatabaseHelper.getDeliveryData(); //table3
+        Cursor data1 = mDatabaseHelper.getDataFromTableFour();//Table4
         DeleteDataUponSyncOrUpload();
         mDatabaseHelper.DeleteFromTableThreeUponSync();//Table 3
         Log.e(TAG, "getDeliveryData: " + data.getCount());
@@ -961,38 +1043,6 @@ public class List extends Fragment implements LocationListener {
 
     }
 
-    private void checkDB() {
-        if (internetChecker.checkInternetConnection()) {
-            Log.e(TAG, "checkDB: " + internetChecker.checkInternetConnection());
-//            internetChecker.failureAlert();
-//            internetChecker.serverErrorAlert();
-        }
-        Cursor data = mDatabaseHelper.getData();
-        ArrayList<String> list1 = new ArrayList<String>();
-        ArrayList<String> list2 = new ArrayList<String>();
-        ArrayList<String> list3 = new ArrayList<String>();
-        ArrayList<String> list4 = new ArrayList<String>();
-
-        if (data.getCount() == 0) {
-            Toast.makeText(context, "Sem dados", Toast.LENGTH_SHORT).show();
-        }
-        while (data.moveToNext()) {
-            list1.add(data.getString(1));
-            list2.add(data.getString(2));
-            list3.add(data.getString(3));
-            list4.add(data.getString(4));
-
-            Log.e(TAG, "checkDB1: " + list1);
-//            Log.e(TAG, "checkDB2: " + list2);
-//            Log.e(TAG, "checkDB3: "+list3 );
-//            Log.e(TAG, "checkDB4: "+list4 );
-            list1.clear();
-            list2.clear();
-            list3.clear();
-            list4.clear();
-        }
-    }
-
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
@@ -1014,24 +1064,32 @@ public class List extends Fragment implements LocationListener {
         String fileName = "temp";
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(fileName, ".jpg");
-
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         String a = image.getName();
-
         Log.d("TAG", "createImageFileList: " + currentPhotoPath);
         Log.d("TAG", "createImageFileList: " + a);
 
         return image;
     }
 
-    private void DeletePhotoPath(String path) {
-        File delete = new File(path);
-        if (delete.exists()) {
-            if (delete.delete()) {
-                System.out.println("file Deleted :" + path);
-            } else {
-                System.out.println("file not Deleted :" + path);
+    private void DeletePhotoPath() {
+        Cursor data = mDatabaseHelper.getDeliveryData();//Table3
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(TAG, "DeletePhotoPath: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(11));
+                File delete = new File(Utils.ConvertArrayListToString(list));
+                if (delete.exists()) {
+                    if (delete.delete()) {
+                        System.out.println("file Deleted :" + Utils.ConvertArrayListToString(list));
+                    } else {
+                        System.out.println("file not Deleted :" + Utils.ConvertArrayListToString(list));
+                    }
+                }
+                list.clear();
             }
         }
     }

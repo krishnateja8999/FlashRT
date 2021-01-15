@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ResearchOne extends Fragment implements Step {
+public class ResearchOne extends Fragment implements BlockingStep {
 
     private TextView baseFile, dateOfVerify, empresa, cnjp, ResponseBaseFile, endereco, bairro, cidade, uf, cep, telePhone, email;
     private AppPrefernces prefernces;
@@ -58,6 +59,7 @@ public class ResearchOne extends Fragment implements Step {
         telePhone = v.findViewById(R.id.telePhone);
         email = v.findViewById(R.id.email);
         prefernces = new AppPrefernces(context);
+        dateOfVerify.setInputType(InputType.TYPE_NULL);
 
         dateOfVerify.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -119,13 +121,32 @@ public class ResearchOne extends Fragment implements Step {
         Log.e("TAG", "AddToPreferences: " + prefernces.getResearchOne());
     }
 
-    public void DateDialog(View v) {
-        datePickerDialog.show();
+    private void Validate(StepperLayout.OnNextClickedCallback callback) {
+        if (baseFile.getText().length() == 0) {
+            baseFile.setError("Necessary");
+        } else {
+            callback.goToNextStep();
+        }
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = (Landing_Screen) context;
+    }
+
+    @Override
+    public void onNextClicked(StepperLayout.OnNextClickedCallback callback) {
+        Validate(callback);
+    }
+
+    @Override
+    public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
+
+    }
+
+    @Override
+    public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
+
     }
 }

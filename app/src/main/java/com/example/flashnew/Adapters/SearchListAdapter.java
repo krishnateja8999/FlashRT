@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.flashnew.Fragments.CollectDetails;
 import com.example.flashnew.Fragments.HawbLists;
 import com.example.flashnew.Fragments.List;
+import com.example.flashnew.Fragments.ResearchListModal;
 import com.example.flashnew.Fragments.SearchSurvey;
 import com.example.flashnew.Modals.SearchListModalClass;
 import com.example.flashnew.R;
@@ -40,13 +42,20 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.search_list_view, parent, false);
-        return new SearchListAdapter.MyViewHolder(v);
+        return new MyViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.searchName.setText(listModalClasses.get(position).getName());
         holder.searchAddress.setText(listModalClasses.get(position).getAddress());
+
+        if (listModalClasses.get(position).getTick_mark().equals("true")) {
+            holder.img_research.setImageResource(R.drawable.ic_right);
+            holder.start.setEnabled(false);
+        } else {
+            holder.start.setEnabled(true);
+        }
 
         holder.start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +64,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
                 FragmentTransaction fragmentTransaction = ((AppCompatActivity) context)
                         .getSupportFragmentManager().beginTransaction();
                 Bundle args = new Bundle();
-                args.putString("Research", listModalClasses.get(holder.getAdapterPosition()).getName());
+                args.putString("Research", listModalClasses.get(holder.getAdapterPosition()).getHawbCode());
                 fr.setArguments(args);
                 fragmentTransaction.replace(R.id.content, fr);
                 fragmentTransaction.addToBackStack(null);
@@ -71,18 +80,21 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
         return listModalClasses.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView searchName;
-        private TextView searchAddress;
+        private TextView searchAddress, hawbCode;
         private Button start;
+        private ImageView img_research;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             searchName = itemView.findViewById(R.id.search_name);
             searchAddress = itemView.findViewById(R.id.search_address);
+            hawbCode = itemView.findViewById(R.id.hawb_code);
             start = itemView.findViewById(R.id.start);
+            img_research = itemView.findViewById(R.id.img_research);
 
         }
     }

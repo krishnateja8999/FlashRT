@@ -104,7 +104,6 @@ public class ScannerActivity extends AppCompatActivity {
                             //Creating dialog box
                             AlertDialog alert1 = builder1.create();
                             alert1.show();
-                            //Utils.DialogClass(requireContext(), "Sucesso", "Coleta " + item[2] + " lido com sucesso", "OK");
                             TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14]);
                             boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
                             System.out.println(success);

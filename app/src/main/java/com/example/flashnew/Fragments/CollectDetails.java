@@ -457,11 +457,13 @@ public class CollectDetails extends Fragment {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                            //PostResponseDeleteData();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                            Toast.makeText(mContext, "Erro, tente mais tarde..." + error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                     queue.add(request);
@@ -474,8 +476,6 @@ public class CollectDetails extends Fragment {
                     latitude.clear();
                     longitude.clear();
                     batteryLevel.clear();
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -483,6 +483,12 @@ public class CollectDetails extends Fragment {
             DeleteDataUponSyncOrUpload();
             mDatabaseHelper.DeleteFromTableSixUponSync();
         }
+    }
+
+    private void PostResponseDeleteData() {
+        Log.e(TAG, "PostResponseDeleteData: ");
+        DeleteDataUponSyncOrUpload();
+        mDatabaseHelper.DeleteFromTableSixUponSync();
     }
 
     private void PostNotCollectData() {
@@ -534,11 +540,13 @@ public class CollectDetails extends Fragment {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.e(ContentValues.TAG, "JsonPOSTResponse: " + response);
+                            //PostNotCollectResponseDeleteData();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                            Toast.makeText(mContext, "Erro, tente mais tarde.." + error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                     queue.add(request);
@@ -559,6 +567,11 @@ public class CollectDetails extends Fragment {
             DeleteDataUponSyncOrUpload1();
             mDatabaseHelper.DeleteFromTableSevenUponSync();//Table7
         }
+    }
+
+    private void PostNotCollectResponseDeleteData() {
+        DeleteDataUponSyncOrUpload1();
+        mDatabaseHelper.DeleteFromTableSevenUponSync();//Table7
     }
 
     private void DeletePhotoPath(String path) {
