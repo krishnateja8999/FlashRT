@@ -14,7 +14,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,16 +23,13 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -43,12 +39,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -65,8 +59,8 @@ import com.example.flashnew.Adapters.AutoSuggestAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.HelperClasses.UploadImages;
-import com.example.flashnew.LoginActivity;
 import com.example.flashnew.Modals.ListImageModal;
+import com.example.flashnew.Modals.ResearchListModal;
 import com.example.flashnew.Modals.TableOneDelivererModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
@@ -82,7 +76,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -527,6 +520,8 @@ public class List extends Fragment implements LocationListener {
         String spinnerValue = spinner.getSelectedItem().toString();
         int spinnerID = Integer.parseInt(spinnerValue.replaceAll("[^0-9]", ""));
         java.util.List<ListImageModal> imageModals = mDatabaseHelper.GetImgDetails(hawb.getText().toString());
+//        <customer code>_<contract code>_<image type>*_<hawb>_img_rt_<customer number>**_<AAAAMMDDHHMMSS>.png
+//        3586_4801_img_ar_02406021825_img_rt_OMtest001_20200111171205.png
 
         String clientNumber = mDatabaseHelper.CheckClientNumber(hawb.getText().toString());
         boolean HawbChecker = mDatabaseHelper.CheckHawbCode1(clientNumber);
@@ -594,63 +589,66 @@ public class List extends Fragment implements LocationListener {
                     String delivererName = response.getString("nomeEntregador");
                     int totalDocuments = response.getInt("quantidadeDocumentos");
 
-                    preferences.setFranchise(franchiseName);
-                    preferences.setSystem(system);
+                    if (totalDocuments == 0) {
+                        Toast.makeText(context, "Nenhum Hawbs na lista.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        preferences.setFranchise(franchiseName);
+                        preferences.setSystem(system);
 
-                    TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
-                            deliveryID, delivererName, totalDocuments);
-                    boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                    System.out.println(success1);
+                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                                deliveryID, delivererName, totalDocuments);
+                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                        System.out.println(success1);
 
-                    JSONArray array = response.getJSONArray("documentos");
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject object = array.getJSONObject(i);
-                        Log.e(TAG, "JsonParseListScreenArray: " + object);
+                        JSONArray array = response.getJSONArray("documentos");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            Log.e(TAG, "JsonParseListScreenArray: " + object);
 
-                        int customerID = object.getInt("idCliente");
-                        int contractID = object.getInt("idContrato");
-                        String hawbCode = object.getString("codHawb");
-                        String numberOrder = object.getString("numeroEncomandaCliente");
-                        String recipientName = object.getString("nomeDestinatario");
-                        int dna = object.getInt("dna");
-                        int attempts = object.getInt("tentativas");
-                        String specialPhoto = object.getString("idCCusto");
-                        int score = object.getInt("score");
-                        String clientNumber = object.getString("numeroEncomandaCliente");
+                            int customerID = object.getInt("idCliente");
+                            int contractID = object.getInt("idContrato");
+                            String hawbCode = object.getString("codHawb");
+                            String numberOrder = object.getString("numeroEncomandaCliente");
+                            String recipientName = object.getString("nomeDestinatario");
+                            int dna = object.getInt("dna");
+                            int attempts = object.getInt("tentativas");
+                            String specialPhoto = object.getString("idCCusto");
+                            int score = object.getInt("score");
+                            String clientNumber = object.getString("numeroEncomandaCliente");
 
-                        if (object.has("endereco")) {
-                            JSONObject object1 = object.getJSONObject("endereco");
-                            String publicPlace = object1.getString("logradouro");
-                            String aptNo = object1.getString("numero");
-                            String neighbourHood = object1.getString("bairro");
-                            String city = object1.getString("cidade");
-                            String state = object1.getString("UF");
-                            int pinCode = object1.getInt("CEP");
+                            if (dna == 8192 || dna == 65536) {
+                                JSONObject object1 = object.getJSONObject("endereco");
+                                String publicPlace = object1.getString("logradouro");
+                                String aptNo = object1.getString("numero");
+                                String neighbourHood = object1.getString("bairro");
+                                String city = object1.getString("cidade");
+                                String state = object1.getString("UF");
+                                int pinCode = object1.getInt("CEP");
 
-                            ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
-                                    aptNo, publicPlace, neighbourHood, city, state, pinCode);
-                            boolean success = mDatabaseHelper.AddResearchList(researchListModal);
-                            System.out.println("Data Added to ResearchList Table " + success);
-                            Log.e(TAG, "exists: ");
-                        } else {
-                            Log.e(TAG, "doesn't exist: ");
-                        }
+                                ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                        aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID);
+                                boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                                System.out.println("Data Added to ResearchList Table " + success);
+                                Log.e(TAG, "exists: ");
+                            } else {
+                                Log.e(TAG, "doesn't exist: ");
+                            }
 
-                        TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                        boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                        System.out.println(success);
+                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
+                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                            System.out.println(success);
 
-                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
-                        System.out.println(tableFourHawbCode);
+                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                            System.out.println(tableFourHawbCode);
 
-                        FragmentTransaction fragmentTransaction = context
-                                .getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.content, new HawbLists());
-                        fragmentTransaction.commit();
+                            FragmentTransaction fragmentTransaction = context
+                                    .getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.replace(R.id.content, new HawbLists());
+                            fragmentTransaction.commit();
 //                            setSuccessDialog();
+                        }
                     }
-
                     ListScreenProgressBar.setVisibility(View.GONE);
 
                 } catch (JSONException e) {
@@ -697,59 +695,63 @@ public class List extends Fragment implements LocationListener {
                     String delivererName = response.getString("nomeEntregador");
                     int totalDocuments = response.getInt("quantidadeDocumentos");
 
-                    preferences.setFranchise(franchiseName);
-                    preferences.setSystem(system);
+                    if (totalDocuments == 0) {
+                        Toast.makeText(context, "Nenhum Hawbs na lista.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        preferences.setFranchise(franchiseName);
+                        preferences.setSystem(system);
 
-                    TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
-                            deliveryID, delivererName, totalDocuments);
-                    boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                    System.out.println(success1);
+                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                                deliveryID, delivererName, totalDocuments);
+                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                        System.out.println(success1);
 
-                    JSONArray array = response.getJSONArray("documentos");
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject object = array.getJSONObject(i);
-                        Log.e(TAG, "JsonParseListScreenArray: " + object);
+                        JSONArray array = response.getJSONArray("documentos");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            Log.e(TAG, "JsonParseListScreenArray: " + object);
 
-                        int customerID = object.getInt("idCliente");
-                        int contractID = object.getInt("idContrato");
-                        String hawbCode = object.getString("codHawb");
-                        String numberOrder = object.getString("numeroEncomandaCliente");
-                        String recipientName = object.getString("nomeDestinatario");
-                        int dna = object.getInt("dna");
-                        int attempts = object.getInt("tentativas");
-                        String specialPhoto = object.getString("idCCusto");
-                        int score = object.getInt("score");
-                        String clientNumber = object.getString("numeroEncomandaCliente");
+                            int customerID = object.getInt("idCliente");
+                            int contractID = object.getInt("idContrato");
+                            String hawbCode = object.getString("codHawb");
+                            String numberOrder = object.getString("numeroEncomandaCliente");
+                            String recipientName = object.getString("nomeDestinatario");
+                            int dna = object.getInt("dna");
+                            int attempts = object.getInt("tentativas");
+                            String specialPhoto = object.getString("idCCusto");
+                            int score = object.getInt("score");
+                            String clientNumber = object.getString("numeroEncomandaCliente");
 
-                        if (object.has("endereco")) {
-                            JSONObject object1 = object.getJSONObject("endereco");
-                            String publicPlace = object1.getString("logradouro");
-                            String aptNo = object1.getString("numero");
-                            String neighbourHood = object1.getString("bairro");
-                            String city = object1.getString("cidade");
-                            String state = object1.getString("UF");
-                            int pinCode = object1.getInt("CEP");
+                            if (dna == 8192 || dna == 65536) {
+                                JSONObject object1 = object.getJSONObject("endereco");
+                                String publicPlace = object1.getString("logradouro");
+                                String aptNo = object1.getString("numero");
+                                String neighbourHood = object1.getString("bairro");
+                                String city = object1.getString("cidade");
+                                String state = object1.getString("UF");
+                                int pinCode = object1.getInt("CEP");
 
-                            ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
-                                    aptNo, publicPlace, neighbourHood, city, state, pinCode);
-                            boolean success = mDatabaseHelper.AddResearchList(researchListModal);
-                            System.out.println("Data Added to ResearchList Table " + success);
-                            Log.e(TAG, "exists: ");
-                        } else {
-                            Log.e(TAG, "doesn't exist: ");
-                        }
+                                ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                        aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID);
+                                boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                                System.out.println("Data Added to ResearchList Table " + success);
+                                Log.e(TAG, "exists: ");
+                            } else {
+                                Log.e(TAG, "doesn't exist: ");
+                            }
 
-                        TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                        boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                        System.out.println(success);
+                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
+                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                            System.out.println(success);
 
-                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
-                        System.out.println(tableFourHawbCode);
-                        Delivery();
+                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                            System.out.println(tableFourHawbCode);
+                            Delivery();
 //                            setSuccessDialog();
+                        }
+                        Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
                     ListScreenProgressBar.setVisibility(View.GONE);
 
                 } catch (JSONException e) {
@@ -796,61 +798,63 @@ public class List extends Fragment implements LocationListener {
                     String delivererName = response.getString("nomeEntregador");
                     int totalDocuments = response.getInt("quantidadeDocumentos");
 
-                    preferences.setFranchise(franchiseName);
-                    preferences.setSystem(system);
+                    if (totalDocuments == 0) {
+                        Toast.makeText(context, "Nenhum Hawbs na lista.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        preferences.setFranchise(franchiseName);
+                        preferences.setSystem(system);
 
-                    TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
-                            deliveryID, delivererName, totalDocuments);
-                    boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
-                    System.out.println(success1);
+                        TableOneDelivererModal tableOneDelivererModal = new TableOneDelivererModal(franchiseName, lists,
+                                deliveryID, delivererName, totalDocuments);
+                        boolean success1 = mDatabaseHelper.addDataToTableOne(tableOneDelivererModal);
+                        System.out.println(success1);
 
-                    JSONArray array = response.getJSONArray("documentos");
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject object = array.getJSONObject(i);
-                        Log.e(TAG, "JsonParseListScreenArray: " + object);
+                        JSONArray array = response.getJSONArray("documentos");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            Log.e(TAG, "JsonParseListScreenArray: " + object);
 
-                        int customerID = object.getInt("idCliente");
-                        int contractID = object.getInt("idContrato");
-                        String hawbCode = object.getString("codHawb");
-                        String numberOrder = object.getString("numeroEncomandaCliente");
-                        String recipientName = object.getString("nomeDestinatario");
-                        int dna = object.getInt("dna");
-                        int attempts = object.getInt("tentativas");
-                        String specialPhoto = object.getString("idCCusto");
-                        int score = object.getInt("score");
-                        String clientNumber = object.getString("numeroEncomandaCliente");
+                            int customerID = object.getInt("idCliente");
+                            int contractID = object.getInt("idContrato");
+                            String hawbCode = object.getString("codHawb");
+                            String numberOrder = object.getString("numeroEncomandaCliente");
+                            String recipientName = object.getString("nomeDestinatario");
+                            int dna = object.getInt("dna");
+                            int attempts = object.getInt("tentativas");
+                            String specialPhoto = object.getString("idCCusto");
+                            int score = object.getInt("score");
+                            String clientNumber = object.getString("numeroEncomandaCliente");
 
-                        if (object.has("endereco")) {
-                            JSONObject object1 = object.getJSONObject("endereco");
-                            String publicPlace = object1.getString("logradouro");
-                            String aptNo = object1.getString("numero");
-                            String neighbourHood = object1.getString("bairro");
-                            String city = object1.getString("cidade");
-                            String state = object1.getString("UF");
-                            int pinCode = object1.getInt("CEP");
+                            if (dna == 8192 || dna == 65536) {
+                                JSONObject object1 = object.getJSONObject("endereco");
+                                String publicPlace = object1.getString("logradouro");
+                                String aptNo = object1.getString("numero");
+                                String neighbourHood = object1.getString("bairro");
+                                String city = object1.getString("cidade");
+                                String state = object1.getString("UF");
+                                int pinCode = object1.getInt("CEP");
 
-                            ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
-                                    aptNo, publicPlace, neighbourHood, city, state, pinCode);
-                            boolean success = mDatabaseHelper.AddResearchList(researchListModal);
-                            System.out.println("Data Added to ResearchList Table " + success);
-                            Log.e(TAG, "exists: ");
-                        } else {
-                            Log.e(TAG, "doesn't exist: ");
-                        }
+                                ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                        aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID);
+                                boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                                System.out.println("Data Added to ResearchList Table " + success);
+                                Log.e(TAG, "exists: ");
+                            } else {
+                                Log.e(TAG, "doesn't exist: ");
+                            }
 
-                        TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                        boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                        System.out.println(success);
+                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
+                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                            System.out.println(success);
 
-                        boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
-                        System.out.println(tableFourHawbCode);
-                        Returns();
+                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                            System.out.println(tableFourHawbCode);
+                            Returns();
 //                            setSuccessDialog();
+                        }
+                        Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
-
-
                     ListScreenProgressBar.setVisibility(View.GONE);
 
                 } catch (JSONException e) {
@@ -1071,27 +1075,6 @@ public class List extends Fragment implements LocationListener {
         Log.d("TAG", "createImageFileList: " + a);
 
         return image;
-    }
-
-    private void DeletePhotoPath() {
-        Cursor data = mDatabaseHelper.getDeliveryData();//Table3
-        ArrayList<String> list = new ArrayList<String>();
-        if (data.getCount() == 0) {
-            Log.e(TAG, "DeletePhotoPath: No Data");
-        } else {
-            while (data.moveToNext()) {
-                list.add(data.getString(11));
-                File delete = new File(Utils.ConvertArrayListToString(list));
-                if (delete.exists()) {
-                    if (delete.delete()) {
-                        System.out.println("file Deleted :" + Utils.ConvertArrayListToString(list));
-                    } else {
-                        System.out.println("file not Deleted :" + Utils.ConvertArrayListToString(list));
-                    }
-                }
-                list.clear();
-            }
-        }
     }
 
     @Override

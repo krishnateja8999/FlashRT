@@ -220,5 +220,49 @@ public class AppPrefernces {
         return gson.fromJson(list, type);
     }
 
+    public void setResearch(JSONObject research) {
+        editor.putString("dgdfg", String.valueOf(research));
+        editor.apply();
+    }
+
+    public String getResearch() {
+        return preference.getString("dgdfg", " ");
+    }
+
+    public void setResearchOneDetails(String OneDetails) {
+        editor.putString("ResearchOneDetails", OneDetails);
+        editor.apply();
+    }
+
+    public String getResearchOneDetails() {
+        return preference.getString("ResearchOneDetails", " ");
+    }
+
+    public void setResearchTwoDetails(String TwoDetails) {
+        editor.putString("ResearchTwoDetails", TwoDetails);
+        editor.apply();
+    }
+
+    public String getResearchTwoDetails() {
+        return preference.getString("ResearchTwoDetails", " ");
+    }
+
+    public void setResearchThreeDetails(String ThreeDetails) {
+        editor.putString("ResearchThreeDetails", ThreeDetails);
+        editor.apply();
+    }
+
+    public String getResearchThreeDetails() {
+        return preference.getString("ResearchThreeDetails", " ");
+    }
+
+    public void setSignaturePath(String sigPath) {
+        editor.putString("SignatureImagePath", sigPath);
+        editor.apply();
+    }
+
+    public String getSignaturePath() {
+        return preference.getString("SignatureImagePath", " ");
+    }
 
 }

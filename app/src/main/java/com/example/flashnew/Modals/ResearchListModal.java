@@ -1,4 +1,4 @@
-package com.example.flashnew.Fragments;
+package com.example.flashnew.Modals;
 
 public class ResearchListModal {
     String hawbCode;
@@ -11,12 +11,14 @@ public class ResearchListModal {
     String city;
     String state;
     int pinCode;
+    int clientID;
+    int contractID;
 
     public ResearchListModal() {
 
     }
 
-    public ResearchListModal(String hawbCode, String clientNumber, String recipientName, int dna, String aptNo, String publicPlace, String streetName, String city, String state, int pinCode) {
+    public ResearchListModal(String hawbCode, String clientNumber, String recipientName, int dna, String aptNo, String publicPlace, String streetName, String city, String state, int pinCode, int clientID, int contractID) {
         this.hawbCode = hawbCode;
         this.clientNumber = clientNumber;
         this.RecipientName = recipientName;
@@ -27,6 +29,8 @@ public class ResearchListModal {
         this.city = city;
         this.state = state;
         this.pinCode = pinCode;
+        this.clientID = clientID;
+        this.contractID = contractID;
     }
 
     public String getHawbCode() {
@@ -107,5 +111,21 @@ public class ResearchListModal {
 
     public void setPinCode(int pinCode) {
         this.pinCode = pinCode;
+    }
+
+    public int getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    public int getContractID() {
+        return contractID;
+    }
+
+    public void setContractID(int contractID) {
+        this.contractID = contractID;
     }
 }

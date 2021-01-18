@@ -1,6 +1,5 @@
 package com.example.flashnew.Adapters;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,10 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.flashnew.Fragments.CollectDetails;
-import com.example.flashnew.Fragments.HawbLists;
-import com.example.flashnew.Fragments.List;
-import com.example.flashnew.Fragments.ResearchListModal;
 import com.example.flashnew.Fragments.SearchSurvey;
 import com.example.flashnew.Modals.SearchListModalClass;
 import com.example.flashnew.R;
@@ -65,6 +60,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
                         .getSupportFragmentManager().beginTransaction();
                 Bundle args = new Bundle();
                 args.putString("Research", listModalClasses.get(holder.getAdapterPosition()).getHawbCode());
+                args.putString("Customer_code", listModalClasses.get(holder.getAdapterPosition()).getCustomerID());
+                args.putString("Contract_code", listModalClasses.get(holder.getAdapterPosition()).getClientID());
+                args.putString("Client_name", listModalClasses.get(holder.getAdapterPosition()).getClientName());
                 fr.setArguments(args);
                 fragmentTransaction.replace(R.id.content, fr);
                 fragmentTransaction.addToBackStack(null);

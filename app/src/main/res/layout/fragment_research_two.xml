@@ -225,7 +225,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/vigilantes"
+            android:id="@+id/eText1"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -250,7 +250,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/observacao"
+            android:id="@+id/eText2"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -355,6 +355,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/eText3"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -422,6 +423,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/eText4"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -489,6 +491,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/eText5"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -513,6 +516,7 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/eText6"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -697,6 +701,112 @@
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/eText7"
+            android:layout_width="350dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:background="@drawable/edit_text_grey_border"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="FOTOGRAFE O TELHADO OU ÁREA ABERTA (SE HOUVER)"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/photo14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Clique para tirar a foto" />
+
+            <ImageView
+                android:id="@+id/image14"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/ic_time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="HÁ ALGUM DUTO DE VENTILAÇÃO ABERTO? *"
+            android:textSize="15sp" />
+
+        <RadioGroup
+            android:id="@+id/researchRGroup20"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Sim"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/bg"
+                android:buttonTint="@color/bg"
+                android:paddingRight="280dp"
+                android:text="Não"
+                android:textSize="15sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/check_list26"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/eText8"
             android:layout_width="350dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -1491,7 +1601,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/comments"
+            android:id="@+id/eText9"
             android:layout_width="350dp"
             android:layout_height="75dp"
             android:layout_gravity="center"

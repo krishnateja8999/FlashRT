@@ -5,12 +5,18 @@ public class SearchListModalClass {
     String name;
     String address;
     String tick_mark;
+    String customerID;
+    String clientID;
+    String clientName;
 
-    public SearchListModalClass(String hawbCode, String name, String address, String tick_mark) {
+    public SearchListModalClass(String hawbCode, String name, String address, String tick_mark, String customerID, String clientID, String clientName) {
         this.hawbCode = hawbCode;
         this.name = name;
         this.address = address;
         this.tick_mark = tick_mark;
+        this.customerID = customerID;
+        this.clientID = clientID;
+        this.clientName = clientName;
     }
 
     public String getHawbCode() {
@@ -43,5 +49,29 @@ public class SearchListModalClass {
 
     public void setTick_mark(String tick_mark) {
         this.tick_mark = tick_mark;
+    }
+
+    public String getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
+    }
+
+    public String getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 }

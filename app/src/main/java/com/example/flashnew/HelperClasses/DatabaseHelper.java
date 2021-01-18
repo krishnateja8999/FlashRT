@@ -5,12 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.flashnew.Fragments.ResearchListModal;
+import com.example.flashnew.Modals.ResearchListModal;
 import com.example.flashnew.Modals.ListImageModal;
 import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.Modals.TableOneDelivererModal;
@@ -29,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private final Context context;
     private static final String DATABASE_NAME = "Flash.db";
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
 
     //Table names
     private static final String TABLE_DELIVER_DETAILS = "tbl_deliverer_details";
@@ -128,7 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PUBLIC_PLACE = "public_place";
     public static final String CREATE_TABLE_RESEARCH_LIST = "CREATE TABLE " + TABLE_RESEARCH_LIST + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, " + APT_NO + " TEXT, " +
-            PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT)";
+            PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + CUSTOMER_ID + " TEXT, " + CONTRACT_ID + " TEXT)";
 
     private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
     private byte[] imageInByte, imageInByte2;
@@ -628,6 +627,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(STATE, listModal.getState());
         contentValues.put(PINCODE, listModal.getPinCode());
         contentValues.put(TICK_MARK, "false");
+        contentValues.put(CUSTOMER_ID, listModal.getClientID());
+        contentValues.put(CONTRACT_ID, listModal.getContractID());
 
         long result = db.insert(TABLE_RESEARCH_LIST, null, contentValues);
         db.close();

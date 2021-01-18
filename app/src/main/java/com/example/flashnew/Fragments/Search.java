@@ -67,7 +67,7 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
         recyclerViewSearchList.setLayoutManager(layoutManager);
         ResearchList();
 
-//        searchListModalClasses.add(new SearchListModalClass("sdf","Augusto Vasquez", "PRAJA DO CERIO 21 VILA PAULISTA, SAO PAULO, SP"));
+//        searchListModalClasses.add(new SearchListModalClass("sdf","Augusto Vasquez", "PRAJA DO CERIO 21 VILA PAULISTA, SAO PAULO, SP","false", "sdfdg", "41656", "research"));
 //        searchAdapter = new SearchListAdapter(getActivity(), searchListModalClasses);
 //        recyclerViewSearchList.setAdapter(searchAdapter);
 
@@ -85,7 +85,7 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
             while (data.moveToNext()) {
                 searchListModalClasses.add(new SearchListModalClass(data.getString(1), data.getString(3),
                         data.getString(5) + ", " + data.getString(6) + ", " + data.getString(7) + ", " + data.getString(8) +
-                                ", " + data.getString(9) + ", " + data.getString(10), data.getString(11)));
+                                ", " + data.getString(9) + ", " + data.getString(10), data.getString(11), data.getString(12), data.getString(13), data.getString(2)));
                 searchAdapter = new SearchListAdapter(getActivity(), searchListModalClasses);
                 recyclerViewSearchList.setAdapter(searchAdapter);
                 searchAdapter.notifyDataSetChanged();

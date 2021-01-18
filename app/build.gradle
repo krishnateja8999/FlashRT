@@ -74,5 +74,6 @@ dependencies {
     implementation platform('com.google.cloud:libraries-bom:16.2.1')
     implementation 'com.google.cloud:google-cloud-storage'
     implementation 'com.google.cloud:google-cloud-core:1.94.0'
+    implementation 'com.kyanogen.signatureview:signature-view:1.2'
 }
 
