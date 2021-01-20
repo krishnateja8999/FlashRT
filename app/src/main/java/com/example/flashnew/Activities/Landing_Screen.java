@@ -415,6 +415,7 @@ public class Landing_Screen extends AppCompatActivity {
                         if (preferences.getListID().equals(edittext.getText().toString())) {
                             databaseHelper.DeleteDataFromTableTwo();
                             databaseHelper.DeleteTableFour();
+                            databaseHelper.DeleteResearchList();
                             preferences.clearListID();
                             Intent intent = new Intent("list_code_status");
                             LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
@@ -497,6 +498,39 @@ public class Landing_Screen extends AppCompatActivity {
         }
     }
 
+    private void SyncFinished() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setTitle(getResources().getString(R.string.Login_screen1));
+        builder1.setMessage("Sincronização concluída");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        //Creating dialog box
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+    }
+
+    private void NoListsToSync() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
+        builder1.setTitle(getResources().getString(R.string.Login_screen1));
+        builder1.setMessage("Sem listas para sincronizar");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert1 = builder1.create();
+        alert1.show();
+    }
+
+    //list Screen
     private void PutJsonRequest() throws JSONException, IOException {
         Cursor data = databaseHelper.getDeliveryData(); //table3
         Cursor data1 = databaseHelper.getDataFromTableFour();
@@ -576,6 +610,7 @@ public class Landing_Screen extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.e(TAG, "PUTonResponseError: " + error);
+                    progressDialog.dismiss();
                     String finalResponseCode = error.toString();
                     Toast.makeText(Landing_Screen.this, "Erro, tente mais tarde..." + error.getMessage(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, "ErrorCodeString: " + finalResponseCode);
@@ -629,22 +664,6 @@ public class Landing_Screen extends AppCompatActivity {
         }
     }
 
-    private void SyncFinished() {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setTitle(getResources().getString(R.string.Login_screen1));
-        builder1.setMessage("Sincronização concluída");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        //Creating dialog box
-        AlertDialog alert1 = builder1.create();
-        alert1.show();
-    }
-
     private void DeleteDataUponSyncOrUpload() {
         Cursor data = databaseHelper.getDeliveryData();//Table3
         ArrayList<String> list = new ArrayList<String>();
@@ -660,50 +679,7 @@ public class Landing_Screen extends AppCompatActivity {
 
     }
 
-    private void NoListsToSync() {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
-        builder1.setTitle(getResources().getString(R.string.Login_screen1));
-        builder1.setMessage("Sem listas para sincronizar");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton(
-                "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert1 = builder1.create();
-        alert1.show();
-    }
-
-    private void DeleteDataUponSyncOrUpload2() {
-        Cursor data = databaseHelper.GetDataFromTableSix(); //table6
-        ArrayList<String> list = new ArrayList<String>();
-        if (data.getCount() == 0) {
-            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
-        } else {
-            while (data.moveToNext()) {
-                list.add(data.getString(1));
-                databaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
-                list.clear();
-            }
-        }
-    }
-
-    private void DeleteDataUponSyncOrUpload1() {
-        Cursor data = databaseHelper.GetDataFromTableSeven(); //table7
-        ArrayList<String> list = new ArrayList<String>();
-        if (data.getCount() == 0) {
-            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
-        } else {
-            while (data.moveToNext()) {
-                list.add(data.getString(1));
-                databaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
-                list.clear();
-            }
-        }
-    }
-
+    //Collect list screen
     private void PostCollectData() {
         Cursor data = databaseHelper.GetDataFromTableSix(); //table6
         ArrayList<String> coletaID = new ArrayList<String>();
@@ -764,6 +740,7 @@ public class Landing_Screen extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                            progressDialog.dismiss();
                             Toast.makeText(Landing_Screen.this, "Erro, tente mais tarde..." + error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
@@ -784,11 +761,6 @@ public class Landing_Screen extends AppCompatActivity {
             DeleteDataUponSyncOrUpload2();
             databaseHelper.DeleteFromTableSixUponSync();
         }
-    }
-
-    private void PostCollectResponseDeleteData() {
-        DeleteDataUponSyncOrUpload();
-        databaseHelper.DeleteFromTableSixUponSync();
     }
 
     private void PostNotCollectData() {
@@ -845,6 +817,7 @@ public class Landing_Screen extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(ContentValues.TAG, "JsonPOSTErrorResponse: " + error);
+                            progressDialog.dismiss();
                             Toast.makeText(Landing_Screen.this, "Erro, tente mais tarde..." + error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
@@ -866,9 +839,178 @@ public class Landing_Screen extends AppCompatActivity {
         }
     }
 
+    private void DeleteDataUponSyncOrUpload2() {
+        Cursor data = databaseHelper.GetDataFromTableSix(); //table6
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                databaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
+                list.clear();
+            }
+        }
+    }
+
+    private void DeleteDataUponSyncOrUpload1() {
+        Cursor data = databaseHelper.GetDataFromTableSeven(); //table7
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(ContentValues.TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                databaseHelper.DeleteFromTableFiveUponUpload(Utils.ConvertArrayListToString(list));//Table5
+                list.clear();
+            }
+        }
+    }
+
     private void PostNotCollectResponseDeleteData() {
         DeleteDataUponSyncOrUpload1();
         databaseHelper.DeleteFromTableSevenUponSync();//Table7
+    }
+
+    private void PostCollectResponseDeleteData() {
+        DeleteDataUponSyncOrUpload();
+        databaseHelper.DeleteFromTableSixUponSync();
+    }
+
+    //Research list screen
+
+    private void PutResearchData() {
+        Cursor data = databaseHelper.GetResearchDetails(); //table11
+        String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
+
+        ArrayList<String> codHawb = new ArrayList<String>();
+        ArrayList<String> dataHoraBaixa = new ArrayList<String>();
+        ArrayList<String> nivelBateria = new ArrayList<String>();
+        ArrayList<String> latitude = new ArrayList<String>();
+        ArrayList<String> longitude = new ArrayList<String>();
+        ArrayList<String> body1 = new ArrayList<String>();
+
+        if (data.getCount() == 0) {
+            Log.e(TAG, "PutJsonRequest: No Data");
+        } else {
+            while (data.moveToNext()) {
+                codHawb.add(data.getString(1));
+                dataHoraBaixa.add(data.getString(2));
+                nivelBateria.add(data.getString(3));
+                latitude.add(data.getString(4));
+                longitude.add(data.getString(5));
+                body1.add(data.getString(6));
+
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObj = new JSONObject();
+                JSONObject jsonObj1 = new JSONObject();
+                try {
+                    jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                    jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                    jsonObj.put("xmlPesquisa", Utils.ConvertArrayListToString(body1));
+
+                    jsonObj1.put("imei", preferences.getIMEI());
+                    jsonObj1.put("franquia", preferences.getFranchise());
+                    jsonObj1.put("sistema", preferences.getSystem());
+                    jsonObj1.put("lista", preferences.getListID());
+                    jsonObj1.put("entregas", jsonArray);
+                    jsonArray.put(jsonObj);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        DeleteResearchDataUponSendingOrSync();
+                        progressDialog.dismiss();
+                        Log.e(TAG, "onResponseResearchThree: " + response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "onErrorResponseResearchThree: " + error.getMessage());
+                        progressDialog.dismiss();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> params = new HashMap<String, String>();
+                        String auth1 = "Basic "
+                                + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
+                                Base64.NO_WRAP);
+                        params.put("Authorization", auth1);
+                        params.put("x-versao-rt", "3.9.0");
+                        params.put("x-rastreador", "ricardo");
+                        params.put("Content-Type", "application/json; charset=utf-8");
+                        return params;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+                };
+                queue.add(request);
+
+                codHawb.clear();
+                dataHoraBaixa.clear();
+                nivelBateria.clear();
+                latitude.clear();
+                longitude.clear();
+                body1.clear();
+            }
+            SendResearchImages();
+        }
+    }
+
+    private void SendResearchImages() {
+        Cursor data = databaseHelper.GetResearchImages(); //table12
+        ArrayList<String> ImagePath = new ArrayList<String>();
+        ArrayList<String> ImageName = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(TAG, "SendResearchImages: No Data");
+        } else {
+            while (data.moveToNext()) {
+                ImagePath.add(data.getString(1));
+                ImageName.add(data.getString(2));
+                try {
+                    Storage storage = UploadImages.setCredentials(getAssets().open("key.json"));
+
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(ImagePath), Utils.ConvertArrayListToString(ImageName));
+                        }
+                    });
+                    thread.start();
+                } catch (Exception e) {
+                    Log.e(TAG, "SendResearchImagesException: " + e.getMessage());
+                }
+                ImagePath.clear();
+                ImageName.clear();
+            }
+            databaseHelper.DeleteResearchImages();
+        }
+    }
+
+    private void DeleteResearchDataUponSendingOrSync() {
+        Cursor data = databaseHelper.GetResearchDetails(); //table11
+        ArrayList<String> list = new ArrayList<String>();
+        if (data.getCount() == 0) {
+            Log.e(TAG, "DeleteDataUponSyncOrUpload: No Data");
+        } else {
+            while (data.moveToNext()) {
+                list.add(data.getString(1));
+                databaseHelper.DeleteDataFromResearchList(Utils.ConvertArrayListToString(list));
+                list.clear();
+            }
+            databaseHelper.DeleteFromResearchDetails();
+        }
     }
 
     private void CodeDeletedDialog(String code) {

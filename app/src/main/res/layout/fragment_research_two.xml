@@ -357,10 +357,10 @@
         <EditText
             android:id="@+id/eText3"
             android:layout_width="350dp"
-            android:layout_height="45dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="text|textMultiLine"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />
@@ -425,10 +425,10 @@
         <EditText
             android:id="@+id/eText4"
             android:layout_width="350dp"
-            android:layout_height="45dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="text|textMultiLine"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />
@@ -518,10 +518,10 @@
         <EditText
             android:id="@+id/eText6"
             android:layout_width="350dp"
-            android:layout_height="45dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="text|textMultiLine"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />
@@ -703,10 +703,10 @@
         <EditText
             android:id="@+id/eText7"
             android:layout_width="350dp"
-            android:layout_height="45dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="text|textMultiLine"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />
@@ -808,10 +808,10 @@
         <EditText
             android:id="@+id/eText8"
             android:layout_width="350dp"
-            android:layout_height="45dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="text|textMultiLine"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />
@@ -1607,7 +1607,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_grey_border"
-            android:inputType="text"
+            android:inputType="text|textMultiLine"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:textColor="@color/black" />

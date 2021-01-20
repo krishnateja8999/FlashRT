@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
+import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.Utils;
 import com.stepstone.stepper.BlockingStep;
@@ -58,6 +59,8 @@ public class ResearchTwo extends Fragment implements BlockingStep {
     private String currentPhotoPath;
     private Landing_Screen context;
     private AppPrefernces prefernces;
+    public static final String TAG = "TAG";
+    private DatabaseHelper mDatabaseHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +69,7 @@ public class ResearchTwo extends Fragment implements BlockingStep {
         View v = inflater.inflate(R.layout.fragment_research_two, container, false);
 
         prefernces = new AppPrefernces(context);
+        mDatabaseHelper = new DatabaseHelper(context);
         researchRGroup1 = v.findViewById(R.id.researchRGroup1);
         researchRGroup2 = v.findViewById(R.id.researchRGroup2);
         researchRGroup3 = v.findViewById(R.id.researchRGroup3);
@@ -264,6 +268,7 @@ public class ResearchTwo extends Fragment implements BlockingStep {
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
+                    mDatabaseHelper.AddResearchImages("/null", "sdf");
                     imagePath1 = currentPhotoPath;
                     image1.setImageResource(R.drawable.ic_right);
                     //        <customer code>_<contract code>_<image type>*_<hawb>_img_rt_<customer number>**_<AAAAMMDDHHMMSS>.png

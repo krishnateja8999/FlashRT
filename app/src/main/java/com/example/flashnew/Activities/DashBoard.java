@@ -22,7 +22,7 @@ import java.util.Collections;
 public class DashBoard extends AppCompatActivity {
     private static final String TAG = "DashBoard";
     private Toolbar toolbar;
-    private TextView imeiText, pendingHawbLists, listaColetasPendentes, syncHawb, listaColetasAguardandoSincronizar, listaAguardandoSincronizarImagens, listaColetasAguardandoSincronizarImagem, listaEntregues, listaDevolvidos, listaColetasFeitas;
+    private TextView imeiText, pendingHawbLists, listaColetasPendentes, syncHawb, listaColetasAguardandoSincronizar, listaAguardandoSincronizarImagens, listaColetasAguardandoSincronizarImagem, listaEntregues, listaDevolvidos, listaColetasFeitas, listaPesquisaAguardandoSincronizar, listaPesquisaPendente, listaPesquisaFotoAguardandoSincronizar;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
 
@@ -44,6 +44,9 @@ public class DashBoard extends AppCompatActivity {
         listaEntregues = findViewById(R.id.listaEntregues);
         listaDevolvidos = findViewById(R.id.listaDevolvidos);
         listaColetasFeitas = findViewById(R.id.listaColetasFeitas);
+        listaPesquisaPendente = findViewById(R.id.listaPesquisaPendente);
+        listaPesquisaAguardandoSincronizar = findViewById(R.id.listaPesquisaAguardandoSincronizar);
+        listaPesquisaFotoAguardandoSincronizar = findViewById(R.id.listaPesquisaFotoAguardandoSincronizar);
         mDatabaseHelper = new DatabaseHelper(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(null);
@@ -55,6 +58,8 @@ public class DashBoard extends AppCompatActivity {
     private void CheckTotalData() {
         Cursor HawbPending = mDatabaseHelper.getData();
         Cursor CollectPending = mDatabaseHelper.GetDataFromTableFive();
+        Cursor ResearchDetails = mDatabaseHelper.GetResearchDetails();
+        Cursor ResearchImages = mDatabaseHelper.GetResearchImages();
 
         String totalHawbsPending = String.valueOf(HawbPending.getCount());
         String totalCollectPending = String.valueOf(CollectPending.getCount());
@@ -65,6 +70,9 @@ public class DashBoard extends AppCompatActivity {
         int HawbDelivery = mDatabaseHelper.TotalDeliveryCount();
         int HawbReturn = mDatabaseHelper.TotalReturnCount();
         int CollectCount = mDatabaseHelper.TotalCollectCount();
+        int ResearchPending = mDatabaseHelper.TotalResearchPendingCount();
+        int ResearchSyncCount = ResearchDetails.getCount();
+        int ResearchImageCount = ResearchImages.getCount();
 
         listaEntregues.setText(String.valueOf(HawbDelivery));
         listaDevolvidos.setText(String.valueOf(HawbReturn));
@@ -75,6 +83,9 @@ public class DashBoard extends AppCompatActivity {
         listaColetasFeitas.setText(String.valueOf(CollectCount));
         listaColetasAguardandoSincronizar.setText(String.valueOf(CollectSync));
         listaColetasAguardandoSincronizarImagem.setText(String.valueOf(NotCollectSync));
+        listaPesquisaPendente.setText(String.valueOf(ResearchPending));
+        listaPesquisaAguardandoSincronizar.setText(String.valueOf(ResearchSyncCount));
+        listaPesquisaFotoAguardandoSincronizar.setText(String.valueOf(ResearchImageCount));
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

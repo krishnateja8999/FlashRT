@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.example.flashnew.Modals.ResearchListModal;
 import com.example.flashnew.Modals.ListImageModal;
+import com.example.flashnew.Modals.SaveResearchDetailsModal;
 import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.Modals.TableOneDelivererModal;
 import com.example.flashnew.Modals.TableSevenNotCollectedModal;
@@ -41,6 +42,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_TOTAL_DELIVERY_RETURNS = "tbl_total_delivery_returns";
     private static final String TABLE_TOTAL_COLLECT_DONE = "tbl_total_collect_done";
     private static final String TABLE_RESEARCH_LIST = "tbl_research_list";
+    private static final String TABLE_SAVE_RESEARCH_DETAILS = "tbl_save_research_details";
+    private static final String TABLE_RESEARCH_IMAGES = "tbl_research_images";
 
     //Table 1 columns & query:
     private static final String ID = "id";
@@ -129,6 +132,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, " + APT_NO + " TEXT, " +
             PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + CUSTOMER_ID + " TEXT, " + CONTRACT_ID + " TEXT)";
 
+    //Table 11 columns & query
+    public static final String RESEARCH_ONE = "research_one";
+    public static final String RESEARCH_TWO = "research_two";
+    public static final String RESEARCH_THREE = "research_three";
+    public static final String XML_RESEARCH = "xml_research";
+    public static final String CREATE_TABLE_SAVE_RESEARCH_DETAILS = "CREATE TABLE " + TABLE_SAVE_RESEARCH_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            HAWB_CODE + " TEXT, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + XML_RESEARCH + " TEXT)";
+
+    //Table 12 columns & query
+    public static final String RESEARCH_IMAGES = "research_image_path";
+    public static final String CREATE_TABLE_RESEARCH_IMAGES = "CREATE TABLE " + TABLE_RESEARCH_IMAGES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            RESEARCH_IMAGES + " TEXT, " + IMAGE_NAME + " TEXT)";
     private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
     private byte[] imageInByte, imageInByte2;
 
@@ -149,6 +164,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TOTAL_DELIVERY_RETURNS);
         db.execSQL(CREATE_TABLE_TOTAL_COLLECT_DONE);
         db.execSQL(CREATE_TABLE_RESEARCH_LIST);
+        db.execSQL(CREATE_TABLE_SAVE_RESEARCH_DETAILS);
+        db.execSQL(CREATE_TABLE_RESEARCH_IMAGES);
     }
 
     @Override
@@ -164,6 +181,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_DELIVERY_RETURNS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOTAL_COLLECT_DONE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESEARCH_LIST);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SAVE_RESEARCH_DETAILS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESEARCH_IMAGES);
         //create new tables on upgrade
         onCreate(db);
     }
@@ -180,6 +199,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_TOTAL_DELIVERY_RETURNS);
         db.execSQL("DELETE FROM " + TABLE_TOTAL_COLLECT_DONE);
         db.execSQL("DELETE FROM " + TABLE_RESEARCH_LIST);
+        db.execSQL("DELETE FROM " + TABLE_SAVE_RESEARCH_DETAILS);
+        db.execSQL("DELETE FROM " + TABLE_RESEARCH_IMAGES);
         db.close();
     }
 
@@ -644,6 +665,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void CheckTickMarkInResearchLists() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "UPDATE " + TABLE_RESEARCH_LIST + " SET " + TICK_MARK + "= 'true'";
+        db.execSQL(query);
+    }
+
+    public void DeleteDataFromResearchList(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_RESEARCH_LIST + " WHERE " + HAWB_CODE + " = '" + id + "'";
+        db.execSQL(query);
+    }
+
+    public void DeleteResearchList() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_RESEARCH_LIST;
+        db.execSQL(query);
+    }
+
+    public int TotalResearchPendingCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_RESEARCH_LIST + " WHERE " + TICK_MARK + " = 'false'";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    //Table eleven
+    public boolean AddResearchDetails(SaveResearchDetailsModal researchDetailsModal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(HAWB_CODE, researchDetailsModal.getHawb_code());
+        contentValues.put(DATE_TIME, researchDetailsModal.getDateTime());
+        contentValues.put(BATTERY_LEVEL, researchDetailsModal.getBatteryLevel());
+        contentValues.put(LATITUDE, researchDetailsModal.getLatitude());
+        contentValues.put(LONGITUDE, researchDetailsModal.getLongitude());
+        contentValues.put(XML_RESEARCH, researchDetailsModal.getXmlBody());
+        long result = db.insert(TABLE_SAVE_RESEARCH_DETAILS, null, contentValues);
+        db.close();
+        return result != -1;
+    }
+
+    public Cursor GetResearchDetails() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_SAVE_RESEARCH_DETAILS;
+        return db.rawQuery(query, null);
+    }
+
+    public void DeleteFromResearchDetails() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_SAVE_RESEARCH_DETAILS;
+        db.execSQL(query);
+    }
+
+    //Table twelve
+    public boolean AddResearchImages(String imagePath, String imageName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(RESEARCH_IMAGES, imagePath);
+        contentValues.put(IMAGE_NAME, imageName);
+        long result = db.insert(TABLE_RESEARCH_IMAGES, null, contentValues);
+        db.close();
+        return result != -1;
+    }
+
+    public Cursor GetResearchImages() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_RESEARCH_IMAGES;
+        return db.rawQuery(query, null);
+    }
+
+    public void DeleteResearchImages() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_RESEARCH_IMAGES;
         db.execSQL(query);
     }
 

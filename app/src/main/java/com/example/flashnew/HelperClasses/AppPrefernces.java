@@ -265,4 +265,40 @@ public class AppPrefernces {
         return preference.getString("SignatureImagePath", " ");
     }
 
+    public void setCustomerCode(String cus_code) {
+        editor.putString("CustomerCodeRes", cus_code);
+        editor.apply();
+    }
+
+    public String getCustomerCode() {
+        return preference.getString("CustomerCodeRes", " ");
+    }
+
+    public void setContractCode(String con_code) {
+        editor.putString("ContractCodeRes", con_code);
+        editor.apply();
+    }
+
+    public String getContractCode() {
+        return preference.getString("ContractCodeRes", " ");
+    }
+
+    public void setHawbCodeRes(String hab_code) {
+        editor.putString("HawbCodeRes", hab_code);
+        editor.apply();
+    }
+
+    public String getHawbCodeRes() {
+        return preference.getString("HawbCodeRes", " ");
+    }
+
+    public void setClientName(String cli_name) {
+        editor.putString("ClientNameRes", cli_name);
+        editor.apply();
+    }
+
+    public String getClientName() {
+        return preference.getString("ClientNameRes", " ");
+    }
+
 }
