@@ -88,6 +88,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 import static android.content.Context.BATTERY_SERVICE;
 import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
+import static com.example.flashnew.Server.Utils.VERSION;
 
 public class List extends Fragment implements LocationListener {
     private TextView title, imei;
@@ -617,19 +618,24 @@ public class List extends Fragment implements LocationListener {
                             String clientNumber = object.getString("numeroEncomandaCliente");
 
                             if (dna == 8192 || dna == 65536) {
-                                JSONObject object1 = object.getJSONObject("endereco");
-                                String publicPlace = object1.getString("logradouro");
-                                String aptNo = object1.getString("numero");
-                                String neighbourHood = object1.getString("bairro");
-                                String city = object1.getString("cidade");
-                                String state = object1.getString("UF");
-                                int pinCode = object1.getInt("CEP");
+                                boolean check = mDatabaseHelper.CheckResearchListData(hawbCode);
+                                if (check) {
+                                    Toast.makeText(context, "A pesquisa " + hawbCode + " já existe", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    JSONObject object1 = object.getJSONObject("endereco");
+                                    String publicPlace = object1.getString("logradouro");
+                                    String aptNo = object1.getString("numero");
+                                    String neighbourHood = object1.getString("bairro");
+                                    String city = object1.getString("cidade");
+                                    String state = object1.getString("UF");
+                                    int pinCode = object1.getInt("CEP");
 
-                                ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
-                                        aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID);
-                                boolean success = mDatabaseHelper.AddResearchList(researchListModal);
-                                System.out.println("Data Added to ResearchList Table " + success);
-                                Log.e(TAG, "exists: ");
+                                    ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                            aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID, lists);
+                                    boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                                    System.out.println("Data Added to ResearchList Table " + success);
+                                    Log.e(TAG, "exists: ");
+                                }
                             } else {
                                 Log.e(TAG, "doesn't exist: ");
                             }
@@ -670,7 +676,7 @@ public class List extends Fragment implements LocationListener {
                         + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
                         Base64.NO_WRAP);
                 params.put("Authorization", auth1);
-                params.put("x-versao-rt", "3.8.10");
+                params.put("x-versao-rt", VERSION);
                 params.put("x-rastreador", "ricardo");
                 return params;
             }
@@ -723,19 +729,24 @@ public class List extends Fragment implements LocationListener {
                             String clientNumber = object.getString("numeroEncomandaCliente");
 
                             if (dna == 8192 || dna == 65536) {
-                                JSONObject object1 = object.getJSONObject("endereco");
-                                String publicPlace = object1.getString("logradouro");
-                                String aptNo = object1.getString("numero");
-                                String neighbourHood = object1.getString("bairro");
-                                String city = object1.getString("cidade");
-                                String state = object1.getString("UF");
-                                int pinCode = object1.getInt("CEP");
+                                boolean check = mDatabaseHelper.CheckResearchListData(hawbCode);
+                                if (check) {
+                                    Toast.makeText(context, "A pesquisa " + hawbCode + " já existe", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    JSONObject object1 = object.getJSONObject("endereco");
+                                    String publicPlace = object1.getString("logradouro");
+                                    String aptNo = object1.getString("numero");
+                                    String neighbourHood = object1.getString("bairro");
+                                    String city = object1.getString("cidade");
+                                    String state = object1.getString("UF");
+                                    int pinCode = object1.getInt("CEP");
 
-                                ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
-                                        aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID);
-                                boolean success = mDatabaseHelper.AddResearchList(researchListModal);
-                                System.out.println("Data Added to ResearchList Table " + success);
-                                Log.e(TAG, "exists: ");
+                                    ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                            aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID, lists);
+                                    boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                                    System.out.println("Data Added to ResearchList Table " + success);
+                                    Log.e(TAG, "exists: ");
+                                }
                             } else {
                                 Log.e(TAG, "doesn't exist: ");
                             }
@@ -773,7 +784,7 @@ public class List extends Fragment implements LocationListener {
                         + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
                         Base64.NO_WRAP);
                 params.put("Authorization", auth1);
-                params.put("x-versao-rt", "3.8.10");
+                params.put("x-versao-rt", VERSION);
                 params.put("x-rastreador", "ricardo");
                 return params;
             }
@@ -826,19 +837,24 @@ public class List extends Fragment implements LocationListener {
                             String clientNumber = object.getString("numeroEncomandaCliente");
 
                             if (dna == 8192 || dna == 65536) {
-                                JSONObject object1 = object.getJSONObject("endereco");
-                                String publicPlace = object1.getString("logradouro");
-                                String aptNo = object1.getString("numero");
-                                String neighbourHood = object1.getString("bairro");
-                                String city = object1.getString("cidade");
-                                String state = object1.getString("UF");
-                                int pinCode = object1.getInt("CEP");
+                                boolean check = mDatabaseHelper.CheckResearchListData(hawbCode);
+                                if (check) {
+                                    Toast.makeText(context, "A pesquisa " + hawbCode + " já existe", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    JSONObject object1 = object.getJSONObject("endereco");
+                                    String publicPlace = object1.getString("logradouro");
+                                    String aptNo = object1.getString("numero");
+                                    String neighbourHood = object1.getString("bairro");
+                                    String city = object1.getString("cidade");
+                                    String state = object1.getString("UF");
+                                    int pinCode = object1.getInt("CEP");
 
-                                ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
-                                        aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID);
-                                boolean success = mDatabaseHelper.AddResearchList(researchListModal);
-                                System.out.println("Data Added to ResearchList Table " + success);
-                                Log.e(TAG, "exists: ");
+                                    ResearchListModal researchListModal = new ResearchListModal(hawbCode, numberOrder, recipientName, dna,
+                                            aptNo, publicPlace, neighbourHood, city, state, pinCode, customerID, contractID, lists);
+                                    boolean success = mDatabaseHelper.AddResearchList(researchListModal);
+                                    System.out.println("Data Added to ResearchList Table " + success);
+                                    Log.e(TAG, "exists: ");
+                                }
                             } else {
                                 Log.e(TAG, "doesn't exist: ");
                             }
@@ -876,7 +892,7 @@ public class List extends Fragment implements LocationListener {
                         + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
                         Base64.NO_WRAP);
                 params.put("Authorization", auth1);
-                params.put("x-versao-rt", "3.8.10");
+                params.put("x-versao-rt", VERSION);
                 params.put("x-rastreador", "ricardo");
                 return params;
             }
@@ -972,7 +988,7 @@ public class List extends Fragment implements LocationListener {
                                 + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
-                        params.put("x-versao-rt", "3.8.10");
+                        params.put("x-versao-rt", VERSION);
                         params.put("x-rastreador", "ricardo");
 //                    params.put("Content-Type", "application/json");
                         params.put("Content-Type", "application/json; charset=utf-8");

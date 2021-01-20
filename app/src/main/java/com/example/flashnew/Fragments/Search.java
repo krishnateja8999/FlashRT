@@ -1,8 +1,13 @@
 package com.example.flashnew.Fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -42,6 +48,7 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
     private DatabaseHelper mDatabaseHelper;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView no_pesquisa;
+    private ReseachListUpdater listUpdater;
 
 
     @Nullable
@@ -61,6 +68,8 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
         no_pesquisa = view.findViewById(R.id.no_pesquisa);
+        listUpdater = new ReseachListUpdater();
+        LocalBroadcastManager.getInstance(context).registerReceiver(listUpdater, new IntentFilter("research_list_update"));
         searchListModalClasses = new ArrayList<>();
         recyclerViewSearchList = view.findViewById(R.id.recyclerViewSearchList);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -85,7 +94,7 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
             while (data.moveToNext()) {
                 searchListModalClasses.add(new SearchListModalClass(data.getString(1), data.getString(3),
                         data.getString(5) + ", " + data.getString(6) + ", " + data.getString(7) + ", " + data.getString(8) +
-                                ", " + data.getString(9) + ", " + data.getString(10), data.getString(11), data.getString(12), data.getString(13), data.getString(2)));
+                                ", " + data.getString(9) + ", " + data.getString(10), data.getString(11), data.getString(12), data.getString(13), data.getString(2), data.getString(14)));
                 searchAdapter = new SearchListAdapter(getActivity(), searchListModalClasses);
                 recyclerViewSearchList.setAdapter(searchAdapter);
                 searchAdapter.notifyDataSetChanged();
@@ -104,5 +113,14 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
     @Override
     public void onRefresh() {
         ResearchList();
+    }
+
+    private class ReseachListUpdater extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ResearchList();
+            no_pesquisa.setVisibility(View.VISIBLE);
+            Log.i("TAG", "onReceiveResearchList: Receiving");
+        }
     }
 }

@@ -13,12 +13,13 @@ public class ResearchListModal {
     int pinCode;
     int clientID;
     int contractID;
+    int listCode;
 
     public ResearchListModal() {
 
     }
 
-    public ResearchListModal(String hawbCode, String clientNumber, String recipientName, int dna, String aptNo, String publicPlace, String streetName, String city, String state, int pinCode, int clientID, int contractID) {
+    public ResearchListModal(String hawbCode, String clientNumber, String recipientName, int dna, String aptNo, String publicPlace, String streetName, String city, String state, int pinCode, int clientID, int contractID, int listCode) {
         this.hawbCode = hawbCode;
         this.clientNumber = clientNumber;
         this.RecipientName = recipientName;
@@ -31,6 +32,7 @@ public class ResearchListModal {
         this.pinCode = pinCode;
         this.clientID = clientID;
         this.contractID = contractID;
+        this.listCode = listCode;
     }
 
     public String getHawbCode() {
@@ -127,5 +129,13 @@ public class ResearchListModal {
 
     public void setContractID(int contractID) {
         this.contractID = contractID;
+    }
+
+    public int getListCode() {
+        return listCode;
+    }
+
+    public void setListCode(int listCode) {
+        this.listCode = listCode;
     }
 }

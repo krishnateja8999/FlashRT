@@ -63,6 +63,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
                 args.putString("Customer_code", listModalClasses.get(holder.getAdapterPosition()).getCustomerID());
                 args.putString("Contract_code", listModalClasses.get(holder.getAdapterPosition()).getClientID());
                 args.putString("Client_name", listModalClasses.get(holder.getAdapterPosition()).getClientName());
+                args.putString("List_code", listModalClasses.get(holder.getAdapterPosition()).getListCode());
                 fr.setArguments(args);
                 fragmentTransaction.replace(R.id.content, fr);
                 fragmentTransaction.addToBackStack(null);

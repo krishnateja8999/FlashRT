@@ -154,12 +154,12 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (userName.getText().toString().length() <= 0) {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen6), Toast.LENGTH_LONG).show();
                     userName.requestFocus();
-                    } else if (password.getText().toString().length() <= 0) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen7), Toast.LENGTH_LONG).show();
-                        password.requestFocus();
-                    } else if (!checkbox.isChecked()) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen11), Toast.LENGTH_LONG).show();
-                    } else {
+                } else if (password.getText().toString().length() <= 0) {
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen7), Toast.LENGTH_LONG).show();
+                    password.requestFocus();
+                } else if (!checkbox.isChecked()) {
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen11), Toast.LENGTH_LONG).show();
+                } else {
                     if (internetChecker.checkInternetConnection()) {
                         jsonParse();
                     } else {
@@ -195,49 +195,50 @@ public class LoginActivity extends AppCompatActivity {
                     String name = object.getString("nome");
 
                     Log.d("TAG", "LoginResponse: " + login);
-                        preferences.setID(id);
-                        preferences.setUserName(login);
-                        preferences.setName(name);
+                    preferences.setID(id);
+                    preferences.setUserName(login);
+                    preferences.setName(name);
                     preferences.setPaso(password.getText().toString());
                     preferences.setHostUrl(hostserverUrl.getText().toString());
+                    preferences.setTracker(identification.getText().toString());
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
-                    startActivity(i);
-                    loginProgressBar.setVisibility(View.GONE);
-                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    loginProgressBar.setVisibility(View.GONE);
-                    dialog1.setTitle("Erro");
-                    dialog1.setMessage(getResources().getString(R.string.Login_screen8));
-                    dialog1.setCancelable(true);
-                    dialog1.setPositiveButton(
-                            "Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    userName.requestFocus();
-                                    dialog.cancel();
-                                }
-                            });
-                    dialog1.show();
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    String auth1 = "Basic "
-                            + Base64.encodeToString((userName.getText().toString() + ":" + password.getText().toString()).getBytes(),
-                            Base64.NO_WRAP);
-                    params.put("Authorization", auth1);
-                    return params;
-                }
-            };
-            queue.add(request);
+                Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
+                startActivity(i);
+                loginProgressBar.setVisibility(View.GONE);
+                finish();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                loginProgressBar.setVisibility(View.GONE);
+                dialog1.setTitle("Erro");
+                dialog1.setMessage(getResources().getString(R.string.Login_screen8));
+                dialog1.setCancelable(true);
+                dialog1.setPositiveButton(
+                        "Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                userName.requestFocus();
+                                dialog.cancel();
+                            }
+                        });
+                dialog1.show();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String auth1 = "Basic "
+                        + Base64.encodeToString((userName.getText().toString() + ":" + password.getText().toString()).getBytes(),
+                        Base64.NO_WRAP);
+                params.put("Authorization", auth1);
+                return params;
+            }
+        };
+        queue.add(request);
     }
 
     @Override

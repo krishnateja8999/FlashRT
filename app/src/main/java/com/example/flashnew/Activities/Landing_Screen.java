@@ -94,6 +94,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
+import static com.example.flashnew.Server.Utils.VERSION;
 
 public class Landing_Screen extends AppCompatActivity {
     public NavigationView navigationView;
@@ -264,7 +265,9 @@ public class Landing_Screen extends AppCompatActivity {
                             Cursor data = databaseHelper.getDeliveryData(); //table3
                             Cursor data2 = databaseHelper.GetDataFromTableSix(); //table6
                             Cursor data3 = databaseHelper.GetDataFromTableSeven(); //table7
-                            if (data.getCount() == 0 && data2.getCount() == 0 && data3.getCount() == 0) {
+                            Cursor data4 = databaseHelper.GetResearchDetails();//table11
+                            Log.e(TAG, "onNavigationItemSelected: " + data4.getCount());
+                            if (data.getCount() == 0 && data2.getCount() == 0 && data3.getCount() == 0 && data4.getCount() == 0) {
                                 NoListsToSync();
                             } else {
                                 progressDialog = new ProgressDialog(Landing_Screen.this);
@@ -284,6 +287,15 @@ public class Landing_Screen extends AppCompatActivity {
                                     } else {
                                         Log.e(TAG, "SyncCollect: Sem listas Collect");
                                     }
+                                    if (data4.getCount() != 0) {
+                                        PutResearchData();
+                                    } else {
+                                        Log.e(TAG, "SyncResearch: Sem Pesquisa");
+                                    }
+
+                                    Intent intent22 = new Intent("research_list_update");
+                                    LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent22);
+
                                     Intent intent = new Intent("list_code_status");
                                     LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
 
@@ -507,6 +519,8 @@ public class Landing_Screen extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+//                Intent intent22 = new Intent("research_list_update");
+//                LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent22);
             }
         });
         //Creating dialog box
@@ -623,12 +637,11 @@ public class Landing_Screen extends AppCompatActivity {
                             + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
                             Base64.NO_WRAP);
                     params.put("Authorization", auth1);
-                    params.put("x-versao-rt", "3.8.10");
+                    params.put("x-versao-rt", VERSION);
                     params.put("x-rastreador", "ricardo");
                     params.put("Content-Type", "application/json; charset=utf-8");
                     return params;
                 }
-
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";
@@ -676,7 +689,6 @@ public class Landing_Screen extends AppCompatActivity {
                 list.clear();
             }
         }
-
     }
 
     //Collect list screen
@@ -889,6 +901,7 @@ public class Landing_Screen extends AppCompatActivity {
         ArrayList<String> latitude = new ArrayList<String>();
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> body1 = new ArrayList<String>();
+        ArrayList<String> listCode = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -900,6 +913,7 @@ public class Landing_Screen extends AppCompatActivity {
                 latitude.add(data.getString(4));
                 longitude.add(data.getString(5));
                 body1.add(data.getString(6));
+                listCode.add(data.getString(7));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -915,7 +929,7 @@ public class Landing_Screen extends AppCompatActivity {
                     jsonObj1.put("imei", preferences.getIMEI());
                     jsonObj1.put("franquia", preferences.getFranchise());
                     jsonObj1.put("sistema", preferences.getSystem());
-                    jsonObj1.put("lista", preferences.getListID());
+                    jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
                     jsonObj1.put("entregas", jsonArray);
                     jsonArray.put(jsonObj);
                 } catch (JSONException e) {
@@ -923,11 +937,13 @@ public class Landing_Screen extends AppCompatActivity {
                 }
                 Log.e(TAG, "PutJsonRequest: " + jsonObj1);
 
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + preferences.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + Utils.ConvertArrayListToString(listCode), jsonObj1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         DeleteResearchDataUponSendingOrSync();
                         progressDialog.dismiss();
+                        Intent intent22 = new Intent("research_list_update");
+                        LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent22);
                         Log.e(TAG, "onResponseResearchThree: " + response);
                     }
                 }, new Response.ErrorListener() {
@@ -944,7 +960,7 @@ public class Landing_Screen extends AppCompatActivity {
                                 + Base64.encodeToString((preferences.getUserName() + ":" + preferences.getPaso()).getBytes(),
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
-                        params.put("x-versao-rt", "3.9.0");
+                        params.put("x-versao-rt", VERSION);
                         params.put("x-rastreador", "ricardo");
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
@@ -963,6 +979,7 @@ public class Landing_Screen extends AppCompatActivity {
                 latitude.clear();
                 longitude.clear();
                 body1.clear();
+                listCode.clear();
             }
             SendResearchImages();
         }

@@ -130,7 +130,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PUBLIC_PLACE = "public_place";
     public static final String CREATE_TABLE_RESEARCH_LIST = "CREATE TABLE " + TABLE_RESEARCH_LIST + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, " + APT_NO + " TEXT, " +
-            PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + CUSTOMER_ID + " TEXT, " + CONTRACT_ID + " TEXT)";
+            PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + CUSTOMER_ID + " TEXT, " + CONTRACT_ID + " TEXT, " + LIST + " INTEGER)";
 
     //Table 11 columns & query
     public static final String RESEARCH_ONE = "research_one";
@@ -138,7 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String RESEARCH_THREE = "research_three";
     public static final String XML_RESEARCH = "xml_research";
     public static final String CREATE_TABLE_SAVE_RESEARCH_DETAILS = "CREATE TABLE " + TABLE_SAVE_RESEARCH_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            HAWB_CODE + " TEXT, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + XML_RESEARCH + " TEXT)";
+            HAWB_CODE + " TEXT, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + XML_RESEARCH + " TEXT, " + LIST + " INTEGER)";
 
     //Table 12 columns & query
     public static final String RESEARCH_IMAGES = "research_image_path";
@@ -650,6 +650,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(TICK_MARK, "false");
         contentValues.put(CUSTOMER_ID, listModal.getClientID());
         contentValues.put(CONTRACT_ID, listModal.getContractID());
+        contentValues.put(LIST, listModal.getListCode());
 
         long result = db.insert(TABLE_RESEARCH_LIST, null, contentValues);
         db.close();
@@ -689,6 +690,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public boolean CheckResearchListData(String researchList) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_RESEARCH_LIST + " WHERE " + HAWB_CODE + " = '" + researchList + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
     //Table eleven
     public boolean AddResearchDetails(SaveResearchDetailsModal researchDetailsModal) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -700,6 +713,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(LATITUDE, researchDetailsModal.getLatitude());
         contentValues.put(LONGITUDE, researchDetailsModal.getLongitude());
         contentValues.put(XML_RESEARCH, researchDetailsModal.getXmlBody());
+        contentValues.put(LIST, researchDetailsModal.getListCodes());
+
         long result = db.insert(TABLE_SAVE_RESEARCH_DETAILS, null, contentValues);
         db.close();
         return result != -1;

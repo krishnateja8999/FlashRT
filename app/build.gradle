@@ -32,7 +32,7 @@ android {
         }
         debug {
             buildConfigField("Boolean", "DEBUG_MODE", "true")
-            buildConfigField("String", "BASE_URL", "\"http://191.241.243.133:8080\"")
+            buildConfigField("String", "BASE_URL", "\"http://191.241.243.133:8081\"")
         }
 
     }

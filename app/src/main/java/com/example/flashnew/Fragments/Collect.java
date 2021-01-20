@@ -302,9 +302,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
 
             @Override
             public byte[] getBody() throws AuthFailureError {
-
                 String body = getXML(code, prefernces.getUserName(), prefernces.getPaso());
-                //String body = getXML(code, "sao.ricardos", "123");
                 return body.getBytes();
             }
         };
@@ -312,11 +310,9 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
     }
 
     private String getXML(int code, String userName, String paso) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<consultaColetaXML>\n  <coletaId>" + code + "</coletaId>\n")
-                .append("<usuario>" + userName + "</usuario>\n")
-                .append("<senha>" + paso + "</senha>\n </consultaColetaXML>");
-        String result = stringBuilder.toString();
+        String result = "<consultaColetaXML>\n  <coletaId>" + code + "</coletaId>\n" +
+                "<usuario>" + userName + "</usuario>\n" +
+                "<senha>" + paso + "</senha>\n </consultaColetaXML>";
         System.out.println(result);
         return result;
     }

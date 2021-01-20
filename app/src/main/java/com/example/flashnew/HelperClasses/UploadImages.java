@@ -22,6 +22,9 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+import static com.example.flashnew.Server.Utils.IMAGE_SERVICE_BUCKET;
+import static com.example.flashnew.Server.Utils.IMAGE_SERVICE_PROJECT_ID;
+
 public class UploadImages {
     public static Storage setCredentials(InputStream credentialFile) {
         InputStream credentialsStream = null;
@@ -35,7 +38,7 @@ public class UploadImages {
             return null;
         }
         return StorageOptions.newBuilder()
-                .setProjectId("digitalizacao-174822").setCredentials(credentials)
+                .setProjectId(IMAGE_SERVICE_PROJECT_ID).setCredentials(credentials)
                 .build().getService();
     }
 
@@ -58,7 +61,7 @@ public class UploadImages {
             return null;
         if (fileContent.length == 0)
             return null;
-        BlobInfo.Builder newBuilder = Blob.newBuilder(BucketInfo.of("gunsandroses-909459-dontcry-571723"),
+        BlobInfo.Builder newBuilder = Blob.newBuilder(BucketInfo.of(IMAGE_SERVICE_BUCKET),
                 newName);
         BlobInfo blobInfo = newBuilder.setContentType("image/png").build();
         try {

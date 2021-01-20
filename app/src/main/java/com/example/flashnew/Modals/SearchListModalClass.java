@@ -8,8 +8,9 @@ public class SearchListModalClass {
     String customerID;
     String clientID;
     String clientName;
+    String listCode;
 
-    public SearchListModalClass(String hawbCode, String name, String address, String tick_mark, String customerID, String clientID, String clientName) {
+    public SearchListModalClass(String hawbCode, String name, String address, String tick_mark, String customerID, String clientID, String clientName, String listCode) {
         this.hawbCode = hawbCode;
         this.name = name;
         this.address = address;
@@ -17,6 +18,7 @@ public class SearchListModalClass {
         this.customerID = customerID;
         this.clientID = clientID;
         this.clientName = clientName;
+        this.listCode = listCode;
     }
 
     public String getHawbCode() {
@@ -73,5 +75,13 @@ public class SearchListModalClass {
 
     public void setClientName(String clientName) {
         this.clientName = clientName;
+    }
+
+    public String getListCode() {
+        return listCode;
+    }
+
+    public void setListCode(String listCode) {
+        this.listCode = listCode;
     }
 }

@@ -60,6 +60,7 @@ import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.BATTERY_SERVICE;
+import static com.example.flashnew.Server.Utils.VERSION;
 
 public class ResearchThree extends Fragment implements BlockingStep {
 
@@ -181,7 +182,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
         String body = setXML();
 
         SaveResearchDetailsModal detailsModal = new SaveResearchDetailsModal(prefernces.getHawbCodeRes(), formattedDate, batLevel, prefernces.getLatitude(),
-                prefernces.getLongitude(), body);
+                prefernces.getLongitude(), body, prefernces.getResearchListCode());
         boolean success = mDatabaseHelper.AddResearchDetails(detailsModal);
         System.out.println(success);
     }
@@ -210,6 +211,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
         ArrayList<String> latitude = new ArrayList<String>();
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> body1 = new ArrayList<String>();
+        ArrayList<String> listCode = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -221,6 +223,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
                 latitude.add(data.getString(4));
                 longitude.add(data.getString(5));
                 body1.add(data.getString(6));
+                listCode.add(data.getString(7));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -236,7 +239,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
                     jsonObj1.put("imei", prefernces.getIMEI());
                     jsonObj1.put("franquia", prefernces.getFranchise());
                     jsonObj1.put("sistema", prefernces.getSystem());
-                    jsonObj1.put("lista", prefernces.getListID());
+                    jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
                     jsonObj1.put("entregas", jsonArray);
                     jsonArray.put(jsonObj);
                 } catch (JSONException e) {
@@ -244,10 +247,12 @@ public class ResearchThree extends Fragment implements BlockingStep {
                 }
                 Log.e(TAG, "PutJsonRequest: " + jsonObj1);
 
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + prefernces.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + Utils.ConvertArrayListToString(listCode), jsonObj1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         DeleteResearchDataUponSendingOrSync();
+                        Intent intent22 = new Intent("research_list_update");
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent22);
                         Log.e(TAG, "onResponseResearchThree: " + response);
                     }
                 }, new Response.ErrorListener() {
@@ -263,12 +268,11 @@ public class ResearchThree extends Fragment implements BlockingStep {
                                 + Base64.encodeToString((prefernces.getUserName() + ":" + prefernces.getPaso()).getBytes(),
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
-                        params.put("x-versao-rt", "3.9.0");
+                        params.put("x-versao-rt", VERSION);
                         params.put("x-rastreador", "ricardo");
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
                     }
-
                     @Override
                     public String getBodyContentType() {
                         return "application/json; charset=utf-8";
@@ -282,6 +286,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
                 latitude.clear();
                 longitude.clear();
                 body1.clear();
+                listCode.clear();
             }
             SendResearchImages();
         }

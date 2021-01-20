@@ -7,14 +7,16 @@ public class SaveResearchDetailsModal {
     String latitude;
     String longitude;
     String xmlBody;
+    String listCodes;
 
-    public SaveResearchDetailsModal(String hawb_code, String dateTime, int batteryLevel, String latitude, String longitude, String xmlBody) {
+    public SaveResearchDetailsModal(String hawb_code, String dateTime, int batteryLevel, String latitude, String longitude, String xmlBody, String listCodes) {
         this.hawb_code = hawb_code;
         this.dateTime = dateTime;
         this.batteryLevel = batteryLevel;
         this.latitude = latitude;
         this.longitude = longitude;
         this.xmlBody = xmlBody;
+        this.listCodes = listCodes;
     }
 
     public String getHawb_code() {
@@ -63,5 +65,13 @@ public class SaveResearchDetailsModal {
 
     public void setXmlBody(String xmlBody) {
         this.xmlBody = xmlBody;
+    }
+
+    public String getListCodes() {
+        return listCodes;
+    }
+
+    public void setListCodes(String listCodes) {
+        this.listCodes = listCodes;
     }
 }

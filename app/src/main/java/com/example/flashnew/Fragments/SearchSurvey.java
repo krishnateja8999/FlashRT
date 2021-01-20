@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -73,6 +74,7 @@ import java.util.Map;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.BATTERY_SERVICE;
 import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
+import static com.example.flashnew.Server.Utils.VERSION;
 
 
 public class SearchSurvey extends Fragment {
@@ -93,7 +95,7 @@ public class SearchSurvey extends Fragment {
     private File photoFile = null;
     private String currentPhotoPath;
     private DatabaseHelper mDatabaseHelper;
-    private String contractCode, customerID, clientName;
+    private String contractCode, customerID, clientName, resListcode;
     private String timeStamp;
     private AppPrefernces prefernces;
     private InternetConnectionChecker checker;
@@ -128,14 +130,17 @@ public class SearchSurvey extends Fragment {
         contractCode = getArguments().getString("Contract_code");
         customerID = getArguments().getString("Customer_code");
         clientName = getArguments().getString("Client_name");
+        resListcode = getArguments().getString("List_code");
         prefernces.setCustomerCode(customerID);
         prefernces.setContractCode(contractCode);
         prefernces.setHawbCodeRes(researchName);
         prefernces.setClientName(clientName);
+        prefernces.setResearchListCode(resListcode);
         Log.e(TAG, "Tags: " + researchName);
         Log.e(TAG, "Tags: " + contractCode);
         Log.e(TAG, "Tags: " + customerID);
         Log.e(TAG, "Tags: " + clientName);
+        Log.e(TAG, "Tags: " + resListcode);
         timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         researchHawb = view.findViewById(R.id.researchHawb);
         researchHawb.setText("Pesquisa: " + researchName);
@@ -317,7 +322,7 @@ public class SearchSurvey extends Fragment {
         String body = SetXml();
 
         SaveResearchDetailsModal detailsModal = new SaveResearchDetailsModal(researchName, formattedDate, batLevel, prefernces.getLatitude(),
-                prefernces.getLongitude(), body);
+                prefernces.getLongitude(), body, prefernces.getResearchListCode());
         boolean success = mDatabaseHelper.AddResearchDetails(detailsModal);
         System.out.println(success);
     }
@@ -421,6 +426,7 @@ public class SearchSurvey extends Fragment {
         ArrayList<String> latitude = new ArrayList<String>();
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> body1 = new ArrayList<String>();
+        ArrayList<String> listCode = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -432,6 +438,7 @@ public class SearchSurvey extends Fragment {
                 latitude.add(data.getString(4));
                 longitude.add(data.getString(5));
                 body1.add(data.getString(6));
+                listCode.add(data.getString(7));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -447,18 +454,21 @@ public class SearchSurvey extends Fragment {
                     jsonObj1.put("imei", prefernces.getIMEI());
                     jsonObj1.put("franquia", prefernces.getFranchise());
                     jsonObj1.put("sistema", prefernces.getSystem());
-                    jsonObj1.put("lista", prefernces.getListID());
+                    jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
                     jsonObj1.put("entregas", jsonArray);
                     jsonArray.put(jsonObj);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+                Log.e(TAG, "PutResearchDataURLSearchList: " + url2 + Utils.ConvertArrayListToString(listCode));
 
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + prefernces.getListID(), jsonObj1, new Response.Listener<JSONObject>() {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url2 + Utils.ConvertArrayListToString(listCode), jsonObj1, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         DeleteDataUponSendingOrSync();
+                        Intent intent22 = new Intent("research_list_update");
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent22);
                         Log.e(TAG, "onResponseResearchThree: " + response);
                     }
                 }, new Response.ErrorListener() {
@@ -474,7 +484,7 @@ public class SearchSurvey extends Fragment {
                                 + Base64.encodeToString((prefernces.getUserName() + ":" + prefernces.getPaso()).getBytes(),
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
-                        params.put("x-versao-rt", "3.9.0");
+                        params.put("x-versao-rt", VERSION);
                         params.put("x-rastreador", "ricardo");
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
@@ -493,6 +503,7 @@ public class SearchSurvey extends Fragment {
                 latitude.clear();
                 longitude.clear();
                 body1.clear();
+                listCode.clear();
             }
             SendResearchImages();
         }
@@ -580,7 +591,8 @@ public class SearchSurvey extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
                 changeFragment(new Search());
-
+                Intent intent22 = new Intent("research_list_update");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent22);
             }
         });
         //Creating dialog box

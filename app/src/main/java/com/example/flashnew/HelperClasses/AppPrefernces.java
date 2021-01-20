@@ -68,6 +68,15 @@ public class AppPrefernces {
         return preference.getString("HostURL", " ");
     }
 
+    public void setTracker(String tracker) {
+        editor.putString("LoginTracker", tracker);
+        editor.apply();
+    }
+
+    public String getTracker() {
+        return preference.getString("LoginTracker", " ");
+    }
+
     //this method will checker whether user is already logged in or not
     public boolean isLoggedIn() {
         return preference.getString("LoginID", null) != null;
@@ -299,6 +308,15 @@ public class AppPrefernces {
 
     public String getClientName() {
         return preference.getString("ClientNameRes", " ");
+    }
+
+    public void setResearchListCode(String res_liCode) {
+        editor.putString("ResListCode", res_liCode);
+        editor.apply();
+    }
+
+    public String getResearchListCode() {
+        return preference.getString("ResListCode", " ");
     }
 
 }
