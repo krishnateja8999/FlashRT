@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image1"
@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image2"
@@ -286,7 +286,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image3"
@@ -306,7 +306,7 @@
 
         <TextView
             android:layout_width="350dp"
-            android:layout_height="35dp"
+            android:layout_height="55dp"
             android:layout_marginStart="5dp"
             android:text="@string/check_list15"
             android:textSize="15sp" />
@@ -552,7 +552,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image4"
@@ -632,7 +632,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image5"
@@ -737,7 +737,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image14"
@@ -842,7 +842,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image6"
@@ -922,7 +922,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image7"
@@ -1002,7 +1002,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image8"
@@ -1083,7 +1083,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image9"
@@ -1102,8 +1102,8 @@
             android:background="@android:color/darker_gray" />
 
         <TextView
-            android:layout_width="350dp"
-            android:layout_height="35dp"
+            android:layout_width="340dp"
+            android:layout_height="55dp"
             android:layout_marginStart="5dp"
             android:text="@string/check_list34"
             android:textSize="15sp" />
@@ -1163,7 +1163,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image10"
@@ -1226,7 +1226,7 @@
 
         <TextView
             android:layout_width="350dp"
-            android:layout_height="35dp"
+            android:layout_height="55dp"
             android:layout_marginStart="5dp"
             android:text="@string/check_list37"
             android:textSize="15sp" />
@@ -1312,7 +1312,7 @@
 
         <TextView
             android:layout_width="350dp"
-            android:layout_height="35dp"
+            android:layout_height="55dp"
             android:layout_marginStart="5dp"
             android:text="@string/check_list39"
             android:textSize="15sp" />
@@ -1372,7 +1372,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image11"
@@ -1435,7 +1435,7 @@
 
         <TextView
             android:layout_width="350dp"
-            android:layout_height="35dp"
+            android:layout_height="55dp"
             android:layout_marginStart="5dp"
             android:text="@string/check_list10"
             android:textSize="15sp" />
@@ -1495,7 +1495,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image12"
@@ -1575,7 +1575,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="@string/check_list_Image" />
 
             <ImageView
                 android:id="@+id/image13"

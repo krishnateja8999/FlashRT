@@ -28,7 +28,7 @@ import static com.example.flashnew.Server.Utils.IMAGE_SERVICE_PROJECT_ID;
 public class UploadImages {
     public static Storage setCredentials(InputStream credentialFile) {
         InputStream credentialsStream = null;
-        ;
+
         Credentials credentials = null;
         try {
             credentialsStream = credentialFile;

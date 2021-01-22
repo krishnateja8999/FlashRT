@@ -104,46 +104,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             PINCODE + " INTEGER, " + TICK_MARK + " TEXT)";
 
     //Table 6 columns & query:
-    public static final String IDENTIFICATION_NO = "identification_no";
-    public static final String TYPE_PROCESS = "type_process";
-    public static final String CREATE_TABLE_COLETA_DETAILS = "CREATE TABLE " + TABLE_COLETA_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String IDENTIFICATION_NO = "identification_no";
+    private static final String TYPE_PROCESS = "type_process";
+    private static final String CREATE_TABLE_COLETA_DETAILS = "CREATE TABLE " + TABLE_COLETA_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLETA_ID + " TEXT, " + RECIPIENT_NAME + " TEXT, " + IDENTIFICATION_NO + " TEXT, " + DATE_TIME + " TEXT," + TYPE_PROCESS + " TEXT," +
             LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER)";
 
 
     //Table 7 columns & query
-    public static final String COLLECT_IMAGE = "collect_image";
-    public static final String CREATE_TABLE_NOT_COLLECTED_DETAILS = "CREATE TABLE " + TABLE_NOT_COLLECTED_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String COLLECT_IMAGE = "collect_image";
+    private static final String CREATE_TABLE_NOT_COLLECTED_DETAILS = "CREATE TABLE " + TABLE_NOT_COLLECTED_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLETA_ID + " TEXT, " + DATE_TIME + " TEXT, " + TYPE_PROCESS + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " BLOB)";
 
     //Table 8 columns & query
-    public static final String TOTAL_LIST_COUNT = "list_count";
-    public static final String CREATE_TABLE_TOTAL_DELIVERY_RETURNS = "CREATE TABLE " + TABLE_TOTAL_DELIVERY_RETURNS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String TOTAL_LIST_COUNT = "list_count";
+    private static final String CREATE_TABLE_TOTAL_DELIVERY_RETURNS = "CREATE TABLE " + TABLE_TOTAL_DELIVERY_RETURNS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             TOTAL_LIST_COUNT + " TEXT)";
 
     //Table 9 columns & query
-    public static final String TOTAL_COLLECT_COUNT = "collect_count";
-    public static final String CREATE_TABLE_TOTAL_COLLECT_DONE = "CREATE TABLE " + TABLE_TOTAL_COLLECT_DONE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String TOTAL_COLLECT_COUNT = "collect_count";
+    private static final String CREATE_TABLE_TOTAL_COLLECT_DONE = "CREATE TABLE " + TABLE_TOTAL_COLLECT_DONE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             TOTAL_COLLECT_COUNT + " TEXT)";
 
     //Table 10 columns & query
-    public static final String PUBLIC_PLACE = "public_place";
-    public static final String CREATE_TABLE_RESEARCH_LIST = "CREATE TABLE " + TABLE_RESEARCH_LIST + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String PUBLIC_PLACE = "public_place";
+    private static final String CREATE_TABLE_RESEARCH_LIST = "CREATE TABLE " + TABLE_RESEARCH_LIST + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, " + APT_NO + " TEXT, " +
             PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + CUSTOMER_ID + " TEXT, " + CONTRACT_ID + " TEXT, " + LIST + " INTEGER)";
 
     //Table 11 columns & query
-    public static final String RESEARCH_ONE = "research_one";
-    public static final String RESEARCH_TWO = "research_two";
-    public static final String RESEARCH_THREE = "research_three";
-    public static final String XML_RESEARCH = "xml_research";
-    public static final String CREATE_TABLE_SAVE_RESEARCH_DETAILS = "CREATE TABLE " + TABLE_SAVE_RESEARCH_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String RESEARCH_ONE = "research_one";
+    private static final String RESEARCH_TWO = "research_two";
+    private static final String RESEARCH_THREE = "research_three";
+    private static final String XML_RESEARCH = "xml_research";
+    private static final String CREATE_TABLE_SAVE_RESEARCH_DETAILS = "CREATE TABLE " + TABLE_SAVE_RESEARCH_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             HAWB_CODE + " TEXT, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + XML_RESEARCH + " TEXT, " + LIST + " INTEGER)";
 
     //Table 12 columns & query
-    public static final String RESEARCH_IMAGES = "research_image_path";
-    public static final String CREATE_TABLE_RESEARCH_IMAGES = "CREATE TABLE " + TABLE_RESEARCH_IMAGES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private static final String RESEARCH_IMAGES = "research_image_path";
+    private static final String CREATE_TABLE_RESEARCH_IMAGES = "CREATE TABLE " + TABLE_RESEARCH_IMAGES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             RESEARCH_IMAGES + " TEXT, " + IMAGE_NAME + " TEXT)";
+
     private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
     private byte[] imageInByte, imageInByte2;
 

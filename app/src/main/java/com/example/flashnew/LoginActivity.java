@@ -43,44 +43,44 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import static com.example.flashnew.Server.Utils.MASTER_PASSWORD;
+
 public class LoginActivity extends AppCompatActivity {
 
-    private CardView masterPasswordDialog1, masterPasswordDialog2;
-    private TextView masterPasswordOK, hostserverUrl, identification, userName, password;
-    private EditText masterPasswordEditText;
-    private Button confirm_login, cancel_login;
-    private RequestQueue queue;
-    private ProgressBar loginProgressBar;
-    private ProgressDialog dialog;
-    private androidx.appcompat.app.AlertDialog.Builder dialog1;
-    private AppPrefernces preferences;
+    private TextView userName;
+    private TextView password;
     private CheckBox checkbox;
+    private RequestQueue queue;
+    private TextView hostserverUrl;
+    private TextView identification;
+    private AppPrefernces preferences;
+    private ProgressBar loginProgressBar;
+    private EditText masterPasswordEditText;
     private InternetConnectionChecker internetChecker;
+    private androidx.appcompat.app.AlertDialog.Builder dialog1;
+    private CardView masterPasswordDialog1, masterPasswordDialog2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        masterPasswordOK = findViewById(R.id.masterPasswordOK);
+        userName = findViewById(R.id.userName);
+        password = findViewById(R.id.password);
+        checkbox = findViewById(R.id.checkbox);
+        queue = Volley.newRequestQueue(this);
+        preferences = new AppPrefernces(this);
+        hostserverUrl = findViewById(R.id.hostserverUrl);
+        identification = findViewById(R.id.identification);
+        Button cancel_login = findViewById(R.id.cancel_login);
+        loginProgressBar = findViewById(R.id.loginProgressBar);
+        Button confirm_login = findViewById(R.id.confirm_login);
+        internetChecker = new InternetConnectionChecker(this);
+        TextView masterPasswordOK = findViewById(R.id.masterPasswordOK);
         masterPasswordDialog1 = findViewById(R.id.masterPasswordDialog);
         masterPasswordDialog2 = findViewById(R.id.masterPasswordDialog2);
         masterPasswordEditText = findViewById(R.id.masterPasswordEditText);
-        hostserverUrl = findViewById(R.id.hostserverUrl);
-        identification = findViewById(R.id.identification);
-        userName = findViewById(R.id.userName);
-        password = findViewById(R.id.password);
-        confirm_login = findViewById(R.id.confirm_login);
-        cancel_login = findViewById(R.id.cancel_login);
-        queue = Volley.newRequestQueue(this);
-        loginProgressBar = findViewById(R.id.loginProgressBar);
-        dialog = new ProgressDialog(this);
         dialog1 = new androidx.appcompat.app.AlertDialog.Builder(this);
-        preferences = new AppPrefernces(this);
-        checkbox = findViewById(R.id.checkbox);
-        internetChecker = new InternetConnectionChecker(this);
-//        preferences.setID("dfgg");
-//        preferences.setHostUrl("gfdg");l
 
         if (preferences.isLoggedIn() && preferences.isLoggedIn1()) {
             Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (masterPasswordEditText.getText().toString().length() <= 0) {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen9), Toast.LENGTH_LONG).show();
                     masterPasswordEditText.setText("");
-                } else if (masterPasswordEditText.getText().toString().equals(getResources().getString(R.string.lista_coletas_feitass))) {
+                } else if (masterPasswordEditText.getText().toString().equals(MASTER_PASSWORD)) {
                     masterPasswordDialog1.setVisibility(View.GONE);
                     masterPasswordDialog2.setVisibility(View.VISIBLE);
                 } else {
@@ -144,7 +144,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
         confirm_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,11 +164,9 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen12), Toast.LENGTH_LONG).show();
                     }
-
                 }
             }
         });
-
 
         cancel_login.setOnClickListener(new View.OnClickListener() {
             @Override

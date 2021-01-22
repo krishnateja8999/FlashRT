@@ -78,6 +78,5 @@ public class MyStepperAdapter extends AbstractFragmentStepAdapter {
                         .create();
         }
         return null;
-
     }
 }

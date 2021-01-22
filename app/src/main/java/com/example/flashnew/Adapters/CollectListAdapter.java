@@ -65,8 +65,6 @@ public class CollectListAdapter extends RecyclerView.Adapter<CollectListAdapter.
                 fragmentTransaction.commit();
             }
         });
-
-
     }
 
     @Override

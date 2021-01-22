@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,63 +15,57 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.Adapters.HawbListAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.R;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
-import static com.example.flashnew.Server.Utils.TAG;
 
 public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private TextView title, imei;
-    private ArrayList<com.example.flashnew.Modals.HawbLists> hawbListsArrayList;
-    private RecyclerView recyclerViewHawbList;
-    private LinearLayoutManager layoutManager;
-    private HawbListAdapter adapter;
-    private DatabaseHelper mDatabaseHelper;
-    private AppPrefernces prefernces;
-    private ListViewUpdater listViewUpdater;
-    private Landing_Screen context;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private TextView title;
     private TextView textView;
     private FragmentManager fm;
-
+    private DatabaseHelper mDatabaseHelper;
+    private RecyclerView recyclerViewHawbList;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ArrayList<com.example.flashnew.Modals.HawbLists> hawbListsArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_hawb_lists, container, false);
+
         title = view.findViewById(R.id.actionbarTitle);
-        imei = view.findViewById(R.id.actionbarImei);
-        hawbListsArrayList = new ArrayList<>();
-        recyclerViewHawbList = view.findViewById(R.id.recyclerViewHawbList);
-        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerViewHawbList.setLayoutManager(layoutManager);
         mDatabaseHelper = new DatabaseHelper(getContext());
-        prefernces = new AppPrefernces(getContext());
-        imei.setVisibility(View.GONE);
+        TextView imei = view.findViewById(R.id.actionbarImei);
+        AppPrefernces prefernces = new AppPrefernces(getContext());
+        recyclerViewHawbList = view.findViewById(R.id.recyclerViewHawbList);
         title.setText("Lista : " + prefernces.getListID());
-        listViewUpdater = new ListViewUpdater();
+        imei.setVisibility(View.GONE);
+
+        ListViewUpdater listViewUpdater = new ListViewUpdater();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listViewUpdater, new IntentFilter("list_view_updater"));
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        fm = getFragmentManager();
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
         textView = view.findViewById(R.id.textView);
+
+        fm = getFragmentManager();
+        hawbListsArrayList = new ArrayList<>();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerViewHawbList.setLayoutManager(layoutManager);
 
         ListsView();
 
@@ -87,7 +80,6 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
             mSwipeRefreshLayout.setVisibility(View.GONE);
             textView.setVisibility(View.VISIBLE);
             title.setVisibility(View.GONE);
-//            Toast.makeText(getContext(), "Sem dados", Toast.LENGTH_SHORT).show();
             Fragment fragment = new List();
             FragmentTransaction fragmentTransaction = fm.beginTransaction();
             fragmentTransaction.replace(R.id.content, fragment);
@@ -99,7 +91,7 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
                 hawbListsArrayList.add(new com.example.flashnew.Modals.HawbLists(data.getString(3), data.getString(5),
                         data.getString(10), data.getString(11)));
             }
-            adapter = new HawbListAdapter(getContext(), hawbListsArrayList);
+            HawbListAdapter adapter = new HawbListAdapter(getContext(), hawbListsArrayList);
             recyclerViewHawbList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
@@ -111,30 +103,11 @@ public class HawbLists extends Fragment implements SwipeRefreshLayout.OnRefreshL
         ListsView();
     }
 
-
     private class ListViewUpdater extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context c, Intent intent) {
             ListsView();
-//            assert getFragmentManager() != null;
-//            Fragment frg = getFragmentManager ().findFragmentByTag("unique_tag");
-//            final FragmentTransaction ft = getFragmentManager ().beginTransaction();
-//            assert frg != null;
-//            ft.detach(frg);
-//            ft.attach(frg);
-//            ft.commit();
-
         }
     }
-
-//    @Override
-//    public void setUserVisibleHint(boolean isVisibleToUser) {
-//        super.setUserVisibleHint(isVisibleToUser);
-//        if (isVisibleToUser) {
-//            // Refresh your fragment here
-//            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
-//            Log.i("IsRefresh", "Yes");
-//        }
-//    }
 }

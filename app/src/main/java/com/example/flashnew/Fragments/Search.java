@@ -38,23 +38,24 @@ import com.example.flashnew.R;
 import java.util.ArrayList;
 
 public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private TextView title, imei;
-    private ArrayList<SearchListModalClass> searchListModalClasses;
-    private RecyclerView recyclerViewSearchList;
-    private LinearLayoutManager layoutManager;
-    private SearchListAdapter searchAdapter;
-    private Context context;
-    private AppPrefernces prefernces;
-    private DatabaseHelper mDatabaseHelper;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private TextView no_pesquisa;
-    private ReseachListUpdater listUpdater;
 
+    private Context context;
+    private TextView no_pesquisa;
+    private TextView title, imei;
+    private AppPrefernces prefernces;
+    private ReseachListUpdater listUpdater;
+    private DatabaseHelper mDatabaseHelper;
+    private SearchListAdapter searchAdapter;
+    private LinearLayoutManager layoutManager;
+    private RecyclerView recyclerViewSearchList;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ArrayList<SearchListModalClass> searchListModalClasses;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search, container, false);
+
         title = view.findViewById(R.id.actionbarTitle);
         imei = view.findViewById(R.id.actionbarImei);
         prefernces = new AppPrefernces(context);

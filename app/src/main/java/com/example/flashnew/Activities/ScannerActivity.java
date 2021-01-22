@@ -27,10 +27,10 @@ import com.example.flashnew.Server.Utils;
 import com.google.zxing.Result;
 
 public class ScannerActivity extends AppCompatActivity {
+
     private CodeScanner mCodeScanner;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,8 +134,3 @@ public class ScannerActivity extends AppCompatActivity {
         super.onPause();
     }
 }
-
-// prefernces.setQRCode(Qcode);
-//                        Intent intent = new Intent("qr_code_validate");
-//                        LocalBroadcastManager.getInstance(ScannerActivity.this).sendBroadcast(intent);
-//                        finish();

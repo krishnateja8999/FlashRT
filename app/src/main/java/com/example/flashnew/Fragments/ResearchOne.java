@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,15 +37,17 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ResearchOne extends Fragment implements BlockingStep {
 
-    private TextView baseFile, dateOfVerify, empresa, cnjp, ResponseBaseFile, endereco, bairro, cidade, uf, cep, telePhone, email;
-    private AppPrefernces prefernces;
     private Landing_Screen context;
-    private DatePickerDialog datePickerDialog;
+    private AppPrefernces prefernces;
     private SimpleDateFormat dateFormatter;
+    private DatePickerDialog datePickerDialog;
     private static final String TAG = "ResearchOne";
+    private TextView baseFile, dateOfVerify, empresa, cnjp, ResponseBaseFile, endereco, bairro, cidade, uf, cep, telePhone, email;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,7 +117,7 @@ public class ResearchOne extends Fragment implements BlockingStep {
             telePhone.setError("Por favor, insira telephone");
         } else if (email.getText().length() == 0) {
             email.setError("Por favor, insira email");
-        } else {
+        } else if (validateEmail()) {
             //AddToPreferences();
             JsonObjectIdentity(baseFile.getText().toString(), dateOfVerify.getText().toString(), empresa.getText().toString(),
                     cnjp.getText().toString(), ResponseBaseFile.getText().toString(), endereco.getText().toString(),
@@ -181,6 +184,22 @@ public class ResearchOne extends Fragment implements BlockingStep {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = (Landing_Screen) context;
+    }
+
+    private static boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private boolean validateEmail() {
+        String mail = email.getText().toString().trim();
+        Boolean isTrue = false;
+        if (!isValidEmail(mail)) {
+            email.setError("Invalid Email");
+            isTrue = false;
+        } else {
+            isTrue = true;
+        }
+        return isTrue;
     }
 
     //For Validation add BlockingStep in implementation instead of step.

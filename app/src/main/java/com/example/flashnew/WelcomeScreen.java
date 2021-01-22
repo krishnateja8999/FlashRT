@@ -20,8 +20,6 @@ public class WelcomeScreen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-//                Toast.makeText(getApplicationContext(),"sdsf",Toast.LENGTH_SHORT).show();
-//                Intent i = new Intent(MainActivity.this, Landing_Screen.class);
                 Intent i = new Intent(WelcomeScreen.this, LoginActivity.class);
                 startActivity(i);
                 finish();

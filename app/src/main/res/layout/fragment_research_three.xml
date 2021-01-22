@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Clique para tirar a foto" />
+                android:text="Clique para assinar" />
 
             <ImageView
                 android:id="@+id/image"

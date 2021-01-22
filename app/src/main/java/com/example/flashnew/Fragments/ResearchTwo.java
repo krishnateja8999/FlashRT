@@ -44,23 +44,23 @@ import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 public class ResearchTwo extends Fragment implements BlockingStep {
 
+    private File photoFile = null;
+    private Landing_Screen context;
+    private String currentPhotoPath;
+    private AppPrefernces prefernces;
+    public static final String TAG = "TAG";
+    private DatabaseHelper mDatabaseHelper;
+    private EditText eText1, eText2, eText3, eText4, eText5, eText6, eText7, eText8, eText9;
+    private String imagePath3, imagePath4, imagePath5, imagePath6, imagePath8, imagePath9, imagePath13, imagePath14;
+    private TextView photo1, photo2, photo3, photo4, photo5, photo6, photo7, photo8, photo9, photo10, photo11, photo12, photo13, photo14;
+    private ImageView image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14;
+    private String imagePath1 = "null", imagePath2 = "null", imagePath7 = "null", imagePath10 = "null", imagePath11 = "null", imagePath12 = "null";
     private RadioGroup researchRGroup1, researchRGroup2, researchRGroup3, researchRGroup4, researchRGroup5, researchRGroup6,
             researchRGroup7, researchRGroup8, researchRGroup9, researchRGroup10, researchRGroup11, researchRGroup12, researchRGroup13,
             researchRGroup14, researchRGroup15, researchRGroup16, researchRGroup17, researchRGroup18, researchRGroup19, researchRGroup20;
     private RadioButton selectedRadioButton1, selectedRadioButton2, selectedRadioButton3, selectedRadioButton4, selectedRadioButton5, selectedRadioButton6,
             selectedRadioButton7, selectedRadioButton8, selectedRadioButton9, selectedRadioButton10, selectedRadioButton11, selectedRadioButton12,
             selectedRadioButton13, selectedRadioButton14, selectedRadioButton15, selectedRadioButton16, selectedRadioButton17, selectedRadioButton18, selectedRadioButton19, selectedRadioButton20;
-    private EditText eText1, eText2, eText3, eText4, eText5, eText6, eText7, eText8, eText9;
-    private TextView photo1, photo2, photo3, photo4, photo5, photo6, photo7, photo8, photo9, photo10, photo11, photo12, photo13, photo14;
-    private ImageView image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14;
-    private String imagePath1 = "null", imagePath2 = "null", imagePath7 = "null", imagePath10 = "null", imagePath11 = "null", imagePath12 = "null";
-    private String imagePath3, imagePath4, imagePath5, imagePath6, imagePath8, imagePath9, imagePath13, imagePath14;
-    private File photoFile = null;
-    private String currentPhotoPath;
-    private Landing_Screen context;
-    private AppPrefernces prefernces;
-    public static final String TAG = "TAG";
-    private DatabaseHelper mDatabaseHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -268,7 +268,6 @@ public class ResearchTwo extends Fragment implements BlockingStep {
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    mDatabaseHelper.AddResearchImages("/null", "sdf");
                     imagePath1 = currentPhotoPath;
                     image1.setImageResource(R.drawable.ic_right);
                     //        <customer code>_<contract code>_<image type>*_<hawb>_img_rt_<customer number>**_<AAAAMMDDHHMMSS>.png

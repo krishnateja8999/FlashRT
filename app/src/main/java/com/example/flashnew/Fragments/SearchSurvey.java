@@ -1,6 +1,5 @@
 package com.example.flashnew.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,26 +78,28 @@ import static com.example.flashnew.Server.Utils.VERSION;
 
 public class SearchSurvey extends Fragment {
 
-    private static final String TAG = "TAG";
-    private CardView client_local, client_alberto, lastCardView;
-    private Button button_abrir, confirm_enviar, takePic;
-    private RadioButton radio1, radio2, radio3, radio4;
-    private RadioGroup radioGroup, radioGroup1;
-    private Spinner spi, spi2;
-    private String[] values1, enderec, ausente, nao_visitado, outros;
-    private String researchName;
-    private Landing_Screen context;
-    private TextView researchHawb;
-    private StepperLayout mStepperLayout;
-    private LinearLayout bl1, actions_lay1;
-    private MyStepperAdapter mStepperAdapter;
-    private File photoFile = null;
-    private String currentPhotoPath;
-    private DatabaseHelper mDatabaseHelper;
-    private String contractCode, customerID, clientName, resListcode;
+    private String imageName;
     private String timeStamp;
+    private Spinner spi, spi2;
+    private String researchName;
+    private TextView researchHawb;
+    private File photoFile = null;
+    private Landing_Screen context;
+    private String currentPhotoPath;
+    private RadioButton radioButton;
     private AppPrefernces prefernces;
+    private StepperLayout mStepperLayout;
+    private DatabaseHelper mDatabaseHelper;
+    private LinearLayout bl1, actions_lay1;
+    private static final String TAG = "TAG";
+    private MyStepperAdapter mStepperAdapter;
     private InternetConnectionChecker checker;
+    private RadioGroup radioGroup, radioGroup1;
+    private RadioButton radio1, radio2, radio3, radio4;
+    private Button button_abrir, confirm_enviar, takePic;
+    private CardView client_local, client_alberto, lastCardView;
+    private String contractCode, customerID, clientName, resListcode;
+    private String[] values1, enderec, ausente, nao_visitado, outros;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -239,18 +240,13 @@ public class SearchSurvey extends Fragment {
                 bl1.setVisibility(View.GONE);
                 actions_lay1.setVisibility(View.GONE);
                 mStepperLayout.setVisibility(View.VISIBLE);
-//                Fragment fr = new StepperTabs();
-//                FragmentTransaction fragmentTransaction = ((AppCompatActivity) context)
-//                        .getSupportFragmentManager().beginTransaction();
-//                fragmentTransaction.replace(R.id.content, fr);
-//                fragmentTransaction.commit();
             }
         });
 
         confirm_enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FinalDialog("Confirme as respostas", "Deseja finalizar?");
+                ButtonEnviar();
             }
         });
 
@@ -305,9 +301,6 @@ public class SearchSurvey extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            mDatabaseHelper.AddResearchImages("/null", "sdf");
-            String imageName = prefernces.getCustomerCode() + "_" + prefernces.getContractCode() + "_img_ft_especial_" + prefernces.getHawbCodeRes() + "_img_rt_" + prefernces.getClientName() + "_" + timeStamp + ".png";
-            mDatabaseHelper.AddResearchImages(currentPhotoPath, imageName);
             Log.e(TAG, "SearchSurveyImagePath: " + currentPhotoPath + " ImageName" + imageName);
             takePic.setText("Tirar fot do local" + "   ✔");
         }
@@ -554,6 +547,22 @@ public class SearchSurvey extends Fragment {
         }
     }
 
+    private void ButtonEnviar() {
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        radioButton = (RadioButton) radioGroup.findViewById(selectedId);
+        if (radioButton.getText().toString().equals("Não")) {
+            if (spi.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_LONG).show();
+            } else if (takePic.getText().toString().equals("Tirar foto do local")) {
+                Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+            } else {
+                FinalDialog("Confirme as respostas", "Deseja finalizar?");
+            }
+        } else {
+            FinalDialog("Confirme as respostas", "Deseja finalizar?");
+        }
+    }
+
     private void FinalDialog(String successDialog, String successDesc) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(successDialog);
@@ -563,6 +572,10 @@ public class SearchSurvey extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FinalDialog2("Sucesso", "Pesquisa finalizada com successo");
+                mDatabaseHelper.AddResearchImages("/null", "sdf");
+                imageName = prefernces.getCustomerCode() + "_" + prefernces.getContractCode() + "_img_ft_especial_" + prefernces.getHawbCodeRes() + "_img_rt_" + prefernces.getClientName() + "_" + timeStamp + ".png";
+                mDatabaseHelper.AddResearchImages(currentPhotoPath, imageName);
+                Log.e(TAG, "SearchSurveyImagePathDialog: " + currentPhotoPath + " ImageName" + imageName);
                 mDatabaseHelper.CheckTickMarkInResearchLists();
                 StoreResearchDetails();
                 if (checker.checkInternetConnection()) {

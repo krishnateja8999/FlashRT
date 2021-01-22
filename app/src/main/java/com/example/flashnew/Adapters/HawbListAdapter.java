@@ -46,27 +46,9 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
         holder.name.setText(hawbLists.get(position).getName());
         holder.address.setText(hawbLists.get(position).getClientNumber());
 
-
         if (hawbLists.get(position).getTick().equals("false")) {
             holder.timeImage.setImageResource(R.drawable.ic_time);
         }
-
-//        Geocoder geocoder;
-//        List<Address> addresses;
-//        geocoder = new Geocoder(context, Locale.getDefault());
-//
-//        try {
-//            addresses = geocoder.getFromLocation(hawbLists.get(position).getLatitude(), hawbLists.get(position).getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-//            String address = addresses.get(0).getAddressLine(0);
-//            String city = addresses.get(0).getAdminArea();
-//            String postalCode = addresses.get(0).getPostalCode();
-//            holder.address.setText(address);
-//            holder.city.setText(city);
-//            holder.postalCode.setText(postalCode);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
@@ -80,7 +62,6 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
         private TextView address, city, name, postalCode;
         private ImageView timeImage;
 
-
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -90,7 +71,6 @@ public class HawbListAdapter extends RecyclerView.Adapter<HawbListAdapter.MyView
             timeImage = itemView.findViewById(R.id.timeImage);
             city = itemView.findViewById(R.id.city_hawb_list);
             postalCode = itemView.findViewById(R.id.pincode_hawb_List);
-
         }
     }
 }

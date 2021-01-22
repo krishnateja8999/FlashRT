@@ -64,16 +64,16 @@ import static com.example.flashnew.Server.Utils.VERSION;
 
 public class ResearchThree extends Fragment implements BlockingStep {
 
-    private static final String TAG = "TAG";
-    private EditText responseDesta;
     private TextView photo;
-    private ImageView image;
-    private DatabaseHelper mDatabaseHelper;
     private ImageTick tick;
-    private AppPrefernces prefernces;
-    private Landing_Screen context;
-    private InternetConnectionChecker checker;
+    private ImageView image;
     private String timeStamp;
+    private EditText responseDesta;
+    private Landing_Screen context;
+    private AppPrefernces prefernces;
+    private DatabaseHelper mDatabaseHelper;
+    private static final String TAG = "TAG";
+    private InternetConnectionChecker checker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,6 +114,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FinalDialog2("Sucesso", "Pesquisa finalizada com successo");
+                mDatabaseHelper.AddResearchImages("/null", "sdf");
                 StoreResearchDetails();
                 SaveImagesOfResearchTwo();
                 //String imageName = customerID + "_" + contractCode + "_img_ft_especial_" + researchHawb + "_img_rt_" + clientName + "_" + timeStamp + ".png";

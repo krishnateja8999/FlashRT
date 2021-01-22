@@ -94,26 +94,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
+import static com.example.flashnew.Server.Utils.MASTER_PASSWORD;
 import static com.example.flashnew.Server.Utils.VERSION;
 
 public class Landing_Screen extends AppCompatActivity {
-    public NavigationView navigationView;
-    public Toolbar toolbar, searchToolbar;
-    private BottomNavigationView bottomNavigationView;
-    private RelativeLayout layout;
-    private ImageView log_out;
-    public static final int PERMISSION_REQ_CODE = 200;
-    private String[] permissions;
-    private ProgressDialog progressDialog;
-    private AppPrefernces preferences;
-    private DatabaseHelper databaseHelper;
-    private RequestQueue queue;
-    private InternetConnectionChecker internetChecker;
-    private LocationManager locationManager;
-    private TextView nav_name;
-    private ImageView provfile_nav;
-    private HeaderProfPicUpdater profPicUpdater;
 
+    public Toolbar toolbar;
+    private ImageView log_out;
+    private TextView nav_name;
+    private RequestQueue queue;
+    private String[] permissions;
+    private RelativeLayout layout;
+    private ImageView provfile_nav;
+    private AppPrefernces preferences;
+    private NavigationView navigationView;
+    private ProgressDialog progressDialog;
+    private DatabaseHelper databaseHelper;
+    private HeaderProfPicUpdater profPicUpdater;
+    private BottomNavigationView bottomNavigationView;
+    private InternetConnectionChecker internetChecker;
+    public static final int PERMISSION_REQ_CODE = 200;
 
     @SuppressLint({"MissingPermission", "HardwareIds"})
     @Override
@@ -214,7 +214,7 @@ public class Landing_Screen extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int id) {
                                             if (edittext.getText().toString().length() == 0) {
                                                 edittext.setError(getResources().getString(R.string.Login_screen9));
-                                            } else if (edittext.getText().toString().equals(getResources().getString(R.string.lista_coletas_feitass))) {
+                                            } else if (edittext.getText().toString().equals(MASTER_PASSWORD)) {
                                                 listDownloadDialog();
                                             } else {
                                                 edittext.setError(getResources().getString(R.string.Login_screen10));
@@ -404,7 +404,6 @@ public class Landing_Screen extends AppCompatActivity {
             case 5:
                 bottomNavigationView.setSelectedItemId(R.id.messages);
                 break;
-
         }
     }
 
@@ -519,8 +518,6 @@ public class Landing_Screen extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-//                Intent intent22 = new Intent("research_list_update");
-//                LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent22);
             }
         });
         //Creating dialog box

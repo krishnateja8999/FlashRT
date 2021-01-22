@@ -11,8 +11,9 @@ import java.util.ArrayList;
 
 public class Utils {
     public static final String TAG = "TAG";
-    public static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final String VERSION = "3.9.0";
+    public static final int REQUEST_IMAGE_CAPTURE = 1;
+    public static final String MASTER_PASSWORD = "tbmvc";
     public static final String IMAGE_SERVICE_PROJECT_ID = "digitalizacao-174822";
     public static final String IMAGE_SERVICE_BUCKET = "gunsandroses-909459-dontcry-571723"; // test bucket.
     //"saopaulo-blackbirds-imagens-174822"    //production bucket.

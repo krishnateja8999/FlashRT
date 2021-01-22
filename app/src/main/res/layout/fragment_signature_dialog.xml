@@ -14,20 +14,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Assine abaixo"
             android:layout_marginStart="50dp"
             android:layout_marginTop="20dp"
+            android:text="Assine abaixo"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <com.kyanogen.signatureview.SignatureView xmlns:sign="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/sigView"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            sign:penSize="5dp"
             sign:backgroundColor="#ffffff"
+            sign:enableSignature="true"
             sign:penColor="#000000"
-            android:id="@+id/sigView"
-            sign:enableSignature="true" />
+            sign:penSize="5dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,11 +36,14 @@
 
             <Button
                 android:id="@+id/clearCanvas"
-                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textSize="15sp"
                 android:text="LIMPAR" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,18 +53,22 @@
 
                 <Button
                     android:id="@+id/save"
-                    android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:textSize="15sp"
                     android:text="OK" />
 
                 <Button
                     android:id="@+id/cancelar"
-                    android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/Red"
-                    android:text="CANCELAR" />
+                    android:layout_marginTop="10dp"
+                    android:text="CANCELAR"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:textSize="15sp"
+                    android:textColor="@color/Red" />
 
             </LinearLayout>
         </LinearLayout>

@@ -32,13 +32,13 @@ import java.util.Calendar;
 
 public class SignatureDialog extends Dialog {
 
+    private File f;
+    private String path;
+    private Bitmap bitmap;
     private Context context;
     private SignatureView sigView;
-    private Button clearCanvas, save, cancelar;
-    private File f;
-    private Bitmap bitmap;
-    private String path;
     private AppPrefernces prefernces;
+    private Button clearCanvas, save, cancelar;
 
     public SignatureDialog(@NonNull Context context) {
         super(context);
@@ -108,7 +108,6 @@ public class SignatureDialog extends Dialog {
 
             Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
             Log.d("TAG", "File Name::--->" + f.getName());
-
 
             return f.getAbsolutePath();
         } catch (IOException e1) {

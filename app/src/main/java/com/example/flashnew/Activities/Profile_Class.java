@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 public class Profile_Class extends AppCompatActivity {
+
     private Bitmap photo, OutImage;
     private AppPrefernces prefernces;
     private CircularImageView imageView;

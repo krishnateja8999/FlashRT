@@ -74,23 +74,23 @@ import static com.android.volley.VolleyLog.TAG;
 import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 public class CollectDetails extends Fragment {
-    private TextView title, imei;
-    private Spinner spinner, spinner2, spinner3;
-    private EditText nameColeta;
-    private EditText coletaIdenti;
-    private DatabaseHelper mDatabaseHelper;
+
     private String strtext;
-    private AppPrefernces prefernces;
-    private Button buttonConfirmCollect, buttonCancelCollect;
-    private Landing_Screen mContext;
-    private Button buttonPhotoAR;
-    private String[] values2, enderec, ausente, nao_visitado, outros;
-    private Bitmap photo;
-    private Bitmap OutImage;
+    private String[] outros;
+    private String[] ausente;
+    private String[] enderec;
     private RequestQueue queue;
-    private InternetConnectionChecker internetChecker;
+    private EditText nameColeta;
+    private Button buttonPhotoAR;
+    private EditText coletaIdenti;
+    private String[] nao_visitado;
     private File photoFile = null;
     private String currentPhotoPath;
+    private Landing_Screen mContext;
+    private AppPrefernces prefernces;
+    private DatabaseHelper mDatabaseHelper;
+    private Spinner spinner, spinner2, spinner3;
+    private InternetConnectionChecker internetChecker;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -103,30 +103,32 @@ public class CollectDetails extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_collect_details, container, false);
-        title = view.findViewById(R.id.actionbarTitle);
-        imei = view.findViewById(R.id.actionbarImei);
-        spinner = view.findViewById(R.id.targetOptions);
-        nameColeta = view.findViewById(R.id.nameColeta);
-        coletaIdenti = view.findViewById(R.id.coletaIdenti);
-        buttonConfirmCollect = view.findViewById(R.id.buttonConfirmCollect);
-        buttonCancelCollect = view.findViewById(R.id.buttonCancelCollect);
-        buttonPhotoAR = view.findViewById(R.id.buttonPhotoAR);
-        spinner2 = view.findViewById(R.id.targetOptions2);
-        spinner3 = view.findViewById(R.id.targetOptions3);
-        values2 = getResources().getStringArray(R.array.motivo_grupo);
-        enderec = getResources().getStringArray(R.array.motivo_dev);
-        ausente = getResources().getStringArray(R.array.motivo_ausente);
-        nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
-        outros = getResources().getStringArray(R.array.motivo_outros);
-        mDatabaseHelper = new DatabaseHelper(getContext());
+
         queue = Volley.newRequestQueue(mContext);
         prefernces = new AppPrefernces(mContext);
+        mDatabaseHelper = new DatabaseHelper(mContext);
+        spinner = view.findViewById(R.id.targetOptions);
+        nameColeta = view.findViewById(R.id.nameColeta);
+        spinner2 = view.findViewById(R.id.targetOptions2);
+        spinner3 = view.findViewById(R.id.targetOptions3);
+        coletaIdenti = view.findViewById(R.id.coletaIdenti);
+        buttonPhotoAR = view.findViewById(R.id.buttonPhotoAR);
+        TextView imei = view.findViewById(R.id.actionbarImei);
+        TextView title = view.findViewById(R.id.actionbarTitle);
         internetChecker = new InternetConnectionChecker(mContext);
-        title.setVisibility(View.GONE);
+        enderec = getResources().getStringArray(R.array.motivo_dev);
+        outros = getResources().getStringArray(R.array.motivo_outros);
+        ausente = getResources().getStringArray(R.array.motivo_ausente);
+        String[] values2 = getResources().getStringArray(R.array.motivo_grupo);
+        Button buttonCancelCollect = view.findViewById(R.id.buttonCancelCollect);
+        nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
+        Button buttonConfirmCollect = view.findViewById(R.id.buttonConfirmCollect);
+
         prefernces.setNotCollectedImage(" ");
         strtext = getArguments().getString("CID");
         imei.setText("Coleta: " + strtext);
-        Log.e(TAG, "CollectDetails: " + prefernces.getNotCollectedImage());
+        title.setVisibility(View.GONE);
+
         String[] values1 = {"-- Selecione Coletar --", "COLETADO", "NAO_COLETADO"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -223,8 +225,6 @@ public class CollectDetails extends Fragment {
         buttonPhotoAR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 dispatchTakePictureIntent();
             }
         });

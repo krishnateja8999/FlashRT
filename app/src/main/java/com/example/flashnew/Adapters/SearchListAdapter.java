@@ -70,8 +70,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
                 fragmentTransaction.commit();
             }
         });
-
-
     }
 
     @Override
@@ -94,7 +92,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.My
             hawbCode = itemView.findViewById(R.id.hawb_code);
             start = itemView.findViewById(R.id.start);
             img_research = itemView.findViewById(R.id.img_research);
-
         }
     }
 }

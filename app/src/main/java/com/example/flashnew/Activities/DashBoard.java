@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class DashBoard extends AppCompatActivity {
-    private static final String TAG = "DashBoard";
+
     private Toolbar toolbar;
-    private TextView imeiText, pendingHawbLists, listaColetasPendentes, syncHawb, listaColetasAguardandoSincronizar, listaAguardandoSincronizarImagens, listaColetasAguardandoSincronizarImagem, listaEntregues, listaDevolvidos, listaColetasFeitas, listaPesquisaAguardandoSincronizar, listaPesquisaPendente, listaPesquisaFotoAguardandoSincronizar;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
+    private static final String TAG = "DashBoard";
+    private TextView imeiText, pendingHawbLists, listaColetasPendentes, syncHawb, listaColetasAguardandoSincronizar, listaAguardandoSincronizarImagens, listaColetasAguardandoSincronizarImagem, listaEntregues, listaDevolvidos, listaColetasFeitas, listaPesquisaAguardandoSincronizar, listaPesquisaPendente, listaPesquisaFotoAguardandoSincronizar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,20 +73,27 @@ public class DashBoard extends AppCompatActivity {
         int CollectCount = mDatabaseHelper.TotalCollectCount();
         int ResearchPending = mDatabaseHelper.TotalResearchPendingCount();
         int ResearchSyncCount = ResearchDetails.getCount();
-        int ResearchImageCount = ResearchImages.getCount();
+        int ResearchImageCount = (ResearchImages.getCount() - 1);
 
+        //List
         listaEntregues.setText(String.valueOf(HawbDelivery));
         listaDevolvidos.setText(String.valueOf(HawbReturn));
         pendingHawbLists.setText(totalHawbsPending);
         syncHawb.setText(String.valueOf(HawbSync));
         listaAguardandoSincronizarImagens.setText(String.valueOf(HawbImageSync));
+        //Collect
         listaColetasPendentes.setText(totalCollectPending);
         listaColetasFeitas.setText(String.valueOf(CollectCount));
         listaColetasAguardandoSincronizar.setText(String.valueOf(CollectSync));
         listaColetasAguardandoSincronizarImagem.setText(String.valueOf(NotCollectSync));
+        //Research
         listaPesquisaPendente.setText(String.valueOf(ResearchPending));
         listaPesquisaAguardandoSincronizar.setText(String.valueOf(ResearchSyncCount));
-        listaPesquisaFotoAguardandoSincronizar.setText(String.valueOf(ResearchImageCount));
+        if (ResearchImages.getCount() == 0) {
+            listaPesquisaFotoAguardandoSincronizar.setText(String.valueOf(ResearchImages.getCount()));
+        } else {
+            listaPesquisaFotoAguardandoSincronizar.setText(String.valueOf(ResearchImageCount));
+        }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

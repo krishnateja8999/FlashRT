@@ -84,65 +84,53 @@ import static android.content.ContentValues.TAG;
 
 
 public class Collect extends Fragment implements BackFragment, SwipeRefreshLayout.OnRefreshListener {
-    private TextView title, imei;
-    private Button coletaDigit, button;
-    private ArrayList<CollectListModalClass> listModalClasses;
-    private RecyclerView recyclerViewCollectList;
-    private LinearLayoutManager layoutManager;
-    private CollectListAdapter collectListAdapter;
-    private String strtext = "null";
-    private QRCodeValidator qrCodeValidator;
-    private ListUpdater listUpdater;
+
     private TextView no_lists;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
-    private RequestQueue queue;
-    private InternetConnectionChecker internetChecker;
+    private RecyclerView recyclerViewCollectList;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private InternetConnectionChecker internetChecker;
+    private ArrayList<CollectListModalClass> listModalClasses;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.collect, container, false);
-        button = view.findViewById(R.id.coletaScan);
-        title = view.findViewById(R.id.actionbarTitle);
-        imei = view.findViewById(R.id.actionbarImei);
-        prefernces = new AppPrefernces(getContext());
-        coletaDigit = view.findViewById(R.id.coletaDigit);
+
         no_lists = view.findViewById(R.id.no_lists);
-        swipeRefreshLayout = view.findViewById(R.id.swipe_collect);
-        queue = Volley.newRequestQueue(getContext());
+        prefernces = new AppPrefernces(getContext());
         mDatabaseHelper = new DatabaseHelper(getContext());
+        Button button = view.findViewById(R.id.coletaScan);
+        TextView imei = view.findViewById(R.id.actionbarImei);
+        TextView title = view.findViewById(R.id.actionbarTitle);
+        Button coletaDigit = view.findViewById(R.id.coletaDigit);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_collect);
         internetChecker = new InternetConnectionChecker(getContext());
-        title.setText("Coletas");
-        imei.setText("IMEI : " + prefernces.getIMEI());
+        recyclerViewCollectList = view.findViewById(R.id.collectRecyclerView);
+
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
-        qrCodeValidator = new QRCodeValidator();
+
+        QRCodeValidator qrCodeValidator = new QRCodeValidator();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(qrCodeValidator, new IntentFilter("qr_code_validate"));
-        listUpdater = new ListUpdater();
+        ListUpdater listUpdater = new ListUpdater();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listUpdater, new IntentFilter("list_updater"));
 
-        recyclerViewCollectList = view.findViewById(R.id.collectRecyclerView);
         listModalClasses = new ArrayList<>();
-        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerViewCollectList.setLayoutManager(layoutManager);
+
+        title.setText("Coletas");
+        imei.setText("IMEI : " + prefernces.getIMEI());
         Cursor data = mDatabaseHelper.getDataFromTableFour();
         if (data.getCount() == 0) {
             mDatabaseHelper.DeleteTableNine();
         }
         ColetaLists();
-//        listModalClasses.add(new CollectListModalClass("544524", "H.no-7-11, Prakash Nagar, Miyapur. 500050"));
-//        collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
-//        if (listModalClasses.size() == 0) {
-//            no_lists.setVisibility(View.VISIBLE);
-//            Log.e("TAG", "onCreateView: " + listModalClasses.size());
-//        }
-//        recyclerViewCollectList.setAdapter(collectListAdapter);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,7 +204,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                 listModalClasses.add(new CollectListModalClass(data.getString(1), data.getString(2) + ", " + data.getString(3) +
                         ", " + data.getString(4) + ", " + data.getString(5) + ", " + data.getString(6), data.getString(7)));
             }
-            collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
+            CollectListAdapter collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
             recyclerViewCollectList.setAdapter(collectListAdapter);
             collectListAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
@@ -276,7 +264,6 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                             //Creating dialog box
                             AlertDialog alert1 = builder1.create();
                             alert1.show();
-                            //Utils.DialogClass(requireContext(), "Sucesso", "Coleta " + item[2] + " lido com sucesso", "OK");
                             TableFiveModel tableFiveModel = new TableFiveModel(s2, s3, s4, s5, s6, s7);
                             boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
                             System.out.println(success);
@@ -358,5 +345,4 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
     public int getBackPriority() {
         return NORMAL_BACK_PRIORITY;
     }
-
 }

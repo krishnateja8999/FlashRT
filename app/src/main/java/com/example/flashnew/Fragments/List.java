@@ -91,33 +91,35 @@ import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 import static com.example.flashnew.Server.Utils.VERSION;
 
 public class List extends Fragment implements LocationListener {
-    private TextView title, imei;
-    private Spinner spinner, spinner2;
-    private Button conf, can, camera;
-    private LinearLayout linearLayout, retur;
-    private RelativeLayout rl1, rl2;
-    private Landing_Screen context;
-    private LinearLayout linearLayout1, linearLayout2;
-    private String[] values2, enderec, ausente, nao_visitado, outros;
-    private CardView listScreenListDownload;
-    private AppPrefernces preferences;
-    private RequestQueue queue;
-    private ProgressBar ListScreenProgressBar;
-    private DatabaseHelper mDatabaseHelper;
-    private AutoCompleteTextView hawb;
-    private Spinner attemptsDropDown;
+
     private Bitmap OutImage;
-    private LocationManager locationManager;
-    private InternetConnectionChecker internetChecker;
-    private ListCodeUpdater listCodeUpdater;
-    private ListScreenUpdater listScreenUpdater;
+    private RequestQueue queue;
+    private TextView title, imei;
     private File photoFile = null;
+    private Landing_Screen context;
     private String currentPhotoPath;
+    private RelativeLayout rl1, rl2;
+    private Spinner attemptsDropDown;
+    private Button conf, can, camera;
+    private AppPrefernces preferences;
+    private Spinner spinner, spinner2;
+    private AutoCompleteTextView hawb;
+    private DatabaseHelper mDatabaseHelper;
+    private LocationManager locationManager;
+    private ListCodeUpdater listCodeUpdater;
+    private CardView listScreenListDownload;
+    private LinearLayout linearLayout, retur;
+    private ProgressBar ListScreenProgressBar;
+    private ListScreenUpdater listScreenUpdater;
+    private LinearLayout linearLayout1, linearLayout2;
+    private InternetConnectionChecker internetChecker;
+    private String[] values2, enderec, ausente, nao_visitado, outros;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.list, container, false);
+
         linearLayout = view.findViewById(R.id.buttonEntrega);
         spinner = view.findViewById(R.id.targetOptions);
         spinner2 = view.findViewById(R.id.spinner2);
@@ -142,7 +144,6 @@ public class List extends Fragment implements LocationListener {
         attemptsDropDown = view.findViewById(R.id.attemptsDropDown);
         internetChecker = new InternetConnectionChecker(context);
         String[] items = new String[]{"1"};
-        //String[] items = new String[]{"1", "2", "3"};
         values2 = getResources().getStringArray(R.array.motivo_grupo);
         ArrayAdapter<String> attemptAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, items);
         attemptsDropDown.setAdapter(attemptAdapter);
@@ -154,11 +155,11 @@ public class List extends Fragment implements LocationListener {
         ausente = getResources().getStringArray(R.array.motivo_ausente);
         nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
         outros = getResources().getStringArray(R.array.motivo_outros);
-        getLocation();
         listCodeUpdater = new ListCodeUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listCodeUpdater, new IntentFilter("list_code_status"));
         listScreenUpdater = new ListScreenUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listScreenUpdater, new IntentFilter("list_screen"));
+
         Cursor data = mDatabaseHelper.getDeliveryData(); //table3
         Cursor data1 = mDatabaseHelper.getDataFromTableFour();
         Cursor data2 = mDatabaseHelper.getData();//Table 2
@@ -193,7 +194,6 @@ public class List extends Fragment implements LocationListener {
 
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
             title.setText("Sem Listas");
-
         } else {
             title.setText("Lista : " + preferences.getListID());
         }
@@ -393,6 +393,7 @@ public class List extends Fragment implements LocationListener {
             preferences.setLowType("DEVOLUCAO");
             preferences.setImageType("img_local");
             HawbStringArray();
+            getLocation();
         }
     }
 
