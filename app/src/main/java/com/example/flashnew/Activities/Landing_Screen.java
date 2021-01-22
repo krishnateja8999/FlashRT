@@ -575,22 +575,6 @@ public class Landing_Screen extends AppCompatActivity {
             JSONObject jsonObj = new JSONObject();
             JSONObject jsonObj1 = new JSONObject();
 
-            jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
-            jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
-            jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
-            jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
-            jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
-            jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
-            jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
-            jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
-            jsonArray.put(jsonObj);
-
-            jsonObj1.put("imei", preferences.getIMEI());
-            jsonObj1.put("franquia", preferences.getFranchise());
-            jsonObj1.put("sistema", preferences.getSystem());
-            jsonObj1.put("lista", preferences.getListID());
-            jsonObj1.put("entregas", jsonArray);
-
             Storage storage = UploadImages.setCredentials(getAssets().open("key.json"));
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -600,7 +584,43 @@ public class Landing_Screen extends AppCompatActivity {
             });
             thread.start();
 
-            Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+            if (Utils.ConvertArrayListToString(tipoBaixa).equals("ENTREGA")) {
+                jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
+                jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
+                jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
+                jsonArray.put(jsonObj);
+
+                jsonObj1.put("imei", preferences.getIMEI());
+                jsonObj1.put("franquia", preferences.getFranchise());
+                jsonObj1.put("sistema", preferences.getSystem());
+                jsonObj1.put("lista", preferences.getListID());
+                jsonObj1.put("entregas", jsonArray);
+
+                Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+            } else {
+                jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
+                jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
+                jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                jsonObj.put("idMotivo", Utils.ConvertArrayListToString(relationID));
+                jsonArray.put(jsonObj);
+
+                jsonObj1.put("imei", preferences.getIMEI());
+                jsonObj1.put("franquia", preferences.getFranchise());
+                jsonObj1.put("sistema", preferences.getSystem());
+                jsonObj1.put("lista", preferences.getListID());
+                jsonObj1.put("entregas", jsonArray);
+
+                Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+            }
 
             String url1 = ApiUtils.GET_LIST;
             String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
@@ -635,7 +655,7 @@ public class Landing_Screen extends AppCompatActivity {
                             Base64.NO_WRAP);
                     params.put("Authorization", auth1);
                     params.put("x-versao-rt", VERSION);
-                    params.put("x-rastreador", "ricardo");
+                    params.put("x-rastreador", preferences.getTracker());
                     params.put("Content-Type", "application/json; charset=utf-8");
                     return params;
                 }
@@ -958,7 +978,7 @@ public class Landing_Screen extends AppCompatActivity {
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
                         params.put("x-versao-rt", VERSION);
-                        params.put("x-rastreador", "ricardo");
+                        params.put("x-rastreador", preferences.getTracker());
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
                     }
@@ -1030,7 +1050,7 @@ public class Landing_Screen extends AppCompatActivity {
     private void CodeDeletedDialog(String code) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setTitle("Sucesso");
-        builder1.setMessage("Lista " + code + " excluída");
+        builder1.setMessage(code + " excluída");
         builder1.setCancelable(true);
         builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override

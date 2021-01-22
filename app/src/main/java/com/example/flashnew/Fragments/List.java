@@ -120,41 +120,46 @@ public class List extends Fragment implements LocationListener {
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.list, container, false);
 
-        linearLayout = view.findViewById(R.id.buttonEntrega);
-        spinner = view.findViewById(R.id.targetOptions);
-        spinner2 = view.findViewById(R.id.spinner2);
         rl1 = view.findViewById(R.id.rl);
         rl2 = view.findViewById(R.id.rl1);
-        title = view.findViewById(R.id.actionbarTitle);
-        imei = view.findViewById(R.id.actionbarImei);
-        conf = view.findViewById(R.id.buttonConfirm);
+        hawb = view.findViewById(R.id.hawb);
+        queue = Volley.newRequestQueue(context);
+        preferences = new AppPrefernces(context);
         can = view.findViewById(R.id.buttonCancel);
-        retur = view.findViewById(R.id.buttonDevolucao);
+        spinner2 = view.findViewById(R.id.spinner2);
+        conf = view.findViewById(R.id.buttonConfirm);
+        imei = view.findViewById(R.id.actionbarImei);
+        mDatabaseHelper = new DatabaseHelper(context);
         camera = view.findViewById(R.id.buttonPhotoAR);
+        title = view.findViewById(R.id.actionbarTitle);
+        spinner = view.findViewById(R.id.targetOptions);
+        retur = view.findViewById(R.id.buttonDevolucao);
+        linearLayout1 = view.findViewById(R.id.buttonColeta);
+        linearLayout = view.findViewById(R.id.buttonEntrega);
+        linearLayout2 = view.findViewById(R.id.buttonPesquisa);
+        internetChecker = new InternetConnectionChecker(context);
+        attemptsDropDown = view.findViewById(R.id.attemptsDropDown);
+        ListScreenProgressBar = view.findViewById(R.id.ListScreenProgressBar);
+        listScreenListDownload = view.findViewById(R.id.listScreenListDownload);
+
         camera.setEnabled(false);
         camera.setBackground(getResources().getDrawable(R.drawable.rounded_grey_filled_bg));
-        linearLayout1 = view.findViewById(R.id.buttonColeta);
-        linearLayout2 = view.findViewById(R.id.buttonPesquisa);
-        listScreenListDownload = view.findViewById(R.id.listScreenListDownload);
-        preferences = new AppPrefernces(context);
-        queue = Volley.newRequestQueue(context);
-        ListScreenProgressBar = view.findViewById(R.id.ListScreenProgressBar);
-        mDatabaseHelper = new DatabaseHelper(context);
-        hawb = view.findViewById(R.id.hawb);
-        attemptsDropDown = view.findViewById(R.id.attemptsDropDown);
-        internetChecker = new InternetConnectionChecker(context);
+
         String[] items = new String[]{"1"};
         values2 = getResources().getStringArray(R.array.motivo_grupo);
         ArrayAdapter<String> attemptAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, items);
         attemptsDropDown.setAdapter(attemptAdapter);
+
         String[] tab_names = getResources().getStringArray(R.array.grau_relacionamento);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, tab_names);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter1);
+
         enderec = getResources().getStringArray(R.array.motivo_dev);
+        outros = getResources().getStringArray(R.array.motivo_outros);
         ausente = getResources().getStringArray(R.array.motivo_ausente);
         nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
-        outros = getResources().getStringArray(R.array.motivo_outros);
+
         listCodeUpdater = new ListCodeUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listCodeUpdater, new IntentFilter("list_code_status"));
         listScreenUpdater = new ListScreenUpdater();
@@ -203,7 +208,11 @@ public class List extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
-                    listDownloadDialog();
+                    if (internetChecker.checkInternetConnection()) {
+                        listDownloadDialog();
+                    } else {
+                        Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     FragmentTransaction fragmentTransaction = context
                             .getSupportFragmentManager().beginTransaction();
@@ -260,7 +269,7 @@ public class List extends Fragment implements LocationListener {
                         hawb.requestFocus();
                     } else if (!check) {
                         Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
-                    } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
+                    } else if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
                         Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
                     } else if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
                         Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
@@ -300,7 +309,11 @@ public class List extends Fragment implements LocationListener {
         Cursor data = mDatabaseHelper.getDataFromTableFour();
         Cursor data1 = mDatabaseHelper.getDeliveryData();
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
-            listDownloadDialogForDelivery();
+            if (internetChecker.checkInternetConnection()) {
+                listDownloadDialogForDelivery();
+            } else {
+                Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+            }
         } else if (data.getCount() == 0 && data1.getCount() != 0) {
             EmptyDataInTableFourDialog("entregar");
         } else {
@@ -332,7 +345,11 @@ public class List extends Fragment implements LocationListener {
     private void Returns() {
         Cursor data = mDatabaseHelper.getDataFromTableFour();
         if (preferences.getListID().equals(" ") || preferences.getListID() == null) {
-            listDownloadDialogForReturn();
+            if (internetChecker.checkInternetConnection()) {
+                listDownloadDialogForReturn();
+            } else {
+                Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+            }
         } else if (data.getCount() == 0) {
             EmptyDataInTableFourDialog("devolvida");
         } else {
@@ -413,6 +430,11 @@ public class List extends Fragment implements LocationListener {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         preferences.setListID(edittext.getText().toString());
+//                        if (internetChecker.checkInternetConnection()){
+//                            JsonParseListScreen();
+//                        }else {
+//                            Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+//                        }
                         JsonParseListScreen();
                     }
                 });
@@ -445,6 +467,11 @@ public class List extends Fragment implements LocationListener {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         preferences.setListID(edittext.getText().toString());
+//                        if (internetChecker.checkInternetConnection()){
+//                            JsonParseListScreen2();
+//                        }else {
+//                            Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+//                        }
                         JsonParseListScreen2();
                     }
                 });
@@ -477,6 +504,11 @@ public class List extends Fragment implements LocationListener {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         preferences.setListID(edittext.getText().toString());
+//                        if (internetChecker.checkInternetConnection()){
+//                            JsonParseListScreen3();
+//                        }else {
+//                            Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+//                        }
                         JsonParseListScreen3();
                     }
                 });
@@ -678,7 +710,7 @@ public class List extends Fragment implements LocationListener {
                         Base64.NO_WRAP);
                 params.put("Authorization", auth1);
                 params.put("x-versao-rt", VERSION);
-                params.put("x-rastreador", "ricardo");
+                params.put("x-rastreador", preferences.getTracker());
                 return params;
             }
         };
@@ -786,7 +818,7 @@ public class List extends Fragment implements LocationListener {
                         Base64.NO_WRAP);
                 params.put("Authorization", auth1);
                 params.put("x-versao-rt", VERSION);
-                params.put("x-rastreador", "ricardo");
+                params.put("x-rastreador", preferences.getTracker());
                 return params;
             }
         };
@@ -894,7 +926,7 @@ public class List extends Fragment implements LocationListener {
                         Base64.NO_WRAP);
                 params.put("Authorization", auth1);
                 params.put("x-versao-rt", VERSION);
-                params.put("x-rastreador", "ricardo");
+                params.put("x-rastreador", preferences.getTracker());
                 return params;
             }
         };
@@ -943,23 +975,43 @@ public class List extends Fragment implements LocationListener {
                 });
                 thread.start();
 
-                jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
-                jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
-                jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
-                jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
-                jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
-                jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
-                jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
-                jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
-                jsonArray.put(jsonObj);
+                if (Utils.ConvertArrayListToString(tipoBaixa).equals("ENTREGA")) {
+                    jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                    jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                    jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
+                    jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
+                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                    jsonObj.put("idGrauParentesco", Utils.ConvertArrayListToString(relationID));
+                    jsonArray.put(jsonObj);
 
-                jsonObj1.put("imei", preferences.getIMEI());
-                jsonObj1.put("franquia", preferences.getFranchise());
-                jsonObj1.put("sistema", preferences.getSystem());
-                jsonObj1.put("lista", preferences.getListID());
-                jsonObj1.put("entregas", jsonArray);
+                    jsonObj1.put("imei", preferences.getIMEI());
+                    jsonObj1.put("franquia", preferences.getFranchise());
+                    jsonObj1.put("sistema", preferences.getSystem());
+                    jsonObj1.put("lista", preferences.getListID());
+                    jsonObj1.put("entregas", jsonArray);
 
-                Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+                    Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+                } else {
+                    jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                    jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                    jsonObj.put("tipoBaixa", Utils.ConvertArrayListToString(tipoBaixa));
+                    jsonObj.put("foto", Utils.ConvertArrayListToString(foto));
+                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                    jsonObj.put("idMotivo", Utils.ConvertArrayListToString(relationID));
+                    jsonArray.put(jsonObj);
+
+                    jsonObj1.put("imei", preferences.getIMEI());
+                    jsonObj1.put("franquia", preferences.getFranchise());
+                    jsonObj1.put("sistema", preferences.getSystem());
+                    jsonObj1.put("lista", preferences.getListID());
+                    jsonObj1.put("entregas", jsonArray);
+
+                    Log.e(TAG, "PutJsonRequest: " + jsonObj1);
+                }
 
                 String url1 = ApiUtils.GET_LIST;
                 String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
@@ -990,7 +1042,7 @@ public class List extends Fragment implements LocationListener {
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
                         params.put("x-versao-rt", VERSION);
-                        params.put("x-rastreador", "ricardo");
+                        params.put("x-rastreador", preferences.getTracker());
 //                    params.put("Content-Type", "application/json");
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
@@ -1150,20 +1202,30 @@ public class List extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Log.e(TAG, "onLocationChangedList: " + location.getLatitude() + ", " + location.getLongitude());
-        preferences.setLatitude(String.valueOf(location.getLatitude()));
-        preferences.setLongitude(String.valueOf(location.getLongitude()));
+        try {
+            Log.e(TAG, "onLocationChangedList: " + location.getLatitude() + ", " + location.getLongitude());
+            preferences.setLatitude(String.valueOf(location.getLatitude()));
+            preferences.setLongitude(String.valueOf(location.getLongitude()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "onLocationChanged: " + e.getMessage());
+        }
     }
 
     @Override
     public void onProviderEnabled(@NonNull String provider) {
-
+        Log.e(TAG, "onProviderEnabled: ");
     }
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
         //Toast.makeText(context, "Habilite o GPS e a Internet", Toast.LENGTH_SHORT).show();
-        //Log.e(TAG, "onProviderDisabled: ");
+        Log.e(TAG, "onProviderDisabled: ");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.e(TAG, "onStatusChanged: ");
     }
 
     @Override

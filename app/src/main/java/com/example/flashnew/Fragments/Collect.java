@@ -39,6 +39,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.Activities.ScannerActivity;
 import com.example.flashnew.Adapters.CollectListAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
@@ -86,6 +87,7 @@ import static android.content.ContentValues.TAG;
 public class Collect extends Fragment implements BackFragment, SwipeRefreshLayout.OnRefreshListener {
 
     private TextView no_lists;
+    private Landing_Screen context;
     private AppPrefernces prefernces;
     private DatabaseHelper mDatabaseHelper;
     private RecyclerView recyclerViewCollectList;
@@ -99,14 +101,14 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         final View view = inflater.inflate(R.layout.collect, container, false);
 
         no_lists = view.findViewById(R.id.no_lists);
-        prefernces = new AppPrefernces(getContext());
-        mDatabaseHelper = new DatabaseHelper(getContext());
+        prefernces = new AppPrefernces(context);
+        mDatabaseHelper = new DatabaseHelper(context);
         Button button = view.findViewById(R.id.coletaScan);
         TextView imei = view.findViewById(R.id.actionbarImei);
         TextView title = view.findViewById(R.id.actionbarTitle);
         Button coletaDigit = view.findViewById(R.id.coletaDigit);
+        internetChecker = new InternetConnectionChecker(context);
         swipeRefreshLayout = view.findViewById(R.id.swipe_collect);
-        internetChecker = new InternetConnectionChecker(getContext());
         recyclerViewCollectList = view.findViewById(R.id.collectRecyclerView);
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -116,12 +118,12 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                 android.R.color.holo_blue_dark);
 
         QRCodeValidator qrCodeValidator = new QRCodeValidator();
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(qrCodeValidator, new IntentFilter("qr_code_validate"));
+        LocalBroadcastManager.getInstance(context).registerReceiver(qrCodeValidator, new IntentFilter("qr_code_validate"));
         ListUpdater listUpdater = new ListUpdater();
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listUpdater, new IntentFilter("list_updater"));
+        LocalBroadcastManager.getInstance(context).registerReceiver(listUpdater, new IntentFilter("list_updater"));
 
         listModalClasses = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recyclerViewCollectList.setLayoutManager(layoutManager);
 
         title.setText("Coletas");
@@ -135,7 +137,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext(), ScannerActivity.class);
+                Intent i = new Intent(context, ScannerActivity.class);
                 startActivity(i);
             }
         });
@@ -143,7 +145,11 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         coletaDigit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DigitalColleta();
+                if (internetChecker.checkInternetConnection()) {
+                    DigitalColleta();
+                } else {
+                    Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -151,13 +157,13 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
     }
 
     private void DigitalColleta() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        final EditText edittext = new EditText(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final EditText edittext = new EditText(context);
         edittext.setBackgroundResource(R.drawable.edit_text_border);
         edittext.setPadding(30, 30, 30, 30);
         edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
-        TextView title = new TextView(getContext());
-        title.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
+        TextView title = new TextView(context);
+        title.setTextColor(ContextCompat.getColor(context, android.R.color.black));
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         title.setTypeface(Typeface.SANS_SERIF);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -175,7 +181,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                         if (internetChecker.checkInternetConnection()) {
                             InJson(Integer.parseInt(edittext.getText().toString()));
                         } else {
-                            Toast.makeText(getContext(), "Sem conexão de internet", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
                         }
                         dialog.cancel();
                     }
@@ -212,7 +218,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
     }
 
     private void InJson(int code) {
-        RequestQueue queue = Volley.newRequestQueue(getContext());
+        RequestQueue queue = Volley.newRequestQueue(context);
         String url1 = ApiUtils.GET_COLETA;
         String url2 = prefernces.getHostUrl() + ApiUtils.GET_COLETA1;
         StringRequest request = new StringRequest(Request.Method.POST, url2, new Response.Listener<String>() {
@@ -235,10 +241,10 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                         String s7 = object.getString("cep");
 
                         boolean check = mDatabaseHelper.CheckColetaData(s2);
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
                         if (check) {
                             builder1.setTitle(getResources().getString(R.string.Login_screen1));
-                            builder1.setMessage("Coleta " + s2 + " já escaneado");
+                            builder1.setMessage("Coleta " + s2 + " já existe");
                             builder1.setCancelable(true);
                             builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
@@ -258,7 +264,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();
                                     Intent intent = new Intent("qr_code_validate");
-                                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                                 }
                             });
                             //Creating dialog box
@@ -269,7 +275,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                             System.out.println(success);
                         }
                     } else {
-                        Toast.makeText(getContext(), "Coleta não encontrada", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Coleta não encontrada", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -279,6 +285,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("TAG", "onErrorResponse: " + error);
+                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
@@ -326,6 +333,12 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
             Log.e(TAG, "onReceive: Collect" + intent);
             no_lists.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = (Landing_Screen) context;
     }
 
     @Override

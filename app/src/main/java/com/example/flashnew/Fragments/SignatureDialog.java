@@ -50,10 +50,10 @@ public class SignatureDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_signature_dialog);
 
-        sigView = findViewById(R.id.sigView);
-        clearCanvas = findViewById(R.id.clearCanvas);
         save = findViewById(R.id.save);
+        sigView = findViewById(R.id.sigView);
         cancelar = findViewById(R.id.cancelar);
+        clearCanvas = findViewById(R.id.clearCanvas);
         prefernces = new AppPrefernces(getContext());
 
         clearCanvas.setOnClickListener(new View.OnClickListener() {

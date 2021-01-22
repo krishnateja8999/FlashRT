@@ -81,15 +81,15 @@ public class ResearchThree extends Fragment implements BlockingStep {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_research_three, container, false);
 
-        responseDesta = v.findViewById(R.id.responseDesta);
         photo = v.findViewById(R.id.photo);
         image = v.findViewById(R.id.image);
-        mDatabaseHelper = new DatabaseHelper(context);
         prefernces = new AppPrefernces(context);
+        mDatabaseHelper = new DatabaseHelper(context);
         checker = new InternetConnectionChecker(context);
+        responseDesta = v.findViewById(R.id.responseDesta);
+
         timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         prefernces.setSignaturePath("null");
-        Log.e(TAG, "onCreateViewResearchThree: " + prefernces.getSignaturePath());
         tick = new ImageTick();
         LocalBroadcastManager.getInstance(context).registerReceiver(tick, new IntentFilter("image_tick"));
 
@@ -102,7 +102,6 @@ public class ResearchThree extends Fragment implements BlockingStep {
         });
 
         return v;
-
     }
 
     private void FinalDialog(String successDialog, String successDesc) {
@@ -270,7 +269,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
                         params.put("x-versao-rt", VERSION);
-                        params.put("x-rastreador", "ricardo");
+                        params.put("x-rastreador", prefernces.getTracker());
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
                     }

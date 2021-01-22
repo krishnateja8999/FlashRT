@@ -55,21 +55,21 @@ public class ResearchOne extends Fragment implements BlockingStep {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_research_one, container, false);
 
-        baseFile = v.findViewById(R.id.baseFile);
-        dateOfVerify = v.findViewById(R.id.dateOfVerify);
-        empresa = v.findViewById(R.id.empresa);
-        cnjp = v.findViewById(R.id.cnjp);
-        ResponseBaseFile = v.findViewById(R.id.ResponseBaseFile);
-        endereco = v.findViewById(R.id.endereco);
-        bairro = v.findViewById(R.id.bairro);
-        cidade = v.findViewById(R.id.cidade);
         uf = v.findViewById(R.id.uf);
         cep = v.findViewById(R.id.cep);
-        telePhone = v.findViewById(R.id.telePhone);
+        cnjp = v.findViewById(R.id.cnjp);
         email = v.findViewById(R.id.email);
+        cidade = v.findViewById(R.id.cidade);
+        bairro = v.findViewById(R.id.bairro);
+        empresa = v.findViewById(R.id.empresa);
         prefernces = new AppPrefernces(context);
-        dateOfVerify.setInputType(InputType.TYPE_NULL);
+        baseFile = v.findViewById(R.id.baseFile);
+        endereco = v.findViewById(R.id.endereco);
+        telePhone = v.findViewById(R.id.telePhone);
+        dateOfVerify = v.findViewById(R.id.dateOfVerify);
+        ResponseBaseFile = v.findViewById(R.id.ResponseBaseFile);
 
+        dateOfVerify.setInputType(InputType.TYPE_NULL);
         dateOfVerify.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

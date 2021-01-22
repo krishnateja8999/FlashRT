@@ -56,25 +56,30 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search, container, false);
 
-        title = view.findViewById(R.id.actionbarTitle);
-        imei = view.findViewById(R.id.actionbarImei);
         prefernces = new AppPrefernces(context);
+        imei = view.findViewById(R.id.actionbarImei);
+        mDatabaseHelper = new DatabaseHelper(context);
+        title = view.findViewById(R.id.actionbarTitle);
+        no_pesquisa = view.findViewById(R.id.no_pesquisa);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_collect_research);
+
         title.setText("Pesquisa");
         imei.setText("IMEI: " + prefernces.getIMEI());
-        mDatabaseHelper = new DatabaseHelper(context);
-        swipeRefreshLayout = view.findViewById(R.id.swipe_collect_research);
+
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
-        no_pesquisa = view.findViewById(R.id.no_pesquisa);
+
         listUpdater = new ReseachListUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listUpdater, new IntentFilter("research_list_update"));
+
         searchListModalClasses = new ArrayList<>();
         recyclerViewSearchList = view.findViewById(R.id.recyclerViewSearchList);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerViewSearchList.setLayoutManager(layoutManager);
+
         ResearchList();
 
 //        searchListModalClasses.add(new SearchListModalClass("sdf","Augusto Vasquez", "PRAJA DO CERIO 21 VILA PAULISTA, SAO PAULO, SP","false", "sdfdg", "41656", "research"));

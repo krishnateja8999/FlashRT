@@ -107,52 +107,50 @@ public class SearchSurvey extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_search_survey, container, false);
 
-        client_local = view.findViewById(R.id.client_local);
-        client_alberto = view.findViewById(R.id.client_alberto);
-        lastCardView = view.findViewById(R.id.lastCardView);
-        button_abrir = view.findViewById(R.id.button_abrir);
-        confirm_enviar = view.findViewById(R.id.confirm_enviar);
-        takePic = view.findViewById(R.id.takePic);
+        bl1 = view.findViewById(R.id.bl1);
+        spi = view.findViewById(R.id.spi);
+        spi2 = view.findViewById(R.id.spi2);
         radio1 = view.findViewById(R.id.radio1);
         radio2 = view.findViewById(R.id.radio2);
         radio3 = view.findViewById(R.id.radio3);
         radio4 = view.findViewById(R.id.radio4);
-        radioGroup = view.findViewById(R.id.radioGroup);
-        radioGroup1 = view.findViewById(R.id.radioGroup1);
-        spi = view.findViewById(R.id.spi);
-        spi2 = view.findViewById(R.id.spi2);
-        bl1 = view.findViewById(R.id.bl1);
-        actions_lay1 = view.findViewById(R.id.actions_lay1);
-        mDatabaseHelper = new DatabaseHelper(context);
         prefernces = new AppPrefernces(context);
+        takePic = view.findViewById(R.id.takePic);
+        mDatabaseHelper = new DatabaseHelper(context);
+        radioGroup = view.findViewById(R.id.radioGroup);
         checker = new InternetConnectionChecker(context);
+        radioGroup1 = view.findViewById(R.id.radioGroup1);
+        client_local = view.findViewById(R.id.client_local);
+        researchHawb = view.findViewById(R.id.researchHawb);
+        lastCardView = view.findViewById(R.id.lastCardView);
+        button_abrir = view.findViewById(R.id.button_abrir);
+        actions_lay1 = view.findViewById(R.id.actions_lay1);
+        confirm_enviar = view.findViewById(R.id.confirm_enviar);
+        client_alberto = view.findViewById(R.id.client_alberto);
+
         assert getArguments() != null;
         researchName = getArguments().getString("Research");
-        contractCode = getArguments().getString("Contract_code");
-        customerID = getArguments().getString("Customer_code");
-        clientName = getArguments().getString("Client_name");
         resListcode = getArguments().getString("List_code");
-        prefernces.setCustomerCode(customerID);
-        prefernces.setContractCode(contractCode);
-        prefernces.setHawbCodeRes(researchName);
+        clientName = getArguments().getString("Client_name");
+        customerID = getArguments().getString("Customer_code");
+        contractCode = getArguments().getString("Contract_code");
         prefernces.setClientName(clientName);
+        prefernces.setCustomerCode(customerID);
+        prefernces.setHawbCodeRes(researchName);
+        prefernces.setContractCode(contractCode);
         prefernces.setResearchListCode(resListcode);
-        Log.e(TAG, "Tags: " + researchName);
-        Log.e(TAG, "Tags: " + contractCode);
-        Log.e(TAG, "Tags: " + customerID);
-        Log.e(TAG, "Tags: " + clientName);
-        Log.e(TAG, "Tags: " + resListcode);
+
         timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        researchHawb = view.findViewById(R.id.researchHawb);
         researchHawb.setText("Pesquisa: " + researchName);
         mStepperLayout = (StepperLayout) view.findViewById(R.id.stepperLayout);
         mStepperAdapter = new MyStepperAdapter(getChildFragmentManager(), context);
         mStepperLayout.setAdapter(mStepperAdapter);
-        values1 = getResources().getStringArray(R.array.motivo_grupo);
+
         enderec = getResources().getStringArray(R.array.motivo_dev);
+        values1 = getResources().getStringArray(R.array.motivo_grupo);
+        outros = getResources().getStringArray(R.array.motivo_outros);
         ausente = getResources().getStringArray(R.array.motivo_ausente);
         nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
-        outros = getResources().getStringArray(R.array.motivo_outros);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spi.setAdapter(adapter1);
@@ -478,7 +476,7 @@ public class SearchSurvey extends Fragment {
                                 Base64.NO_WRAP);
                         params.put("Authorization", auth1);
                         params.put("x-versao-rt", VERSION);
-                        params.put("x-rastreador", "ricardo");
+                        params.put("x-rastreador", prefernces.getTracker());
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
                     }
