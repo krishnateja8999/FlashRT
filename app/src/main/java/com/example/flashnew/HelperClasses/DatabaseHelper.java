@@ -137,8 +137,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String RESEARCH_TWO = "research_two";
     private static final String RESEARCH_THREE = "research_three";
     private static final String XML_RESEARCH = "xml_research";
+    private static final String MOTIVO_ID = "motive_id";
     private static final String CREATE_TABLE_SAVE_RESEARCH_DETAILS = "CREATE TABLE " + TABLE_SAVE_RESEARCH_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            HAWB_CODE + " TEXT, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + XML_RESEARCH + " TEXT, " + LIST + " INTEGER)";
+            HAWB_CODE + " TEXT, " + DATE_TIME + " TEXT, " + BATTERY_LEVEL + " INTEGER, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + XML_RESEARCH + " TEXT, " + LIST + " INTEGER, " + MOTIVO_ID + " INTEGER)";
 
     //Table 12 columns & query
     private static final String RESEARCH_IMAGES = "research_image_path";
@@ -715,6 +716,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(LONGITUDE, researchDetailsModal.getLongitude());
         contentValues.put(XML_RESEARCH, researchDetailsModal.getXmlBody());
         contentValues.put(LIST, researchDetailsModal.getListCodes());
+        contentValues.put(MOTIVO_ID, researchDetailsModal.getMotiveID());
 
         long result = db.insert(TABLE_SAVE_RESEARCH_DETAILS, null, contentValues);
         db.close();

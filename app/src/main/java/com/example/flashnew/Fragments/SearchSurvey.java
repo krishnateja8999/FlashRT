@@ -312,10 +312,22 @@ public class SearchSurvey extends Fragment {
         int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
         String body = SetXml();
 
-        SaveResearchDetailsModal detailsModal = new SaveResearchDetailsModal(researchName, formattedDate, batLevel, prefernces.getLatitude(),
-                prefernces.getLongitude(), body, prefernces.getResearchListCode());
-        boolean success = mDatabaseHelper.AddResearchDetails(detailsModal);
-        System.out.println(success);
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        radioButton = (RadioButton) radioGroup.findViewById(selectedId);
+
+        if (radioButton.getText().toString().equals("Não")) {
+            String spinnerValue = spi2.getSelectedItem().toString();
+            int spinnerID = Integer.parseInt(spinnerValue.replaceAll("[^0-9]", ""));
+            SaveResearchDetailsModal detailsModal = new SaveResearchDetailsModal(researchName, formattedDate, batLevel, prefernces.getLatitude(),
+                    prefernces.getLongitude(), body, prefernces.getResearchListCode(), String.valueOf(spinnerID));
+            boolean success = mDatabaseHelper.AddResearchDetails(detailsModal);
+            System.out.println("Data Added to research table SS1: " + success);
+        } else {
+            SaveResearchDetailsModal detailsModal = new SaveResearchDetailsModal(researchName, formattedDate, batLevel, prefernces.getLatitude(),
+                    prefernces.getLongitude(), body, prefernces.getResearchListCode(), "null");
+            boolean success = mDatabaseHelper.AddResearchDetails(detailsModal);
+            System.out.println("Data Added to research table SS2: " + success);
+        }
     }
 
     private String SetXml() {
@@ -418,6 +430,7 @@ public class SearchSurvey extends Fragment {
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> body1 = new ArrayList<String>();
         ArrayList<String> listCode = new ArrayList<String>();
+        ArrayList<String> motivoID = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -430,24 +443,42 @@ public class SearchSurvey extends Fragment {
                 longitude.add(data.getString(5));
                 body1.add(data.getString(6));
                 listCode.add(data.getString(7));
+                motivoID.add(data.getString(8));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
                 JSONObject jsonObj1 = new JSONObject();
                 try {
-                    jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
-                    jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
-                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
-                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
-                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
-                    jsonObj.put("xmlPesquisa", Utils.ConvertArrayListToString(body1));
+                    if (Utils.ConvertArrayListToString(motivoID).equals("null")) {
+                        jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                        jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                        jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                        jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                        jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                        jsonObj.put("xmlPesquisa", Utils.ConvertArrayListToString(body1));
 
-                    jsonObj1.put("imei", prefernces.getIMEI());
-                    jsonObj1.put("franquia", prefernces.getFranchise());
-                    jsonObj1.put("sistema", prefernces.getSystem());
-                    jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
-                    jsonObj1.put("entregas", jsonArray);
-                    jsonArray.put(jsonObj);
+                        jsonObj1.put("imei", prefernces.getIMEI());
+                        jsonObj1.put("franquia", prefernces.getFranchise());
+                        jsonObj1.put("sistema", prefernces.getSystem());
+                        jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
+                        jsonObj1.put("entregas", jsonArray);
+                        jsonArray.put(jsonObj);
+                    } else {
+                        jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                        jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                        jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                        jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                        jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                        jsonObj.put("idMotivo", Utils.ConvertArrayListToString(motivoID));
+                        jsonObj.put("xmlPesquisa", Utils.ConvertArrayListToString(body1));
+
+                        jsonObj1.put("imei", prefernces.getIMEI());
+                        jsonObj1.put("franquia", prefernces.getFranchise());
+                        jsonObj1.put("sistema", prefernces.getSystem());
+                        jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
+                        jsonObj1.put("entregas", jsonArray);
+                        jsonArray.put(jsonObj);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -495,6 +526,7 @@ public class SearchSurvey extends Fragment {
                 longitude.clear();
                 body1.clear();
                 listCode.clear();
+                motivoID.clear();
             }
             SendResearchImages();
         }

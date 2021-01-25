@@ -182,7 +182,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
         String body = setXML();
 
         SaveResearchDetailsModal detailsModal = new SaveResearchDetailsModal(prefernces.getHawbCodeRes(), formattedDate, batLevel, prefernces.getLatitude(),
-                prefernces.getLongitude(), body, prefernces.getResearchListCode());
+                prefernces.getLongitude(), body, prefernces.getResearchListCode(), "null");
         boolean success = mDatabaseHelper.AddResearchDetails(detailsModal);
         System.out.println(success);
     }

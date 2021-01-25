@@ -8,8 +8,9 @@ public class SaveResearchDetailsModal {
     String longitude;
     String xmlBody;
     String listCodes;
+    String motiveID;
 
-    public SaveResearchDetailsModal(String hawb_code, String dateTime, int batteryLevel, String latitude, String longitude, String xmlBody, String listCodes) {
+    public SaveResearchDetailsModal(String hawb_code, String dateTime, int batteryLevel, String latitude, String longitude, String xmlBody, String listCodes, String motiveID) {
         this.hawb_code = hawb_code;
         this.dateTime = dateTime;
         this.batteryLevel = batteryLevel;
@@ -17,6 +18,7 @@ public class SaveResearchDetailsModal {
         this.longitude = longitude;
         this.xmlBody = xmlBody;
         this.listCodes = listCodes;
+        this.motiveID = motiveID;
     }
 
     public String getHawb_code() {
@@ -73,5 +75,13 @@ public class SaveResearchDetailsModal {
 
     public void setListCodes(String listCodes) {
         this.listCodes = listCodes;
+    }
+
+    public String getMotiveID() {
+        return motiveID;
+    }
+
+    public void setMotiveID(String motiveID) {
+        this.motiveID = motiveID;
     }
 }

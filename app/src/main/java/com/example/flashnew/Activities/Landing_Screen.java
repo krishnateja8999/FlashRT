@@ -919,6 +919,7 @@ public class Landing_Screen extends AppCompatActivity {
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> body1 = new ArrayList<String>();
         ArrayList<String> listCode = new ArrayList<String>();
+        ArrayList<String> motivoID = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(TAG, "PutJsonRequest: No Data");
@@ -931,24 +932,42 @@ public class Landing_Screen extends AppCompatActivity {
                 longitude.add(data.getString(5));
                 body1.add(data.getString(6));
                 listCode.add(data.getString(7));
+                motivoID.add(data.getString(8));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
                 JSONObject jsonObj1 = new JSONObject();
                 try {
-                    jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
-                    jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
-                    jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
-                    jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
-                    jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
-                    jsonObj.put("xmlPesquisa", Utils.ConvertArrayListToString(body1));
+                    if (Utils.ConvertArrayListToString(motivoID).equals("null")) {
+                        jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                        jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                        jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                        jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                        jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                        jsonObj.put("xmlPesquisa", Utils.ConvertArrayListToString(body1));
 
-                    jsonObj1.put("imei", preferences.getIMEI());
-                    jsonObj1.put("franquia", preferences.getFranchise());
-                    jsonObj1.put("sistema", preferences.getSystem());
-                    jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
-                    jsonObj1.put("entregas", jsonArray);
-                    jsonArray.put(jsonObj);
+                        jsonObj1.put("imei", preferences.getIMEI());
+                        jsonObj1.put("franquia", preferences.getFranchise());
+                        jsonObj1.put("sistema", preferences.getSystem());
+                        jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
+                        jsonObj1.put("entregas", jsonArray);
+                        jsonArray.put(jsonObj);
+                    } else {
+                        jsonObj.put("codHawb", Utils.ConvertArrayListToString(codHawb));
+                        jsonObj.put("dataHoraBaixa", Utils.ConvertArrayListToString(dataHoraBaixa));
+                        jsonObj.put("nivelBateria", Utils.ConvertArrayListToString(nivelBateria));
+                        jsonObj.put("latitude", Utils.ConvertArrayListToString(latitude));
+                        jsonObj.put("longitude", Utils.ConvertArrayListToString(longitude));
+                        jsonObj.put("idMotivo", Utils.ConvertArrayListToString(motivoID));
+                        jsonObj.put("xmlPesquisa", Utils.ConvertArrayListToString(body1));
+
+                        jsonObj1.put("imei", preferences.getIMEI());
+                        jsonObj1.put("franquia", preferences.getFranchise());
+                        jsonObj1.put("sistema", preferences.getSystem());
+                        jsonObj1.put("lista", Utils.ConvertArrayListToString(listCode));
+                        jsonObj1.put("entregas", jsonArray);
+                        jsonArray.put(jsonObj);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -997,6 +1016,7 @@ public class Landing_Screen extends AppCompatActivity {
                 longitude.clear();
                 body1.clear();
                 listCode.clear();
+                motivoID.clear();
             }
             SendResearchImages();
         }
