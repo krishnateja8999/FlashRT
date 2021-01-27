@@ -163,6 +163,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
 
         if (responseDesta.getText().length() == 0) {
             responseDesta.setError("Por favor, insira seu nome.");
+            responseDesta.requestFocus();
         } else if (prefernces.getSignaturePath().equals("null")) {
             Toast.makeText(getContext(), "Forneça sua assinatura.", Toast.LENGTH_LONG).show();
         } else {
@@ -195,8 +196,6 @@ public class ResearchThree extends Fragment implements BlockingStep {
 
         String array11 = "\"Survey\"" + ":" + object3;
         prefernces.setResearchThreeDetails(array11);
-        //Log.e(TAG, "JsonDetailsThree: "+ array11);
-
     }
 
     private void PutResearchData() {
@@ -341,9 +340,7 @@ public class ResearchThree extends Fragment implements BlockingStep {
                 "                \"type\": \"fieldset\",\n" +
                 "                \"id\": \"fieldset-59\",\n" +
                 "                \"value\": []";
-        String result = "<![CDATA[[{" + prefernces.getResearchOneDetails() + ", \n" + tab1 + "},\n {\n" + prefernces.getResearchTwoDetails() + ", \n" + tab2 + "},\n {\n" + prefernces.getResearchThreeDetails() + ", \n" + tab3 + "}]]]>";
-//        Log.e(TAG, "setXML: "+result);
-        return result;
+        return "<![CDATA[[{" + prefernces.getResearchOneDetails() + ", \n" + tab1 + "},\n {\n" + prefernces.getResearchTwoDetails() + ", \n" + tab2 + "},\n {\n" + prefernces.getResearchThreeDetails() + ", \n" + tab3 + "}]]]>";
     }
 
     private void SaveImagesOfResearchTwo() {

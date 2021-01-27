@@ -180,18 +180,16 @@ public class LoginActivity extends AppCompatActivity {
         loginProgressBar.setVisibility(View.VISIBLE);
         String url1 = ApiUtils.LOGIN;
         String url2 = hostserverUrl.getText().toString() + ApiUtils.LOGIN1;
-        Log.e("TAG", "jsonParseLogin: " + url2);
         StringRequest request = new StringRequest(Request.Method.GET, url2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("TAG", "LoginActivityJson: " + response);
+                Log.e("TAG", "LoginResponse: " + response);
                 try {
                     JSONObject object = new JSONObject(response);
                     String id = object.getString("id");
                     String login = object.getString("login");
                     String name = object.getString("nome");
 
-                    Log.d("TAG", "LoginResponse: " + login);
                     preferences.setID(id);
                     preferences.setUserName(login);
                     preferences.setName(name);
@@ -210,6 +208,7 @@ public class LoginActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", "LoginErrorResponse: " + error.getMessage());
                 loginProgressBar.setVisibility(View.GONE);
                 dialog1.setTitle("Erro");
                 dialog1.setMessage(getResources().getString(R.string.Login_screen8));

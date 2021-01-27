@@ -19,5 +19,4 @@ public class ApiUtils {
     public static final String GET_COLETA1 = "/FlashOnline/rest/coleta/getconsulta";
     public static final String POST_COLETA1 = "/FlashOnline/rest/rt/baixar/coleta";
     public static final String GET_RESEARCH = "/FlashPegasus/rest/hawb/rastro/v.1/bigdata/hawb/";
-
 }

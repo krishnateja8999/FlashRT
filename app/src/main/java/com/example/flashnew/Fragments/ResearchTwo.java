@@ -396,11 +396,9 @@ public class ResearchTwo extends Fragment implements BlockingStep {
         selectedRadioButton18 = (RadioButton) researchRGroup18.findViewById(selectedId18);
         selectedRadioButton19 = (RadioButton) researchRGroup19.findViewById(selectedId19);
         selectedRadioButton20 = (RadioButton) researchRGroup20.findViewById(selectedId20);
-        //Log.e("TAG", "Validate: " + selectedRadioButton1.getText().toString());
 
         String s = "Por favor selecione: ";
         String s1 = "OK";
-        String s2 = "Selecione e preencha todos os campos obrigatórios.";
 
         if (researchRGroup1.getCheckedRadioButtonId() == -1) {
             Utils.DialogClass(context, s, getResources().getString(R.string.check_list1), s1);
@@ -516,11 +514,6 @@ public class ResearchTwo extends Fragment implements BlockingStep {
 
         String array11 = "\"Survey\"" + ":" + object2;
         prefernces.setResearchTwoDetails(array11);
-
-
-        Log.e("TAG", "JsonObjectIdentityStringArray: " + array11);
-
-
     }
 
     @Nullable
@@ -548,7 +541,6 @@ public class ResearchTwo extends Fragment implements BlockingStep {
     @Override
     public void onNextClicked(StepperLayout.OnNextClickedCallback callback) {
         Validate(callback);
-        //callback.goToNextStep();
     }
 
     @Override
@@ -560,5 +552,4 @@ public class ResearchTwo extends Fragment implements BlockingStep {
     public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
         callback.goToPrevStep();
     }
-
 }

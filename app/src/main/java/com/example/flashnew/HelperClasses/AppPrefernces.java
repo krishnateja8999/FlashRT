@@ -3,18 +3,11 @@ package com.example.flashnew.HelperClasses;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-
 import static android.content.Context.MODE_PRIVATE;
 
 public class AppPrefernces {
     private static final String PREFERENCE_NAME = "Flash";
-    private SharedPreferences preference;
+    private final SharedPreferences preference;
     private SharedPreferences.Editor editor;
 
     public AppPrefernces(Context context) {
@@ -26,10 +19,6 @@ public class AppPrefernces {
     public void setID(String id) {
         editor.putString("LoginID", id);
         editor.apply();
-    }
-
-    public String getID() {
-        return preference.getString("LoginID", "ggg");
     }
 
     public void setUserName(String userName) {
@@ -214,29 +203,6 @@ public class AppPrefernces {
     }
 
     //Research Screen preferences
-    public void setResearchOne(JSONObject object) {
-        Gson gson = new Gson();
-        String list = gson.toJson(object);
-        editor.putString("ResearchOne", list);
-        editor.apply();
-    }
-
-    public JSONObject getResearchOne() {
-        Gson gson = new Gson();
-        String list = preference.getString("ResearchOne", "N/A");
-        Type type = new TypeToken<JSONObject>() {
-        }.getType();
-        return gson.fromJson(list, type);
-    }
-
-    public void setResearch(JSONObject research) {
-        editor.putString("dgdfg", String.valueOf(research));
-        editor.apply();
-    }
-
-    public String getResearch() {
-        return preference.getString("dgdfg", " ");
-    }
 
     public void setResearchOneDetails(String OneDetails) {
         editor.putString("ResearchOneDetails", OneDetails);
@@ -318,5 +284,4 @@ public class AppPrefernces {
     public String getResearchListCode() {
         return preference.getString("ResListCode", " ");
     }
-
 }

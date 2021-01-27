@@ -146,9 +146,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_RESEARCH_IMAGES = "CREATE TABLE " + TABLE_RESEARCH_IMAGES + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             RESEARCH_IMAGES + " TEXT, " + IMAGE_NAME + " TEXT)";
 
-    private ByteArrayOutputStream objectByteArrayOutputStream, objectByteArrayOutputStream2;
-    private byte[] imageInByte, imageInByte2;
-
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, VERSION);
         this.context = context;
@@ -311,10 +308,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void addDataToTableThree(TableThreeDeliveryModal deliveryModal) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-//            Bitmap imageToStoreBitmap = deliveryModal.getImage();
-//            objectByteArrayOutputStream = new ByteArrayOutputStream();
-//            imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG, 100, objectByteArrayOutputStream);
-//            imageInByte = objectByteArrayOutputStream.toByteArray();
 
             ContentValues contentValues = new ContentValues();
             contentValues.put(H_CODE, deliveryModal.getHawbCode());
@@ -532,10 +525,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean AddDataToTableSeven(TableSevenNotCollectedModal notCollectedModal) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-//        Bitmap imageToStoreBitmap = notCollectedModal.getImage();
-//        objectByteArrayOutputStream2 = new ByteArrayOutputStream();
-//        imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG, 100, objectByteArrayOutputStream2);
-//        imageInByte2 = objectByteArrayOutputStream2.toByteArray();
 
         contentValues.put(COLETA_ID, notCollectedModal.getCollectID());
         contentValues.put(DATE_TIME, notCollectedModal.getDateTime());
@@ -758,5 +747,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "DELETE FROM " + TABLE_RESEARCH_IMAGES;
         db.execSQL(query);
     }
-
 }

@@ -134,9 +134,7 @@ public class List extends Fragment implements LocationListener {
         title = view.findViewById(R.id.actionbarTitle);
         spinner = view.findViewById(R.id.targetOptions);
         retur = view.findViewById(R.id.buttonDevolucao);
-        linearLayout1 = view.findViewById(R.id.buttonColeta);
         linearLayout = view.findViewById(R.id.buttonEntrega);
-        linearLayout2 = view.findViewById(R.id.buttonPesquisa);
         internetChecker = new InternetConnectionChecker(context);
         attemptsDropDown = view.findViewById(R.id.attemptsDropDown);
         ListScreenProgressBar = view.findViewById(R.id.ListScreenProgressBar);

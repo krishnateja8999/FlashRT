@@ -646,5 +646,4 @@ public class SearchSurvey extends Fragment {
     public void changeFragment(Fragment fragment) {
         context.getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
-
 }

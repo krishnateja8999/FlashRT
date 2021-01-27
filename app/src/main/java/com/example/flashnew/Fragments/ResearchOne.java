@@ -95,58 +95,47 @@ public class ResearchOne extends Fragment implements BlockingStep {
     private void Validate(StepperLayout.OnNextClickedCallback callback) throws JSONException {
         if (baseFile.getText().length() == 0) {
             baseFile.setError("Por favor, insira sua filial");
+            baseFile.requestFocus();
         } else if (dateOfVerify.getText().length() == 0) {
             dateOfVerify.setError("Selecione a data");
+            dateOfVerify.requestFocus();
         } else if (empresa.getText().length() == 0) {
             empresa.setError("Digite o nome da sua empresa");
+            empresa.requestFocus();
         } else if (cnjp.getText().length() == 0) {
             cnjp.setError("Insira CNPJ");
+            cnjp.requestFocus();
         } else if (ResponseBaseFile.getText().length() == 0) {
             ResponseBaseFile.setError("Por favor, insira sua filial");
+            ResponseBaseFile.requestFocus();
         } else if (endereco.getText().length() == 0) {
             endereco.setError("Insira o endereço");
+            endereco.requestFocus();
         } else if (bairro.getText().length() == 0) {
             bairro.setError("Por favor, insira bairro");
+            bairro.requestFocus();
         } else if (cidade.getText().length() == 0) {
             cidade.setError("Por favor, insira cidade");
+            cidade.requestFocus();
         } else if (uf.getText().length() == 0) {
             uf.setError("Por favor, insira uf");
+            uf.requestFocus();
         } else if (cep.getText().length() == 0) {
             cep.setError("Por favor, insira cep");
+            cep.requestFocus();
         } else if (telePhone.getText().length() == 0) {
             telePhone.setError("Por favor, insira telephone");
+            telePhone.requestFocus();
         } else if (email.getText().length() == 0) {
             email.setError("Por favor, insira email");
+            email.requestFocus();
         } else if (validateEmail()) {
-            //AddToPreferences();
             JsonObjectIdentity(baseFile.getText().toString(), dateOfVerify.getText().toString(), empresa.getText().toString(),
                     cnjp.getText().toString(), ResponseBaseFile.getText().toString(), endereco.getText().toString(),
                     bairro.getText().toString(), cidade.getText().toString(), uf.getText().toString(), cep.getText().toString(),
                     telePhone.getText().toString(), email.getText().toString());
             callback.goToNextStep();
         }
-    }
-
-    private void AddToPreferences() {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("FfvName", baseFile.getText().toString());
-            object.put("Email", dateOfVerify.getText().toString());
-            object.put("ContactNumber", empresa.getText().toString());
-            object.put("StateId", cnjp.getText().toString());
-            object.put("State", ResponseBaseFile.getText().toString());
-            object.put("DistrictId", endereco.getText().toString());
-            object.put("District", bairro.getText().toString());
-            object.put("LocationId", cidade.getText().toString());
-            object.put("Location", uf.getText().toString());
-            object.put("PostcodeId", cep.getText().toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        prefernces.setResearchOne(null);
-        prefernces.setResearchOne(object);
-        //prefernces.setResearch(object);
-        Log.e("TAG", "AddToPreferences: " + prefernces.getResearchOne());
     }
 
     private void JsonObjectIdentity(String base, String date, String empresa2, String cnjp2, String resoponseBase, String endreco2, String bairo, String city2, String state2, String pincode2, String phone2, String email2) throws JSONException {
@@ -165,19 +154,7 @@ public class ResearchOne extends Fragment implements BlockingStep {
 
         String array11 = "\"Survey\"" + ":" + object;
 
-        JSONArray array = new JSONArray(object);
-        for (int i = 0; i <= array.length(); i++) {
-            JSONObject array1 = array.getJSONObject(1);
-            String type = array1.getString("type");
-//            Log.e(TAG, "dsf: "+type);
-//            Log.e(TAG, "dsf: "+array1);
-        }
-        //Log.e(TAG, "ConvertToJsonArray: "+ array);
-
         prefernces.setResearchOneDetails(array11);
-//        Log.e(TAG, "JsonObjectIdentityString: "+object);
-//        Log.e(TAG, "JsonObjectIdentityStringArray: "+array11);
-
     }
 
     @Override
@@ -221,7 +198,6 @@ public class ResearchOne extends Fragment implements BlockingStep {
 
     @Override
     public void onNextClicked(StepperLayout.OnNextClickedCallback callback) {
-        //callback.goToNextStep();
         try {
             Validate(callback);
         } catch (JSONException e) {

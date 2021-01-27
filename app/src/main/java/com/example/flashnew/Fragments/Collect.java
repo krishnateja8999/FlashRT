@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +87,7 @@ import static android.content.ContentValues.TAG;
 
 public class Collect extends Fragment implements BackFragment, SwipeRefreshLayout.OnRefreshListener {
 
+    private ProgressBar bar;
     private TextView no_lists;
     private Landing_Screen context;
     private AppPrefernces prefernces;
@@ -100,8 +102,9 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.collect, container, false);
 
-        no_lists = view.findViewById(R.id.no_lists);
         prefernces = new AppPrefernces(context);
+        bar = view.findViewById(R.id.collectBar);
+        no_lists = view.findViewById(R.id.no_lists);
         mDatabaseHelper = new DatabaseHelper(context);
         Button button = view.findViewById(R.id.coletaScan);
         TextView imei = view.findViewById(R.id.actionbarImei);
@@ -218,6 +221,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
     }
 
     private void InJson(int code) {
+        bar.setVisibility(View.VISIBLE);
         RequestQueue queue = Volley.newRequestQueue(context);
         String url1 = ApiUtils.GET_COLETA;
         String url2 = prefernces.getHostUrl() + ApiUtils.GET_COLETA1;
@@ -275,17 +279,19 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                             System.out.println(success);
                         }
                     } else {
-                        Toast.makeText(context, "Coleta não encontrada", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Insira um código de coleta válido", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                bar.setVisibility(View.GONE);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("TAG", "onErrorResponse: " + error);
                 Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                bar.setVisibility(View.GONE);
             }
         }) {
             @Override
