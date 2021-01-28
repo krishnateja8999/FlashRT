@@ -1,17 +1,12 @@
 package com.example.flashnew.Fragments;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -41,7 +36,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -58,6 +52,7 @@ import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.Adapters.AutoSuggestAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.HelperClasses.GetCurrentLocation;
 import com.example.flashnew.HelperClasses.UploadImages;
 import com.example.flashnew.Modals.ListImageModal;
 import com.example.flashnew.Modals.ResearchListModal;
@@ -90,7 +85,7 @@ import static android.content.Context.BATTERY_SERVICE;
 import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 import static com.example.flashnew.Server.Utils.VERSION;
 
-public class List extends Fragment implements LocationListener {
+public class List extends Fragment {
 
     private Bitmap OutImage;
     private RequestQueue queue;
@@ -105,7 +100,6 @@ public class List extends Fragment implements LocationListener {
     private Spinner spinner, spinner2;
     private AutoCompleteTextView hawb;
     private DatabaseHelper mDatabaseHelper;
-    private LocationManager locationManager;
     private ListCodeUpdater listCodeUpdater;
     private CardView listScreenListDownload;
     private LinearLayout linearLayout, retur;
@@ -163,6 +157,12 @@ public class List extends Fragment implements LocationListener {
         listScreenUpdater = new ListScreenUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listScreenUpdater, new IntentFilter("list_screen"));
 
+        try {
+            GetCurrentLocation.Location(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Cursor data = mDatabaseHelper.getDeliveryData(); //table3
         Cursor data1 = mDatabaseHelper.getDataFromTableFour();
         Cursor data2 = mDatabaseHelper.getData();//Table 2
@@ -173,7 +173,7 @@ public class List extends Fragment implements LocationListener {
         if (data2.getCount() == 0) {
             mDatabaseHelper.DeleteTableEight();
         }
-        getLocation();
+
         hawb.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -331,12 +331,10 @@ public class List extends Fragment implements LocationListener {
             ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, tab_names);
             adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
             spinner.setAdapter(adapter1);
-            //preferences.clearListID();
             preferences.setLowType("ENTREGA");
             preferences.setImageType("img_ar");
             preferences.setPhotoBoolean("false");
             HawbStringArray();
-            getLocation();
         }
     }
 
@@ -408,7 +406,6 @@ public class List extends Fragment implements LocationListener {
             preferences.setLowType("DEVOLUCAO");
             preferences.setImageType("img_local");
             HawbStringArray();
-            getLocation();
         }
     }
 
@@ -428,11 +425,6 @@ public class List extends Fragment implements LocationListener {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         preferences.setListID(edittext.getText().toString());
-//                        if (internetChecker.checkInternetConnection()){
-//                            JsonParseListScreen();
-//                        }else {
-//                            Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
-//                        }
                         JsonParseListScreen();
                     }
                 });
@@ -465,11 +457,6 @@ public class List extends Fragment implements LocationListener {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         preferences.setListID(edittext.getText().toString());
-//                        if (internetChecker.checkInternetConnection()){
-//                            JsonParseListScreen2();
-//                        }else {
-//                            Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
-//                        }
                         JsonParseListScreen2();
                     }
                 });
@@ -502,11 +489,6 @@ public class List extends Fragment implements LocationListener {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         preferences.setListID(edittext.getText().toString());
-//                        if (internetChecker.checkInternetConnection()){
-//                            JsonParseListScreen3();
-//                        }else {
-//                            Toast.makeText(context, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
-//                        }
                         JsonParseListScreen3();
                     }
                 });
@@ -602,7 +584,6 @@ public class List extends Fragment implements LocationListener {
                 list.clear();
             }
         }
-
     }
 
     private void JsonParseListScreen() {
@@ -683,7 +664,6 @@ public class List extends Fragment implements LocationListener {
                                     .getSupportFragmentManager().beginTransaction();
                             fragmentTransaction.replace(R.id.content, new HawbLists());
                             fragmentTransaction.commit();
-//                            setSuccessDialog();
                         }
                     }
                     ListScreenProgressBar.setVisibility(View.GONE);
@@ -790,7 +770,6 @@ public class List extends Fragment implements LocationListener {
                             boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
                             System.out.println(tableFourHawbCode);
                             Delivery();
-//                            setSuccessDialog();
                         }
                         Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
                     }
@@ -898,7 +877,6 @@ public class List extends Fragment implements LocationListener {
                             boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
                             System.out.println(tableFourHawbCode);
                             Returns();
-//                            setSuccessDialog();
                         }
                         Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
                     }
@@ -1041,7 +1019,6 @@ public class List extends Fragment implements LocationListener {
                         params.put("Authorization", auth1);
                         params.put("x-versao-rt", VERSION);
                         params.put("x-rastreador", preferences.getTracker());
-//                    params.put("Content-Type", "application/json");
                         params.put("Content-Type", "application/json; charset=utf-8");
                         return params;
                     }
@@ -1148,8 +1125,6 @@ public class List extends Fragment implements LocationListener {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//                Bitmap photo = (Bitmap) data.getExtras().get("data");
-//                OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
             preferences.setImagePath(currentPhotoPath);
             preferences.setPhotoBoolean("true");
             Log.e(TAG, "onActivityResultList: " + OutImage);
@@ -1177,78 +1152,9 @@ public class List extends Fragment implements LocationListener {
         }
     }
 
-    // Location
-    private void getLocation() {
-        try {
-            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        try {
-            Log.e(TAG, "onLocationChangedList: " + location.getLatitude() + ", " + location.getLongitude());
-            preferences.setLatitude(String.valueOf(location.getLatitude()));
-            preferences.setLongitude(String.valueOf(location.getLongitude()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "onLocationChanged: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-        Log.e(TAG, "onProviderEnabled: ");
-    }
-
-    @Override
-    public void onProviderDisabled(@NonNull String provider) {
-        //Toast.makeText(context, "Habilite o GPS e a Internet", Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "onProviderDisabled: ");
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.e(TAG, "onStatusChanged: ");
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = (Landing_Screen) context;
     }
-
 }
-
-
-//    private void setSuccessDialog(){
-//        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-//        builder1.setTitle("Sucesso");
-//        builder1.setMessage("Lista baixada com sucesso");
-//        builder1.setCancelable(false);
-//        builder1.setPositiveButton(
-//                "OK",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        dialog.cancel();
-//                        Toast.makeText(context, "What is happening", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//        //Creating dialog box
-//        AlertDialog alert1 = builder1.create();
-//        alert1.show();
-//    }

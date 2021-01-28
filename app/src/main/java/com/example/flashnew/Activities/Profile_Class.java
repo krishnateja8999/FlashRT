@@ -37,13 +37,15 @@ public class Profile_Class extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile__class);
-        Toolbar toolbar = findViewById(R.id.toolbar_t);
+
         EditText name = findViewById(R.id.name);
+        prefernces = new AppPrefernces(this);
+        Toolbar toolbar = findViewById(R.id.toolbar_t);
         EditText userName = findViewById(R.id.userName);
         EditText passWord = findViewById(R.id.passWord);
         imageView = findViewById(R.id.iv_profile_auditor);
         ImageView take_pic1 = findViewById(R.id.take_pic1);
-        prefernces = new AppPrefernces(this);
+
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(null);
@@ -51,8 +53,9 @@ public class Profile_Class extends AppCompatActivity {
         }
 
         name.setText(prefernces.getName());
-        userName.setText(prefernces.getUserName());
         passWord.setText(prefernces.getPaso());
+        userName.setText(prefernces.getUserName());
+
         if (prefernces.getProfileImage().equals(" ")) {
             Log.e("TAG", "NoProfilePic");
         } else {

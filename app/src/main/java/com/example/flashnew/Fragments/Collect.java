@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +36,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
@@ -45,40 +43,20 @@ import com.example.flashnew.Activities.ScannerActivity;
 import com.example.flashnew.Adapters.CollectListAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.HelperClasses.GetCurrentLocation;
 import com.example.flashnew.Modals.CollectListModalClass;
 import com.example.flashnew.Modals.TableFiveModel;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
 import com.example.flashnew.Server.InternetConnectionChecker;
-import com.example.flashnew.Server.Utils;
 
 import net.skoumal.fragmentback.BackFragment;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
@@ -129,6 +107,12 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recyclerViewCollectList.setLayoutManager(layoutManager);
 
+        try {
+            GetCurrentLocation.Location(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         title.setText("Coletas");
         imei.setText("IMEI : " + prefernces.getIMEI());
         Cursor data = mDatabaseHelper.getDataFromTableFour();
@@ -173,7 +157,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
         lp.setMargins(0, 20, 0, 0);
         title.setPadding(30, 20, 0, 20);
         title.setLayoutParams(lp);
-        title.setText("Digite o Codigo da coleta");
+        title.setText("Digite o código da coleta");
         builder.setCustomTitle(title);
         builder.setCancelable(true);
         builder.setView(edittext);
@@ -248,7 +232,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
                         if (check) {
                             builder1.setTitle(getResources().getString(R.string.Login_screen1));
-                            builder1.setMessage("Coleta " + s2 + " já existe");
+                            builder1.setMessage("Coleta " + s2 + " já foi adicionado");
                             builder1.setCancelable(true);
                             builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override

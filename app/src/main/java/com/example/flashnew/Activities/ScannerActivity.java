@@ -75,7 +75,7 @@ public class ScannerActivity extends AppCompatActivity {
                         } else if (check) {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(ScannerActivity.this);
                             builder1.setTitle(getResources().getString(R.string.Login_screen1));
-                            builder1.setMessage("Coleta " + item[2] + " já escaneado");
+                            builder1.setMessage("Coleta " + item[2] + " já foi adicionado");
                             builder1.setCancelable(true);
                             builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override

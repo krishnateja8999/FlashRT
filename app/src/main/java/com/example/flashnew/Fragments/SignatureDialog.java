@@ -115,5 +115,4 @@ public class SignatureDialog extends Dialog {
         }
         return "";
     }
-
 }

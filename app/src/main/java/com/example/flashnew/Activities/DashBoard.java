@@ -5,19 +5,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
 import com.example.flashnew.R;
-import com.example.flashnew.Server.Utils;
-import com.google.zxing.common.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class DashBoard extends AppCompatActivity {
 
@@ -58,12 +51,11 @@ public class DashBoard extends AppCompatActivity {
 
     private void CheckTotalData() {
         Cursor HawbPending = mDatabaseHelper.getData();
-        Cursor CollectPending = mDatabaseHelper.GetDataFromTableFive();
         Cursor ResearchDetails = mDatabaseHelper.GetResearchDetails();
         Cursor ResearchImages = mDatabaseHelper.GetResearchImages();
 
         String totalHawbsPending = String.valueOf(HawbPending.getCount());
-        String totalCollectPending = String.valueOf(CollectPending.getCount());
+        int totalCollectPending = mDatabaseHelper.DashCollectPendingCount();
         int HawbSync = mDatabaseHelper.DashSyncCount();
         int CollectSync = mDatabaseHelper.DashCollectSyncCount();
         int HawbImageSync = mDatabaseHelper.DashImageSync();
@@ -82,7 +74,7 @@ public class DashBoard extends AppCompatActivity {
         syncHawb.setText(String.valueOf(HawbSync));
         listaAguardandoSincronizarImagens.setText(String.valueOf(HawbImageSync));
         //Collect
-        listaColetasPendentes.setText(totalCollectPending);
+        listaColetasPendentes.setText(String.valueOf(totalCollectPending));
         listaColetasFeitas.setText(String.valueOf(CollectCount));
         listaColetasAguardandoSincronizar.setText(String.valueOf(CollectSync));
         listaColetasAguardandoSincronizarImagem.setText(String.valueOf(NotCollectSync));
@@ -102,5 +94,4 @@ public class DashBoard extends AppCompatActivity {
         }
         return true;
     }
-
 }

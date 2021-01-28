@@ -294,7 +294,7 @@ public class CollectDetails extends Fragment {
                 mDatabaseHelper.CheckTickMarkInTableFive(strtext);
                 SuccessDialog();
                 boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
-                System.out.println(AddCollectForCount);
+                System.out.println("Collect Added: " + AddCollectForCount);
                 if (internetChecker.checkInternetConnection()) {
                     PostCollectData();
                 }
@@ -308,7 +308,7 @@ public class CollectDetails extends Fragment {
                 mDatabaseHelper.CheckTickMarkInTableFive(strtext);
                 NotCollectedSuccessDialog();
                 boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
-                System.out.println(AddCollectForCount);
+                System.out.println("Collect Added: " + AddCollectForCount);
                 if (internetChecker.checkInternetConnection()) {
                     PostNotCollectData();
                 }

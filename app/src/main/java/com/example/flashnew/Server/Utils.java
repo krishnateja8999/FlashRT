@@ -1,5 +1,6 @@
 package com.example.flashnew.Server;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 
@@ -51,5 +52,4 @@ public class Utils {
         alert1.show();
         return alert1;
     }
-
 }

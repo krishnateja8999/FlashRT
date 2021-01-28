@@ -6,32 +6,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.Adapters.SearchListAdapter;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.HelperClasses.GetCurrentLocation;
 import com.example.flashnew.Modals.SearchListModalClass;
 import com.example.flashnew.R;
 
@@ -39,9 +32,9 @@ import java.util.ArrayList;
 
 public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private Context context;
     private TextView no_pesquisa;
     private TextView title, imei;
+    private Landing_Screen context;
     private AppPrefernces prefernces;
     private ReseachListUpdater listUpdater;
     private DatabaseHelper mDatabaseHelper;
@@ -64,7 +57,7 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
         swipeRefreshLayout = view.findViewById(R.id.swipe_collect_research);
 
         title.setText("Pesquisa");
-        imei.setText("IMEI: " + prefernces.getIMEI());
+        imei.setText("IMEI : " + prefernces.getIMEI());
 
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
@@ -75,16 +68,18 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
         listUpdater = new ReseachListUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listUpdater, new IntentFilter("research_list_update"));
 
+        try {
+            GetCurrentLocation.Location(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         searchListModalClasses = new ArrayList<>();
         recyclerViewSearchList = view.findViewById(R.id.recyclerViewSearchList);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerViewSearchList.setLayoutManager(layoutManager);
 
         ResearchList();
-
-//        searchListModalClasses.add(new SearchListModalClass("sdf","Augusto Vasquez", "PRAJA DO CERIO 21 VILA PAULISTA, SAO PAULO, SP","false", "sdfdg", "41656", "research"));
-//        searchAdapter = new SearchListAdapter(getActivity(), searchListModalClasses);
-//        recyclerViewSearchList.setAdapter(searchAdapter);
 
         return view;
     }
@@ -113,7 +108,7 @@ public class Search extends Fragment implements SwipeRefreshLayout.OnRefreshList
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context = context;
+        this.context = (Landing_Screen) context;
     }
 
     @Override

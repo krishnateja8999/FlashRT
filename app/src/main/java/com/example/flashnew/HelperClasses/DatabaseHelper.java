@@ -133,9 +133,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             PUBLIC_PLACE + " TEXT, " + STREET_NAME + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " + PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + CUSTOMER_ID + " TEXT, " + CONTRACT_ID + " TEXT, " + LIST + " INTEGER)";
 
     //Table 11 columns & query
-    private static final String RESEARCH_ONE = "research_one";
-    private static final String RESEARCH_TWO = "research_two";
-    private static final String RESEARCH_THREE = "research_three";
     private static final String XML_RESEARCH = "xml_research";
     private static final String MOTIVO_ID = "motive_id";
     private static final String CREATE_TABLE_SAVE_RESEARCH_DETAILS = "CREATE TABLE " + TABLE_SAVE_RESEARCH_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -484,6 +481,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int DashCollectSyncCount() {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_SCANNER_DETAILS + " WHERE " + TICK_MARK + " = 'true' ";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    public int DashCollectPendingCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_SCANNER_DETAILS + " WHERE " + TICK_MARK + " = 'false' ";
         Cursor cursor = db.rawQuery(query, null);
         int count = cursor.getCount();
         cursor.close();

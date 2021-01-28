@@ -1,15 +1,12 @@
 package com.example.flashnew.Activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -17,7 +14,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -29,13 +25,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.LayerDrawable;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
@@ -58,7 +49,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Fragments.Collect;
@@ -67,9 +57,9 @@ import com.example.flashnew.Fragments.Messages;
 import com.example.flashnew.Fragments.Search;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.HelperClasses.GetCurrentLocation;
 import com.example.flashnew.HelperClasses.UploadImages;
 import com.example.flashnew.LoginActivity;
-import com.example.flashnew.Modals.ListImageModal;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
 import com.example.flashnew.Server.InternetConnectionChecker;
@@ -78,18 +68,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.cloud.storage.Storage;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,10 +111,8 @@ public class Landing_Screen extends AppCompatActivity {
         setSupportActionBar(toolbar);
         preferences = new AppPrefernces(this);
         permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        changeFragment(new Dashboard());
         changeFragment(new List());
         layout = findViewById(R.id.container2);
         databaseHelper = new DatabaseHelper(this);
@@ -148,12 +131,24 @@ public class Landing_Screen extends AppCompatActivity {
             toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.white));
         }
 
-        if (Build.VERSION.SDK_INT <= 24) {
-            //preferences.setIMEI(telephonyManager.getDeviceId());
-            preferences.setIMEI(getDeviceUniqueID(this));
+        try {
+            GetCurrentLocation.Location(Landing_Screen.this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (Build.VERSION.SDK_INT <= 26) {
+            try {
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                preferences.setIMEI(telephonyManager.getDeviceId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                preferences.setIMEI(getDeviceUniqueID(this));
+            }
         } else {
             preferences.setIMEI(getDeviceUniqueID(this));
         }
+
         navigationView = findViewById(R.id.nav_view);
         profPicUpdater = new HeaderProfPicUpdater();
         LocalBroadcastManager.getInstance(this).registerReceiver(profPicUpdater, new IntentFilter("header_pic_update"));
@@ -162,10 +157,11 @@ public class Landing_Screen extends AppCompatActivity {
         provfile_nav = hView.findViewById(R.id.provfile_nav);
         nav_name.setText(preferences.getUserName());
         if (preferences.getProfileImage().equals("") || preferences.getProfileImage().equals(" ")) {
-            Log.e(TAG, "Nav_header_prof_pic: ");
+            Log.e(TAG, "Nav_header_prof_pic: no profile pic");
         } else {
             provfile_nav.setImageBitmap(decodeBase64(preferences.getProfileImage()));
         }
+
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -178,19 +174,12 @@ public class Landing_Screen extends AppCompatActivity {
                         startActivity(new Intent(Landing_Screen.this, Profile_Class.class));
                         return true;
                     case R.id.about:
-                        // startActivity(new Intent(Landing_Screen.this,About.class));
-                        java.util.List<ListImageModal> imageModals = databaseHelper.GetImgDetails("researchOM001");
-                        for (ListImageModal mee : imageModals) {
-                            Log.e(TAG, "About: " + mee.getCustomerCode() + mee.getContractCode() + mee.getCustomerNumber());
-                        }
-                        Log.e(TAG, "onClick: " + preferences.getListID().toString());
+                        Log.e(TAG, "About: " + preferences.getLongitude() + ", " + preferences.getLatitude());
                         return true;
 
                     case R.id.dashBoard:
-
                         Intent i = new Intent(Landing_Screen.this, DashBoard.class);
                         startActivity(i);
-
                         return true;
 
                     case R.id.list_delete:
@@ -227,13 +216,6 @@ public class Landing_Screen extends AppCompatActivity {
                             alert.show();
                         }
                         return true;
-
-//                    case R.id.nav_logout:
-//                        preferences.logout();
-//                        startActivity(new Intent(Landing_Screen.this, LoginActivity.class));
-//                        databaseHelper.truncateAllTablesOnLogout();
-//                        finish();
-//                        return true;
                 }
                 return false;
             }
@@ -246,7 +228,6 @@ public class Landing_Screen extends AppCompatActivity {
                 menuView.getChildAt(2).findViewById(com.google.android.material.R.id.icon);
         iconView.setScaleY(1.5f);
         iconView.setScaleX(1.5f);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -380,7 +361,6 @@ public class Landing_Screen extends AppCompatActivity {
                 alert1.show();
             }
         });
-
     }
 
     public void changeFragment(Fragment fragment) {
@@ -659,6 +639,7 @@ public class Landing_Screen extends AppCompatActivity {
                     params.put("Content-Type", "application/json; charset=utf-8");
                     return params;
                 }
+
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";
@@ -1109,24 +1090,5 @@ public class Landing_Screen extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        FragmentManager fm = getSupportFragmentManager();
-//        for (Fragment frag : fm.getFragments()) {
-//            if (frag.isVisible()) {
-//                FragmentManager childFm = frag.getChildFragmentManager();
-//                if (childFm.getBackStackEntryCount() > 0) {
-//                    childFm.popBackStack();
-//                    return;
-//                }
-//            }
-//        }
-//        super.onBackPressed();
-//        if (!dispatchOnBackPressedToFragments(fm)) {
-//            // if no child fragment consumed the onBackPressed event,
-//            // we execute the default behaviour.
-//            super.onBackPressed();
-//        }
-//        Intent intent = new Intent(Landing_Screen.this, Landing_Screen.class);
-//        startActivity(intent);
     }
-
 }
