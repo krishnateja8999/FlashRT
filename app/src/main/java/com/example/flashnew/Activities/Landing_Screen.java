@@ -289,36 +289,6 @@ public class Landing_Screen extends AppCompatActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-//                                new Handler().postDelayed(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        try {
-//                                            if (data.getCount() != 0) {
-//                                                PutJsonRequest();
-//                                            } else {
-//                                                Log.e(TAG, "SyncList: Sem listas");
-//                                            }
-//                                            if (data2.getCount() != 0 || data3.getCount() != 0) {
-//                                                PostCollectData();
-//                                                PostNotCollectData();
-//                                            } else {
-//                                                Log.e(TAG, "SyncCollect: Sem listas Collect");
-//                                            }
-//                                            Intent intent = new Intent("list_code_status");
-//                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent);
-//
-//                                            Intent intent1 = new Intent("list_screen");
-//                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent1);
-//
-//                                            Intent intent2 = new Intent("list_updater");
-//                                            LocalBroadcastManager.getInstance(Landing_Screen.this).sendBroadcast(intent2);
-//                                            SyncFinished();
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                        progressDialog.dismiss();
-//                                    }
-//                                }, 3000);
                             }
                         } else {
                             Toast.makeText(Landing_Screen.this, "Sem conexão de internet", Toast.LENGTH_SHORT).show();
@@ -508,7 +478,7 @@ public class Landing_Screen extends AppCompatActivity {
     private void NoListsToSync() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(Landing_Screen.this);
         builder1.setTitle(getResources().getString(R.string.Login_screen1));
-        builder1.setMessage("Sem listas para sincronizar");
+        builder1.setMessage("Todas as Hawbs foram sincronizadas");
         builder1.setCancelable(true);
         builder1.setPositiveButton(
                 "OK",

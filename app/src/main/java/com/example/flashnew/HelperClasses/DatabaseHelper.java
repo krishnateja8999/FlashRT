@@ -101,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String PINCODE = "pincode";
     private static final String CREATE_TABLE_SCANNER_DETAILS = "CREATE TABLE " + TABLE_SCANNER_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLETA_ID + " TEXT, " + STREET_NAME + " TEXT, " + APT_NO + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " +
-            PINCODE + " INTEGER, " + TICK_MARK + " TEXT)";
+            PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + DNA + " INTEGER)";
 
     //Table 6 columns & query:
     private static final String IDENTIFICATION_NO = "identification_no";
@@ -441,6 +441,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(STATE, tableFiveModel.getState());
         contentValues.put(PINCODE, tableFiveModel.getPincode());
         contentValues.put(TICK_MARK, "false");
+        contentValues.put(DNA, tableFiveModel.getDna());
 
         long result = db.insert(TABLE_SCANNER_DETAILS, null, contentValues);
 
@@ -509,6 +510,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(LATITUDE, collectModal.getLatitude());
         contentValues.put(LONGITUDE, collectModal.getLongitude());
         contentValues.put(BATTERY_LEVEL, collectModal.getBatteryPercentage());
+        contentValues.put(COLLECT_IMAGE, collectModal.getImagePath());
 
         long result = db.insert(TABLE_COLETA_DETAILS, null, contentValues);
         db.close();

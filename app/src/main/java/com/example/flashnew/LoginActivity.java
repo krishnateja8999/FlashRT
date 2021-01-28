@@ -82,11 +82,14 @@ public class LoginActivity extends AppCompatActivity {
         masterPasswordEditText = findViewById(R.id.masterPasswordEditText);
         dialog1 = new androidx.appcompat.app.AlertDialog.Builder(this);
 
-        if (preferences.isLoggedIn() && preferences.isLoggedIn1()) {
-            Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
-            startActivity(i);
-            finish();
-        }
+        Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
+        startActivity(i);
+
+//        if (preferences.isLoggedIn() && preferences.isLoggedIn1()) {
+//            Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
+//            startActivity(i);
+//            finish();
+//        }
 
         masterPasswordOK.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -75,6 +75,7 @@ import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 public class CollectDetails extends Fragment {
 
+    private String dna;
     private String strtext;
     private String[] outros;
     private String[] ausente;
@@ -91,6 +92,12 @@ public class CollectDetails extends Fragment {
     private DatabaseHelper mDatabaseHelper;
     private Spinner spinner, spinner2, spinner3;
     private InternetConnectionChecker internetChecker;
+
+    private int INFO_RETIRADA = 32;
+    private int FOTO_FORA_ALVO = 16;
+    private int FOTO_LOCAL_COLETA = 4;
+    private int FOTO_PROD_COLETADO = 2;
+    private int FOTO_PEDIDO_COLETA = 8;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -126,10 +133,12 @@ public class CollectDetails extends Fragment {
 
         prefernces.setNotCollectedImage(" ");
         strtext = getArguments().getString("CID");
+        dna = getArguments().getString("collect_dna");
+        Log.e(TAG, "DnaArgs: " + dna);
         imei.setText("Coleta: " + strtext);
         title.setVisibility(View.GONE);
 
-        String[] values1 = {"-- Selecione Coletar --", "COLETADO", "NAO_COLETADO"};
+        String[] values1 = {"COLETADO", "NAO_COLETADO"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, values1);
         adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter1);
@@ -137,24 +146,45 @@ public class CollectDetails extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-                    spinner2.setVisibility(View.GONE);
-                    nameColeta.setVisibility(View.VISIBLE);
-                    coletaIdenti.setVisibility(View.VISIBLE);
-                    buttonPhotoAR.setVisibility(View.GONE);
-                    spinner3.setVisibility(View.GONE);
-                    spinner2.setSelection(0);
+                    if (dna.equals(String.valueOf(FOTO_PROD_COLETADO))) {
+                        spinner2.setVisibility(View.GONE);
+                        nameColeta.setVisibility(View.VISIBLE);
+                        coletaIdenti.setVisibility(View.VISIBLE);
+                        spinner3.setVisibility(View.GONE);
+                        buttonPhotoAR.setVisibility(View.VISIBLE);
+                        spinner2.setSelection(0);
+                    } else if (dna.equals(String.valueOf(FOTO_FORA_ALVO))) {
+                        spinner2.setVisibility(View.GONE);
+                        nameColeta.setVisibility(View.VISIBLE);
+                        coletaIdenti.setVisibility(View.VISIBLE);
+                        spinner3.setVisibility(View.GONE);
+                        buttonPhotoAR.setVisibility(View.VISIBLE);
+                        spinner2.setSelection(0);
+                    } else {
+                        spinner2.setVisibility(View.GONE);
+                        nameColeta.setVisibility(View.VISIBLE);
+                        coletaIdenti.setVisibility(View.VISIBLE);
+                        buttonPhotoAR.setVisibility(View.GONE);
+                        spinner3.setVisibility(View.GONE);
+                        spinner2.setSelection(0);
+                    }
                 } else if (position == 1) {
-                    spinner2.setVisibility(View.GONE);
-                    nameColeta.setVisibility(View.VISIBLE);
-                    coletaIdenti.setVisibility(View.VISIBLE);
-                    buttonPhotoAR.setVisibility(View.GONE);
-                    spinner3.setVisibility(View.GONE);
-                    spinner2.setSelection(0);
-                } else if (position == 2) {
-                    spinner2.setVisibility(View.VISIBLE);
-                    nameColeta.setVisibility(View.GONE);
-                    coletaIdenti.setVisibility(View.GONE);
-                    buttonPhotoAR.setVisibility(View.VISIBLE);
+                    if (dna.equals(String.valueOf(FOTO_LOCAL_COLETA))) {
+                        spinner2.setVisibility(View.VISIBLE);
+                        nameColeta.setVisibility(View.GONE);
+                        coletaIdenti.setVisibility(View.GONE);
+                        buttonPhotoAR.setVisibility(View.VISIBLE);
+                    } else if (dna.equals(String.valueOf(FOTO_PEDIDO_COLETA))) {
+                        spinner2.setVisibility(View.VISIBLE);
+                        nameColeta.setVisibility(View.GONE);
+                        coletaIdenti.setVisibility(View.GONE);
+                        buttonPhotoAR.setVisibility(View.VISIBLE);
+                    } else {
+                        spinner2.setVisibility(View.VISIBLE);
+                        nameColeta.setVisibility(View.GONE);
+                        coletaIdenti.setVisibility(View.GONE);
+                        buttonPhotoAR.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -208,7 +238,8 @@ public class CollectDetails extends Fragment {
         buttonConfirmCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConfirmCollected();
+                DNAConfirm();
+                //ConfirmCollected();
             }
         });
 
@@ -232,6 +263,17 @@ public class CollectDetails extends Fragment {
         return view;
     }
 
+    /**
+     * Processa coleta
+     * <p>
+     * Modelo (20 itens):
+     * tipo|dt_processamento|nro_coleta|franquia|dt_fim_coleta|cliente|tipo_enc|resp|logradouro|numero|compl|bairro|cidade|uf|cep|obs|dna|latitude|longitude|perimetro
+     * <p>
+     * Ex:
+     * <p>
+     * COLETA|2016-03-28 11:11:11|11111|SAO|2016-03-28 19:00:00|Eu|AAAB|Eu|Rua Tamandaré|272|Apto 52 D|Liberdade|São Paulo|SP|01525-000|Urgente|62|-22.84060824000000|-43.29553650000000|500
+     */
+
     private void SuccessDialog() {
         StoreColetaDetails();
         SuccessDialog1("Sucesso", "Colleta com sucesso");
@@ -253,7 +295,7 @@ public class CollectDetails extends Fragment {
         String spinnerValue = spinner.getSelectedItem().toString();
 
         TableSixCollectModal sixCollectModal = new TableSixCollectModal(strtext, nameColeta.getText().toString(), coletaIdenti.getText().toString(),
-                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel);
+                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, prefernces.getNotCollectedImage());
         boolean success = mDatabaseHelper.AddDataToTableSix(sixCollectModal);
         System.out.println(success);
         Fragment fr = new Collect();
@@ -280,40 +322,6 @@ public class CollectDetails extends Fragment {
         FragmentTransaction ft = mContext.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content, fr);
         ft.commit();
-    }
-
-    private void ConfirmCollected() {
-        if (spinner.getSelectedItem().toString().equals("-- Selecione Coletar --")) {
-            Toast.makeText(getContext(), "Selecione a Coletar", Toast.LENGTH_SHORT).show();
-        } else if (spinner.getSelectedItem().toString().equals("COLETADO")) {
-            if (nameColeta.getText().toString().length() == 0) {
-                Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
-            } else if (coletaIdenti.getText().toString().length() == 0) {
-                Toast.makeText(getContext(), "Por favor insira um rg", Toast.LENGTH_SHORT).show();
-            } else {
-                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
-                SuccessDialog();
-                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
-                System.out.println("Collect Added: " + AddCollectForCount);
-                if (internetChecker.checkInternetConnection()) {
-                    PostCollectData();
-                }
-            }
-        } else if (spinner.getSelectedItem().toString().equals("NAO_COLETADO")) {
-            if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
-                Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
-            } else if (prefernces.getNotCollectedImage().equals(" ") || prefernces.getNotCollectedImage().equals("")) {
-                Toast.makeText(mContext, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
-            } else {
-                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
-                NotCollectedSuccessDialog();
-                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
-                System.out.println("Collect Added: " + AddCollectForCount);
-                if (internetChecker.checkInternetConnection()) {
-                    PostNotCollectData();
-                }
-            }
-        }
     }
 
     private void dispatchTakePictureIntent() {
@@ -351,8 +359,6 @@ public class CollectDetails extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            photo = (Bitmap) data.getExtras().get("data");
-//            OutImage = Bitmap.createScaledBitmap(photo, 600, 800, true);
             prefernces.setNotCollectedImage(currentPhotoPath);
             buttonPhotoAR.setText("Tirar foto do local" + "   ✔");
             Toast.makeText(mContext, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
@@ -414,6 +420,7 @@ public class CollectDetails extends Fragment {
         ArrayList<String> latitude = new ArrayList<String>();
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> batteryLevel = new ArrayList<String>();
+        ArrayList<String> collectImage = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(ContentValues.TAG, "PostCollect: No Data");
@@ -427,6 +434,7 @@ public class CollectDetails extends Fragment {
                 latitude.add(data.getString(6));
                 longitude.add(data.getString(7));
                 batteryLevel.add(data.getString(8));
+                collectImage.add(data.getString(9));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -468,6 +476,7 @@ public class CollectDetails extends Fragment {
                     });
                     queue.add(request);
 
+                    DeletePhotoPath(Utils.ConvertArrayListToString(collectImage));
                     coletaID.clear();
                     name.clear();
                     identification.clear();
@@ -476,6 +485,7 @@ public class CollectDetails extends Fragment {
                     latitude.clear();
                     longitude.clear();
                     batteryLevel.clear();
+                    collectImage.clear();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -581,6 +591,147 @@ public class CollectDetails extends Fragment {
                 System.out.println("file Deleted :" + path);
             } else {
                 System.out.println("file not Deleted :" + path);
+            }
+        }
+    }
+
+    private void DNAConfirm() {
+        if (dna.equals(String.valueOf(FOTO_PROD_COLETADO))) {
+            PhotoCollectConfirm();
+
+        } else if (dna.equals(String.valueOf(FOTO_LOCAL_COLETA))) {
+            PhotoNotCollectConfirm();
+
+        } else if (dna.equals(String.valueOf(FOTO_PEDIDO_COLETA))) {
+            PhotoNotCollectConfirm();
+
+        } else if (dna.equals(String.valueOf(FOTO_FORA_ALVO))) {
+            PhotoCollectConfirm();
+
+        } else {
+            if (spinner.getSelectedItem().toString().equals("COLETADO")) {
+                if (nameColeta.getText().toString().length() == 0) {
+                    Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
+                } else if (coletaIdenti.getText().toString().length() == 0) {
+                    Toast.makeText(getContext(), "Por favor insira um rg", Toast.LENGTH_SHORT).show();
+                } else {
+                    mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                    SuccessDialog();
+                    boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                    System.out.println("Collect Added: " + AddCollectForCount);
+                    if (internetChecker.checkInternetConnection()) {
+                        PostCollectData();
+                    }
+                }
+            } else if (spinner.getSelectedItem().toString().equals("NAO_COLETADO")) {
+                if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                    Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
+                } else {
+                    mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                    NotCollectedSuccessDialog();
+                    boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                    System.out.println("Collect Added: " + AddCollectForCount);
+                    if (internetChecker.checkInternetConnection()) {
+                        PostNotCollectData();
+                    }
+                }
+            }
+        }
+    }
+
+    private void PhotoCollectConfirm() {
+        if (spinner.getSelectedItem().toString().equals("COLETADO")) {
+            if (nameColeta.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
+            } else if (coletaIdenti.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um rg", Toast.LENGTH_SHORT).show();
+            } else if (prefernces.getNotCollectedImage().equals(" ") || prefernces.getNotCollectedImage().equals("")) {
+                Toast.makeText(mContext, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                SuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println("Collect Added: " + AddCollectForCount);
+                if (internetChecker.checkInternetConnection()) {
+                    PostCollectData();
+                }
+            }
+        } else if (spinner.getSelectedItem().toString().equals("NAO_COLETADO")) {
+            if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                NotCollectedSuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println("Collect Added: " + AddCollectForCount);
+                if (internetChecker.checkInternetConnection()) {
+                    PostNotCollectData();
+                }
+            }
+        }
+    }
+
+    private void PhotoNotCollectConfirm() {
+        if (spinner.getSelectedItem().toString().equals("COLETADO")) {
+            if (nameColeta.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
+            } else if (coletaIdenti.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um rg", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                SuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println("Collect Added: " + AddCollectForCount);
+                if (internetChecker.checkInternetConnection()) {
+                    PostCollectData();
+                }
+            }
+        } else if (spinner.getSelectedItem().toString().equals("NAO_COLETADO")) {
+            if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
+            } else if (prefernces.getNotCollectedImage().equals(" ") || prefernces.getNotCollectedImage().equals("")) {
+                Toast.makeText(mContext, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                NotCollectedSuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println("Collect Added: " + AddCollectForCount);
+                if (internetChecker.checkInternetConnection()) {
+                    PostNotCollectData();
+                }
+            }
+        }
+    }
+
+    //Old
+    private void ConfirmCollected() {
+        if (spinner.getSelectedItem().toString().equals("COLETADO")) {
+            if (nameColeta.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um nome", Toast.LENGTH_SHORT).show();
+            } else if (coletaIdenti.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Por favor insira um rg", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                SuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println("Collect Added: " + AddCollectForCount);
+                if (internetChecker.checkInternetConnection()) {
+                    PostCollectData();
+                }
+            }
+        } else if (spinner.getSelectedItem().toString().equals("NAO_COLETADO")) {
+            if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                Toast.makeText(mContext, "Selecione a grupo", Toast.LENGTH_SHORT).show();
+            } else if (prefernces.getNotCollectedImage().equals(" ") || prefernces.getNotCollectedImage().equals("")) {
+                Toast.makeText(mContext, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+            } else {
+                mDatabaseHelper.CheckTickMarkInTableFive(strtext);
+                NotCollectedSuccessDialog();
+                boolean AddCollectForCount = mDatabaseHelper.AddCollectsForCount("COLECTA");
+                System.out.println("Collect Added: " + AddCollectForCount);
+                if (internetChecker.checkInternetConnection()) {
+                    PostNotCollectData();
+                }
             }
         }
     }

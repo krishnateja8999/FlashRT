@@ -7,14 +7,16 @@ public class TableFiveModel {
     String city;
     String state;
     String pincode;
+    String dna;
 
-    public TableFiveModel(String coletaID, String streetName, String aptNo, String city, String state, String pincode) {
+    public TableFiveModel(String coletaID, String streetName, String aptNo, String city, String state, String pincode, String dna) {
         this.coletaID = coletaID;
         this.streetName = streetName;
         this.aptNo = aptNo;
         this.city = city;
         this.state = state;
         this.pincode = pincode;
+        this.dna = dna;
     }
 
     public String getColetaID() {
@@ -63,5 +65,13 @@ public class TableFiveModel {
 
     public void setPincode(String pincode) {
         this.pincode = pincode;
+    }
+
+    public String getDna() {
+        return dna;
+    }
+
+    public void setDna(String dna) {
+        this.dna = dna;
     }
 }

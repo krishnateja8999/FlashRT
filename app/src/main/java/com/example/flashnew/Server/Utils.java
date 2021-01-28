@@ -3,6 +3,7 @@ package com.example.flashnew.Server;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Location;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -51,5 +52,12 @@ public class Utils {
         AlertDialog alert1 = builder1.create();
         alert1.show();
         return alert1;
+    }
+
+    public static boolean FindPerimeter(double cPoint, double cPoint2, double lat, double longi) {
+        float[] results = new float[1];
+        Location.distanceBetween(cPoint, cPoint2, lat, longi, results);
+        float distanceInMeters = results[0];
+        return distanceInMeters < 1000;
     }
 }

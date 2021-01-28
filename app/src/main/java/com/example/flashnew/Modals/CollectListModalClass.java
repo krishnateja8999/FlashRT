@@ -4,11 +4,13 @@ public class CollectListModalClass {
     String hawbCode;
     String address;
     String tick_mark;
+    String dna;
 
-    public CollectListModalClass(String hawbCode, String address, String tick_mark) {
+    public CollectListModalClass(String hawbCode, String address, String tick_mark, String dna) {
         this.hawbCode = hawbCode;
         this.address = address;
         this.tick_mark = tick_mark;
+        this.dna = dna;
     }
 
     public String getHawbCode() {
@@ -33,5 +35,13 @@ public class CollectListModalClass {
 
     public void setTick_mark(String tick_mark) {
         this.tick_mark = tick_mark;
+    }
+
+    public String getDna() {
+        return dna;
+    }
+
+    public void setDna(String dna) {
+        this.dna = dna;
     }
 }

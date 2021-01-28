@@ -51,6 +51,7 @@ public class ScannerActivity extends AppCompatActivity {
                         Log.e("TAG", "run: " + Qcode);
 
                         String[] item = Qcode.split("\\|");
+                        Log.e("TAG", "run: " + item.length);
                         boolean check = false;
                         try {
                             check = mDatabaseHelper.CheckColetaData(item[2]);
@@ -104,7 +105,7 @@ public class ScannerActivity extends AppCompatActivity {
                             //Creating dialog box
                             AlertDialog alert1 = builder1.create();
                             alert1.show();
-                            TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14]);
+                            TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14], item[18]);
                             boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
                             System.out.println(success);
                         }

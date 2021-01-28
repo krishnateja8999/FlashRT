@@ -59,6 +59,7 @@ public class CollectListAdapter extends RecyclerView.Adapter<CollectListAdapter.
                         .getSupportFragmentManager().beginTransaction();
                 Bundle args = new Bundle();
                 args.putString("CID", listModalClasses.get(holder.getAdapterPosition()).getHawbCode());
+                args.putString("collect_dna", listModalClasses.get(holder.getAdapterPosition()).getDna());
                 fr.setArguments(args);
                 fragmentTransaction.replace(R.id.content, fr);
                 fragmentTransaction.addToBackStack(null);

@@ -105,7 +105,6 @@ public class List extends Fragment {
     private LinearLayout linearLayout, retur;
     private ProgressBar ListScreenProgressBar;
     private ListScreenUpdater listScreenUpdater;
-    private LinearLayout linearLayout1, linearLayout2;
     private InternetConnectionChecker internetChecker;
     private String[] values2, enderec, ausente, nao_visitado, outros;
 
@@ -243,7 +242,6 @@ public class List extends Fragment {
                     if (hawb.getText().toString().length() == 0) {
                         Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
                         hawb.requestFocus();
-                        //hawb.setError("Selecione um Hawb");
                     } else if (!check) {
                         Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
                     } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
@@ -548,7 +546,6 @@ public class List extends Fragment {
         } else {
             for (ListImageModal list231 : imageModals) {
                 String imageName2 = list231.getCustomerCode() + "_" + list231.getContractCode() + "_" + preferences.getImageType() + "_" + hawb.getText().toString() + "_img_rt_" + list231.getCustomerNumber() + "_" + timeStamp + ".png";
-                Log.e(TAG, "storeDeliveryDataImageName: " + imageName2);
                 mDatabaseHelper.addDataToTableThree(new TableThreeDeliveryModal(hawb.getText().toString(), spinnerID,
                         attemptsDropDown.getSelectedItem().toString(), formattedDate, batLevel, preferences.getLowType(), preferences.getPhotoBoolean(), preferences.getLatitude(), preferences.getLongitude(), preferences.getImagePath(), imageName2));
             }
@@ -588,7 +585,6 @@ public class List extends Fragment {
 
     private void JsonParseListScreen() {
         ListScreenProgressBar.setVisibility(View.VISIBLE);
-        String url1 = ApiUtils.GET_LIST;
         String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
             @Override
@@ -697,7 +693,6 @@ public class List extends Fragment {
 
     private void JsonParseListScreen2() {
         ListScreenProgressBar.setVisibility(View.VISIBLE);
-        String url1 = ApiUtils.GET_LIST;
         String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
             @Override
@@ -804,7 +799,6 @@ public class List extends Fragment {
 
     private void JsonParseListScreen3() {
         ListScreenProgressBar.setVisibility(View.VISIBLE);
-        String url1 = ApiUtils.GET_LIST;
         String url2 = preferences.getHostUrl() + ApiUtils.GET_LIST1;
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2 + preferences.getListID(), null, new Response.Listener<JSONObject>() {
             @Override
