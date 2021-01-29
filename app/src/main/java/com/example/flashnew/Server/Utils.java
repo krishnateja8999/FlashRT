@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Location;
+import android.text.TextUtils;
 
 import androidx.appcompat.app.AlertDialog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Utils {
@@ -59,5 +61,25 @@ public class Utils {
         Location.distanceBetween(cPoint, cPoint2, lat, longi, results);
         float distanceInMeters = results[0];
         return distanceInMeters < 1000;
+    }
+
+    public static double GetLatitude(List<Double> a) {
+        String b = TextUtils.join(",", a);
+        String[] item = b.split(",");
+        return Double.parseDouble(item[0]);
+    }
+
+    public static double GetLongitude(List<Double> a) {
+        String b = TextUtils.join(",", a);
+        String[] item = b.split(",");
+        return Double.parseDouble(item[1]);
+    }
+
+    public static boolean CheckZeroInLocation(double latiti) {
+        if (latiti == 0.0 || latiti == 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

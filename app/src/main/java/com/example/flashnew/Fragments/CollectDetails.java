@@ -48,12 +48,14 @@ import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Activities.Landing_Screen;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
+import com.example.flashnew.HelperClasses.UploadImages;
 import com.example.flashnew.Modals.TableSevenNotCollectedModal;
 import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.R;
 import com.example.flashnew.Server.ApiUtils;
 import com.example.flashnew.Server.InternetConnectionChecker;
 import com.example.flashnew.Server.Utils;
+import com.google.cloud.storage.Storage;
 
 import net.skoumal.fragmentback.BackFragment;
 
@@ -75,7 +77,6 @@ import static com.example.flashnew.Server.Utils.REQUEST_IMAGE_CAPTURE;
 
 public class CollectDetails extends Fragment {
 
-    private String dna;
     private String strtext;
     private String[] outros;
     private String[] ausente;
@@ -89,15 +90,17 @@ public class CollectDetails extends Fragment {
     private String currentPhotoPath;
     private Landing_Screen mContext;
     private AppPrefernces prefernces;
+    private double latitude, longitude;
     private DatabaseHelper mDatabaseHelper;
+    private String dna, clientID, contractID;
     private Spinner spinner, spinner2, spinner3;
     private InternetConnectionChecker internetChecker;
 
-    private int INFO_RETIRADA = 32;
-    private int FOTO_FORA_ALVO = 16;
-    private int FOTO_LOCAL_COLETA = 4;
-    private int FOTO_PROD_COLETADO = 2;
-    private int FOTO_PEDIDO_COLETA = 8;
+    private final int INFO_RETIRADA = 32;
+    private final int FOTO_FORA_ALVO = 16;
+    private final int FOTO_LOCAL_COLETA = 4;
+    private final int FOTO_PROD_COLETADO = 2;
+    private final int FOTO_PEDIDO_COLETA = 8;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -134,7 +137,11 @@ public class CollectDetails extends Fragment {
         prefernces.setNotCollectedImage(" ");
         strtext = getArguments().getString("CID");
         dna = getArguments().getString("collect_dna");
-        Log.e(TAG, "DnaArgs: " + dna);
+        clientID = getArguments().getString("client_id");
+        contractID = getArguments().getString("contract_id");
+        latitude = getArguments().getDouble("latitude_collect");
+        longitude = getArguments().getDouble("longitude_collect");
+        Log.e(TAG, "DnaArgs: " + dna + ", " + clientID + ", " + contractID + " , " + latitude + ", " + longitude);
         imei.setText("Coleta: " + strtext);
         title.setVisibility(View.GONE);
 
@@ -154,12 +161,21 @@ public class CollectDetails extends Fragment {
                         buttonPhotoAR.setVisibility(View.VISIBLE);
                         spinner2.setSelection(0);
                     } else if (dna.equals(String.valueOf(FOTO_FORA_ALVO))) {
-                        spinner2.setVisibility(View.GONE);
-                        nameColeta.setVisibility(View.VISIBLE);
-                        coletaIdenti.setVisibility(View.VISIBLE);
-                        spinner3.setVisibility(View.GONE);
-                        buttonPhotoAR.setVisibility(View.VISIBLE);
-                        spinner2.setSelection(0);
+                        if (Utils.FindPerimeter(latitude, longitude, Double.parseDouble(prefernces.getLatitude()), Double.parseDouble(prefernces.getLongitude()))) {
+                            spinner2.setVisibility(View.GONE);
+                            nameColeta.setVisibility(View.VISIBLE);
+                            coletaIdenti.setVisibility(View.VISIBLE);
+                            spinner3.setVisibility(View.GONE);
+                            buttonPhotoAR.setVisibility(View.GONE);
+                            spinner2.setSelection(0);
+                        } else {
+                            spinner2.setVisibility(View.GONE);
+                            nameColeta.setVisibility(View.VISIBLE);
+                            coletaIdenti.setVisibility(View.VISIBLE);
+                            spinner3.setVisibility(View.GONE);
+                            buttonPhotoAR.setVisibility(View.VISIBLE);
+                            spinner2.setSelection(0);
+                        }
                     } else {
                         spinner2.setVisibility(View.GONE);
                         nameColeta.setVisibility(View.VISIBLE);
@@ -264,14 +280,9 @@ public class CollectDetails extends Fragment {
     }
 
     /**
-     * Processa coleta
-     * <p>
-     * Modelo (20 itens):
-     * tipo|dt_processamento|nro_coleta|franquia|dt_fim_coleta|cliente|tipo_enc|resp|logradouro|numero|compl|bairro|cidade|uf|cep|obs|dna|latitude|longitude|perimetro
-     * <p>
-     * Ex:
-     * <p>
-     * COLETA|2016-03-28 11:11:11|11111|SAO|2016-03-28 19:00:00|Eu|AAAB|Eu|Rua Tamandaré|272|Apto 52 D|Liberdade|São Paulo|SP|01525-000|Urgente|62|-22.84060824000000|-43.29553650000000|500
+     * tipo |dt_processamento|nro_coleta|franquia|dt_fim_coleta |cliente |tipo_enc |resp |logradouro
+     * |numero|compl |bairro |cidade |uf|cep
+     * |obs|dna|latitude|longitude|perimetro|clienteID|contratoID
      */
 
     private void SuccessDialog() {
@@ -294,8 +305,13 @@ public class CollectDetails extends Fragment {
         String formattedDate = df.format(c.getTime());
         String spinnerValue = spinner.getSelectedItem().toString();
 
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+//        <customer code>_<contract code>_<image type>_<hawb>_img_rt_<customer//number>*_<AAAAMMDDHHMMSS>.png
+
+        String imageName = clientID + "_" + contractID + "_img_ar_" + strtext + "_img_rt_" + strtext + "_" + timeStamp + ".png";
+
         TableSixCollectModal sixCollectModal = new TableSixCollectModal(strtext, nameColeta.getText().toString(), coletaIdenti.getText().toString(),
-                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, prefernces.getNotCollectedImage());
+                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, prefernces.getNotCollectedImage(), imageName);
         boolean success = mDatabaseHelper.AddDataToTableSix(sixCollectModal);
         System.out.println(success);
         Fragment fr = new Collect();
@@ -312,9 +328,12 @@ public class CollectDetails extends Fragment {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String formattedDate = df.format(c.getTime());
         String spinnerValue = spinner.getSelectedItem().toString();
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+
+        String imageName = clientID + "_" + contractID + "_img_ar_" + strtext + "_img_rt_" + strtext + "_" + timeStamp + ".png";
 
         TableSevenNotCollectedModal sevenCollectModal = new TableSevenNotCollectedModal(strtext,
-                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, prefernces.getNotCollectedImage());
+                formattedDate, spinnerValue, prefernces.getLatitude(), prefernces.getLongitude(), batLevel, prefernces.getNotCollectedImage(), imageName);
         boolean success = mDatabaseHelper.AddDataToTableSeven(sevenCollectModal);
         Log.e(TAG, "StoreNotColetaDetails: " + prefernces.getNotCollectedImage());
         System.out.println(success);
@@ -421,6 +440,7 @@ public class CollectDetails extends Fragment {
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> batteryLevel = new ArrayList<String>();
         ArrayList<String> collectImage = new ArrayList<String>();
+        ArrayList<String> collectImageName = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(ContentValues.TAG, "PostCollect: No Data");
@@ -435,6 +455,7 @@ public class CollectDetails extends Fragment {
                 longitude.add(data.getString(7));
                 batteryLevel.add(data.getString(8));
                 collectImage.add(data.getString(9));
+                collectImageName.add(data.getString(10));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -458,7 +479,19 @@ public class CollectDetails extends Fragment {
 
                     Log.e(ContentValues.TAG, "PostCollectData: " + jsonObj1);
 
-                    String url1 = ApiUtils.POST_COLETA;
+                    if (Utils.ConvertArrayListToString(collectImage).equals("") || Utils.ConvertArrayListToString(collectImage).equals(" ")) {
+                        Log.e(TAG, "PostCollectData: No image");
+                    } else {
+                        Storage storage = UploadImages.setCredentials(mContext.getAssets().open("key.json"));
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(collectImage), Utils.ConvertArrayListToString(collectImageName));
+                            }
+                        });
+                        thread.start();
+                    }
+
                     String url2 = prefernces.getHostUrl() + ApiUtils.POST_COLETA1;
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
@@ -486,6 +519,7 @@ public class CollectDetails extends Fragment {
                     longitude.clear();
                     batteryLevel.clear();
                     collectImage.clear();
+                    collectImageName.clear();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -510,6 +544,7 @@ public class CollectDetails extends Fragment {
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> batteryLevel = new ArrayList<String>();
         ArrayList<String> notCollectImage = new ArrayList<String>();
+        ArrayList<String> notCollectImageName = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(ContentValues.TAG, "PostNotCollect: No Data");
@@ -522,6 +557,7 @@ public class CollectDetails extends Fragment {
                 longitude.add(data.getString(5));
                 batteryLevel.add(data.getString(6));
                 notCollectImage.add(data.getString(7));
+                notCollectImageName.add(data.getString(8));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -543,7 +579,19 @@ public class CollectDetails extends Fragment {
 
                     Log.e(ContentValues.TAG, "PostNotCollectData: " + jsonObj1);
 
-                    String url1 = ApiUtils.POST_COLETA;
+                    if (Utils.ConvertArrayListToString(notCollectImage).equals("") || Utils.ConvertArrayListToString(notCollectImage).equals(" ")) {
+                        Log.e(TAG, "PostCollectData: No image");
+                    } else {
+                        Storage storage = UploadImages.setCredentials(mContext.getAssets().open("key.json"));
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(notCollectImage), Utils.ConvertArrayListToString(notCollectImageName));
+                            }
+                        });
+                        thread.start();
+                    }
+
                     String url2 = prefernces.getHostUrl() + ApiUtils.POST_COLETA1;
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
@@ -569,8 +617,9 @@ public class CollectDetails extends Fragment {
                     longitude.clear();
                     batteryLevel.clear();
                     notCollectImage.clear();
+                    notCollectImageName.clear();
 
-                } catch (JSONException e) {
+                } catch (JSONException | IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -606,7 +655,11 @@ public class CollectDetails extends Fragment {
             PhotoNotCollectConfirm();
 
         } else if (dna.equals(String.valueOf(FOTO_FORA_ALVO))) {
-            PhotoCollectConfirm();
+            if (Utils.FindPerimeter(latitude, longitude, Double.parseDouble(prefernces.getLatitude()), Double.parseDouble(prefernces.getLongitude()))) {
+                PhotoNotCollectConfirm();
+            } else {
+                PhotoCollectConfirm();
+            }
 
         } else {
             if (spinner.getSelectedItem().toString().equals("COLETADO")) {

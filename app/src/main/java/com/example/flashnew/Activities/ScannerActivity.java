@@ -105,11 +105,16 @@ public class ScannerActivity extends AppCompatActivity {
                             //Creating dialog box
                             AlertDialog alert1 = builder1.create();
                             alert1.show();
-                            TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14], item[18]);
-                            boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
-                            System.out.println(success);
+                            if (item[17].equals("null") && item[18].equals("null")) {
+                                TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14], item[16], item[20], item[21], 0, 0);
+                                boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
+                                System.out.println(success);
+                            } else {
+                                TableFiveModel tableFiveModel = new TableFiveModel(item[2], item[8], item[9], item[12], item[13], item[14], item[16], item[20], item[21], Double.parseDouble(item[17]), Double.parseDouble(item[18]));
+                                boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
+                                System.out.println(success);
+                            }
                         }
-
                     }
                 });
             }

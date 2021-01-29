@@ -8,8 +8,12 @@ public class TableFiveModel {
     String state;
     String pincode;
     String dna;
+    String clientID;
+    String contractID;
+    double latitude;
+    double longitude;
 
-    public TableFiveModel(String coletaID, String streetName, String aptNo, String city, String state, String pincode, String dna) {
+    public TableFiveModel(String coletaID, String streetName, String aptNo, String city, String state, String pincode, String dna, String clientID, String contractID, double latitude, double longitude) {
         this.coletaID = coletaID;
         this.streetName = streetName;
         this.aptNo = aptNo;
@@ -17,6 +21,10 @@ public class TableFiveModel {
         this.state = state;
         this.pincode = pincode;
         this.dna = dna;
+        this.clientID = clientID;
+        this.contractID = contractID;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getColetaID() {
@@ -73,5 +81,37 @@ public class TableFiveModel {
 
     public void setDna(String dna) {
         this.dna = dna;
+    }
+
+    public String getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
+    }
+
+    public String getContractID() {
+        return contractID;
+    }
+
+    public void setContractID(String contractID) {
+        this.contractID = contractID;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

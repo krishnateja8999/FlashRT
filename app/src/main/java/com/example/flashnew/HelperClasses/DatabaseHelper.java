@@ -18,6 +18,7 @@ import com.example.flashnew.Modals.TableSevenNotCollectedModal;
 import com.example.flashnew.Modals.TableSixCollectModal;
 import com.example.flashnew.Modals.TableThreeDeliveryModal;
 import com.example.flashnew.Modals.TableTwoListModal;
+import com.google.gson.internal.bind.JsonTreeReader;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -71,8 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TICK_MARK = "tick_mark";
     private static final String CREATE_TABLE_TOTAL_LIST_DETAILS = "CREATE TABLE " + TABLE_TOTAL_LIST_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CUSTOMER_ID + " INTEGER, "
             + CONTRACT_ID + " INTEGER, " + HAWB_CODE + " TEXT, " + NUMBER_ORDER_CLIENT + " TEXT, " + RECIPIENT_NAME + " TEXT, " + DNA + " INTEGER, "
-            + ATTEMPTS + " INTEGER, " + SPECIAL_PHOTO + " TEXT, " + SCORE + " INTEGER, " + CLIENT_NUMBER + " TEXT, " + TICK_MARK + " TEXT)";
-
+            + ATTEMPTS + " INTEGER, " + SPECIAL_PHOTO + " TEXT, " + SCORE + " INTEGER, " + CLIENT_NUMBER + " TEXT, " + TICK_MARK + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT)";
 
     //Table 3 columns & query:
     private static final String H_CODE = "h_code";
@@ -101,20 +101,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String PINCODE = "pincode";
     private static final String CREATE_TABLE_SCANNER_DETAILS = "CREATE TABLE " + TABLE_SCANNER_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLETA_ID + " TEXT, " + STREET_NAME + " TEXT, " + APT_NO + " TEXT, " + CITY + " TEXT, " + STATE + " TEXT, " +
-            PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + DNA + " INTEGER)";
+            PINCODE + " INTEGER, " + TICK_MARK + " TEXT, " + DNA + " INTEGER, " + CUSTOMER_ID + " TEXT, " + CONTRACT_ID + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT)";
 
     //Table 6 columns & query:
     private static final String IDENTIFICATION_NO = "identification_no";
     private static final String TYPE_PROCESS = "type_process";
+    private static final String COLLECT_IMAGE = "collect_image";
     private static final String CREATE_TABLE_COLETA_DETAILS = "CREATE TABLE " + TABLE_COLETA_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLETA_ID + " TEXT, " + RECIPIENT_NAME + " TEXT, " + IDENTIFICATION_NO + " TEXT, " + DATE_TIME + " TEXT," + TYPE_PROCESS + " TEXT," +
-            LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER)";
+            LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " TEXT, " + IMAGE_NAME + " TEXT)";
 
 
     //Table 7 columns & query
-    private static final String COLLECT_IMAGE = "collect_image";
     private static final String CREATE_TABLE_NOT_COLLECTED_DETAILS = "CREATE TABLE " + TABLE_NOT_COLLECTED_DETAILS + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            COLETA_ID + " TEXT, " + DATE_TIME + " TEXT, " + TYPE_PROCESS + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " BLOB)";
+            COLETA_ID + " TEXT, " + DATE_TIME + " TEXT, " + TYPE_PROCESS + " TEXT, " + LATITUDE + " FLOAT, " + LONGITUDE + " FLOAT, " + BATTERY_LEVEL + " INTEGER, " + COLLECT_IMAGE + " TEXT, " + IMAGE_NAME + " TEXT)";
 
     //Table 8 columns & query
     private static final String TOTAL_LIST_COUNT = "list_count";
@@ -237,6 +237,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(SCORE, twoListModal.getScore());
         contentValues.put(CLIENT_NUMBER, twoListModal.getClientNumber());
         contentValues.put(TICK_MARK, "false");
+        contentValues.put(LATITUDE, twoListModal.getLatitude());
+        contentValues.put(LONGITUDE, twoListModal.getLongitude());
 
         long result = db.insert(TABLE_TOTAL_LIST_DETAILS, null, contentValues);
         db.close();
@@ -299,6 +301,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return listImage;
+    }
+
+    public String GetDna(String code_hawb) {
+        String text = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " + DNA + " FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " = '" + code_hawb + "' OR " +
+                CLIENT_NUMBER + " ='" + code_hawb + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                text = cursor.getString(cursor.getColumnIndex(DNA));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return text;
+    }
+
+    public List<Double> GetLatLong(String codes) {
+        List<Double> doubles = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT " + LATITUDE + ", " + LONGITUDE + " FROM " + TABLE_TOTAL_LIST_DETAILS +
+                " WHERE " + HAWB_CODE + " ='" + codes + "' OR " + NUMBER_ORDER_CLIENT + " ='" + codes + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                doubles.add(cursor.getDouble(0));
+                doubles.add(cursor.getDouble(1));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return doubles;
+    }
+
+    public boolean CheckHawbCodeList(String cod) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_TOTAL_LIST_DETAILS + " WHERE " + HAWB_CODE + " = '" + cod + "' OR " + CLIENT_NUMBER + " = '" + cod + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
     }
 
     //Table three
@@ -427,7 +473,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-
     //Collect Screen
     //Table five
     public boolean AddDateToTableFive(TableFiveModel tableFiveModel) {
@@ -442,6 +487,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(PINCODE, tableFiveModel.getPincode());
         contentValues.put(TICK_MARK, "false");
         contentValues.put(DNA, tableFiveModel.getDna());
+        contentValues.put(CUSTOMER_ID, tableFiveModel.getClientID());
+        contentValues.put(CONTRACT_ID, tableFiveModel.getContractID());
+        contentValues.put(LATITUDE, tableFiveModel.getLatitude());
+        contentValues.put(LONGITUDE, tableFiveModel.getLongitude());
 
         long result = db.insert(TABLE_SCANNER_DETAILS, null, contentValues);
 
@@ -511,6 +560,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(LONGITUDE, collectModal.getLongitude());
         contentValues.put(BATTERY_LEVEL, collectModal.getBatteryPercentage());
         contentValues.put(COLLECT_IMAGE, collectModal.getImagePath());
+        contentValues.put(IMAGE_NAME, collectModal.getImageName());
 
         long result = db.insert(TABLE_COLETA_DETAILS, null, contentValues);
         db.close();
@@ -541,6 +591,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(LONGITUDE, notCollectedModal.getLongitude());
         contentValues.put(BATTERY_LEVEL, notCollectedModal.getBatteryPercentage());
         contentValues.put(COLLECT_IMAGE, notCollectedModal.getImage());
+        contentValues.put(IMAGE_NAME, notCollectedModal.getImageName());
 
         long result = db.insert(TABLE_NOT_COLLECTED_DETAILS, null, contentValues);
         db.close();

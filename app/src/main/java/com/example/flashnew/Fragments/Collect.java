@@ -195,7 +195,8 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
             swipeRefreshLayout.setVisibility(View.VISIBLE);
             while (data.moveToNext()) {
                 listModalClasses.add(new CollectListModalClass(data.getString(1), data.getString(2) + ", " + data.getString(3) +
-                        ", " + data.getString(4) + ", " + data.getString(5) + ", " + data.getString(6), data.getString(7), data.getString(8)));
+                        ", " + data.getString(4) + ", " + data.getString(5) + ", " + data.getString(6), data.getString(7), data.getString(8), data.getString(9)
+                        , data.getString(10), data.getFloat(11), data.getFloat(12)));
             }
             CollectListAdapter collectListAdapter = new CollectListAdapter(getActivity(), listModalClasses);
             recyclerViewCollectList.setAdapter(collectListAdapter);
@@ -228,6 +229,8 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                         String s6 = object.getString("uf");
                         String s7 = object.getString("cep");
                         String s8 = object.getString("dnaColeta");
+                        String s10 = object.getString("clienteId");
+                        String s11 = object.getString("contratoId");
 
                         boolean check = mDatabaseHelper.CheckColetaData(s2);
                         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
@@ -259,7 +262,7 @@ public class Collect extends Fragment implements BackFragment, SwipeRefreshLayou
                             //Creating dialog box
                             AlertDialog alert1 = builder1.create();
                             alert1.show();
-                            TableFiveModel tableFiveModel = new TableFiveModel(s2, s3, s4, s5, s6, s7, s8);
+                            TableFiveModel tableFiveModel = new TableFiveModel(s2, s3, s4, s5, s6, s7, s8, s10, s11, 0, 0);
                             boolean success = mDatabaseHelper.AddDateToTableFive(tableFiveModel);
                             System.out.println(success);
                         }

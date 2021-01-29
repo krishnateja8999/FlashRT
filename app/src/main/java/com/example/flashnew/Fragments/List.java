@@ -106,7 +106,7 @@ public class List extends Fragment {
     private ProgressBar ListScreenProgressBar;
     private ListScreenUpdater listScreenUpdater;
     private InternetConnectionChecker internetChecker;
-    private String[] values2, enderec, ausente, nao_visitado, outros;
+    private String[] values2, enderec, ausente, nao_visitado, outros, deliveryDna, returnDna;
 
     @Nullable
     @Override
@@ -149,6 +149,8 @@ public class List extends Fragment {
         enderec = getResources().getStringArray(R.array.motivo_dev);
         outros = getResources().getStringArray(R.array.motivo_outros);
         ausente = getResources().getStringArray(R.array.motivo_ausente);
+        returnDna = getResources().getStringArray(R.array.list_return_dna);
+        deliveryDna = getResources().getStringArray(R.array.list_delivery_dna);
         nao_visitado = getResources().getStringArray(R.array.motivo_nao_visitado);
 
         listCodeUpdater = new ListCodeUpdater();
@@ -180,17 +182,20 @@ public class List extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //DnaConfirmForHawbET();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (hawb.getText().toString().length() <= 0) {
-                    camera.setBackground(getResources().getDrawable(R.drawable.rounded_grey_filled_bg));
-                    camera.setEnabled(false);
-                } else {
-                    camera.setBackground(getResources().getDrawable(R.drawable.rounded_blue_button));
-                    camera.setEnabled(true);
-                }
+                DnaConfirmForHawbET();
+//                if (hawb.getText().toString().length() <= 0) {
+//                    camera.setVisibility(View.GONE);
+//                    camera.setBackground(getResources().getDrawable(R.drawable.rounded_grey_filled_bg));
+//                    camera.setEnabled(false);
+//                } else {
+//                    camera.setBackground(getResources().getDrawable(R.drawable.rounded_blue_button));
+//                    camera.setEnabled(true);
+//                }
             }
         });
 
@@ -237,50 +242,52 @@ public class List extends Fragment {
         conf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean check = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
-                if (preferences.getLowType().equals("ENTREGA")) {
-                    if (hawb.getText().toString().length() == 0) {
-                        Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
-                        hawb.requestFocus();
-                    } else if (!check) {
-                        Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
-                    } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
-                        Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
-                    } else if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
-                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
-                    } else {
-                        storeDeliveryData();
-                        if (internetChecker.checkInternetConnection()) {
-                            PutJsonRequest();
-                        }
-                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
-                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
-                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
-                        System.out.println(AddDeliveryType);
-                        ConfirmSuccessDialog("entregue");
-                    }
-                } else {
-                    if (hawb.getText().toString().length() == 0) {
-                        Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
-                        hawb.requestFocus();
-                    } else if (!check) {
-                        Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
-                    } else if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
-                        Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
-                    } else if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
-                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
-                    } else {
-                        storeDeliveryData();
-                        if (internetChecker.checkInternetConnection()) {
-                            PutJsonRequest();
-                        }
-                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
-                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
-                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
-                        System.out.println(AddDeliveryType);
-                        ConfirmSuccessDialog("devolvida");
-                    }
-                }
+                //ConfirmButton();
+                ConfirmButton2();
+//                boolean check = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
+//                if (preferences.getLowType().equals("ENTREGA")) {
+//                    if (hawb.getText().toString().length() == 0) {
+//                        Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+//                        hawb.requestFocus();
+//                    } else if (!check) {
+//                        Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+//                    } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
+//                        Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+//                    } else if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+//                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        storeDeliveryData();
+//                        if (internetChecker.checkInternetConnection()) {
+//                            PutJsonRequest();
+//                        }
+//                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+//                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+//                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+//                        System.out.println(AddDeliveryType);
+//                        ConfirmSuccessDialog("entregue");
+//                    }
+//                } else {
+//                    if (hawb.getText().toString().length() == 0) {
+//                        Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+//                        hawb.requestFocus();
+//                    } else if (!check) {
+//                        Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+//                    } else if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+//                        Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+//                    } else if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+//                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        storeDeliveryData();
+//                        if (internetChecker.checkInternetConnection()) {
+//                            PutJsonRequest();
+//                        }
+//                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+//                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+//                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+//                        System.out.println(AddDeliveryType);
+//                        ConfirmSuccessDialog("devolvida");
+//                    }
+//                }
             }
         });
 
@@ -645,17 +652,31 @@ public class List extends Fragment {
                                     Log.e(TAG, "exists: ");
                                 }
                             } else {
-                                Log.e(TAG, "doesn't exist: ");
+                                Log.e(TAG, "Research doesn't exist: ");
                             }
 
-                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                            System.out.println(success);
+                            if (object.has("latitude") && object.has("longitude")) {
+                                double latitude = object.getDouble("latitude");
+                                double longitude = object.getDouble("longitude");
+                                TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                        hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber, latitude, longitude);
+                                boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                                System.out.println(success);
 
-                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
-                            System.out.println(tableFourHawbCode);
+                                boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                                System.out.println(tableFourHawbCode);
+                                Log.e(TAG, "Hawb has lat, long");
 
+                            } else {
+                                TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                        hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber, 0, 0);
+                                boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                                System.out.println(success);
+
+                                boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                                System.out.println(tableFourHawbCode);
+                                Log.e(TAG, "Hawb doesn't have lat, long");
+                            }
                             FragmentTransaction fragmentTransaction = context
                                     .getSupportFragmentManager().beginTransaction();
                             fragmentTransaction.replace(R.id.content, new HawbLists());
@@ -757,13 +778,28 @@ public class List extends Fragment {
                                 Log.e(TAG, "doesn't exist: ");
                             }
 
-                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                            System.out.println(success);
+                            if (object.has("latitude") && object.has("longitude")) {
+                                double latitude = object.getDouble("latitude");
+                                double longitude = object.getDouble("longitude");
+                                TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                        hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber, latitude, longitude);
+                                boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                                System.out.println(success);
 
-                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
-                            System.out.println(tableFourHawbCode);
+                                boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                                System.out.println(tableFourHawbCode);
+                                Log.e(TAG, "Hawb has lat, long");
+
+                            } else {
+                                TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                        hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber, 0, 0);
+                                boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                                System.out.println(success);
+
+                                boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                                System.out.println(tableFourHawbCode);
+                                Log.e(TAG, "Hawb doesn't have lat, long");
+                            }
                             Delivery();
                         }
                         Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
@@ -863,13 +899,28 @@ public class List extends Fragment {
                                 Log.e(TAG, "doesn't exist: ");
                             }
 
-                            TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
-                                    hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber);
-                            boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
-                            System.out.println(success);
+                            if (object.has("latitude") && object.has("longitude")) {
+                                double latitude = object.getDouble("latitude");
+                                double longitude = object.getDouble("longitude");
+                                TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                        hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber, latitude, longitude);
+                                boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                                System.out.println(success);
 
-                            boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
-                            System.out.println(tableFourHawbCode);
+                                boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                                System.out.println(tableFourHawbCode);
+                                Log.e(TAG, "Hawb has lat, long");
+
+                            } else {
+                                TableTwoListModal tableTwoListModal = new TableTwoListModal(customerID, contractID,
+                                        hawbCode, numberOrder, recipientName, dna, attempts, specialPhoto, score, clientNumber, 0, 0);
+                                boolean success = mDatabaseHelper.addDataToTableTwo(tableTwoListModal);
+                                System.out.println(success);
+
+                                boolean tableFourHawbCode = mDatabaseHelper.addDataToTableFour(hawbCode, clientNumber);
+                                System.out.println(tableFourHawbCode);
+                                Log.e(TAG, "Hawb doesn't have lat, long");
+                            }
                             Returns();
                         }
                         Toast.makeText(context, "Listas baixadas com sucesso", Toast.LENGTH_SHORT).show();
@@ -940,7 +991,13 @@ public class List extends Fragment {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(imagePath), Utils.ConvertArrayListToString(imageName));
+                        Log.e(TAG, "run: " + Utils.ConvertArrayListToString(imagePath));
+                        Log.e(TAG, "run2: " + Utils.ConvertArrayListToString(imageName));
+                        if (Utils.ConvertArrayListToString(imagePath).equals("") || Utils.ConvertArrayListToString(imagePath).equals(" ") || Utils.ConvertArrayListToString(imagePath).equals(null)) {
+                            Log.e(TAG, "PutList: no image");
+                        } else {
+                            UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(imagePath), Utils.ConvertArrayListToString(imageName));
+                        }
                     }
                 });
                 thread.start();
@@ -1121,7 +1178,6 @@ public class List extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             preferences.setImagePath(currentPhotoPath);
             preferences.setPhotoBoolean("true");
-            Log.e(TAG, "onActivityResultList: " + OutImage);
             camera.setText("Selecione a foto" + "   ✔");
             Toast.makeText(context, getResources().getString(R.string.list_screen4), Toast.LENGTH_SHORT).show();
         }
@@ -1142,6 +1198,345 @@ public class List extends Fragment {
             if (data.getCount() == 0 && data1.getCount() == 0) {
                 mDatabaseHelper.DeleteDataFromTableTwo();
                 preferences.clearListID();
+            }
+        }
+    }
+
+    private void DnaConfirmForHawbET() {
+        String a = mDatabaseHelper.GetDna(hawb.getText().toString());
+        boolean checkHawb = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
+
+        boolean check = Arrays.asList(deliveryDna).contains(a);//dna numbers
+        boolean check2 = Arrays.asList(returnDna).contains(a);//dna numbers
+
+        if (preferences.getLowType().equals("ENTREGA")) {
+
+            if (hawb.getText().toString().length() <= 0) {
+                camera.setVisibility(View.GONE);
+            } else if (checkHawb) {//check if hawb is present in the list
+                java.util.List<Double> latLongs = mDatabaseHelper.GetLatLong(hawb.getText().toString());
+                double latit = Utils.GetLatitude(latLongs);
+                double longtit = Utils.GetLongitude(latLongs);
+                Log.e(TAG, "DnaConfirmForHawbET: " + latit + ", " + longtit);
+                //Perimeter Check
+                boolean perimeterCheck = Utils.FindPerimeter(latit, longtit, Double.parseDouble(preferences.getLatitude()), Double.parseDouble(preferences.getLongitude()));
+
+                if (latit == 0.0 || latit == 0) {
+                    if (check) {// check if the hawb dna requires picture
+                        camera.setVisibility(View.VISIBLE);
+                        camera.setBackground(getResources().getDrawable(R.drawable.rounded_blue_button));
+                        camera.setEnabled(true);
+                    } else {
+                        camera.setVisibility(View.GONE);
+                    }
+                } else {
+                    if (check || !perimeterCheck) {// check if the hawb dna requires picture
+                        camera.setVisibility(View.VISIBLE);
+                        camera.setBackground(getResources().getDrawable(R.drawable.rounded_blue_button));
+                        camera.setEnabled(true);
+                    } else {
+                        camera.setVisibility(View.GONE);
+                    }
+                }
+            } else {
+                camera.setVisibility(View.GONE);
+            }
+
+        } else {
+
+            if (hawb.getText().toString().length() <= 0) {
+                camera.setVisibility(View.GONE);
+            } else if (checkHawb) {
+                java.util.List<Double> latLongs = mDatabaseHelper.GetLatLong(hawb.getText().toString());
+                double latit = Utils.GetLatitude(latLongs);
+                double longtit = Utils.GetLongitude(latLongs);
+                //Perimeter Check
+                boolean perimeterCheck = Utils.FindPerimeter(latit, longtit, Double.parseDouble(preferences.getLatitude()), Double.parseDouble(preferences.getLongitude()));
+
+                if (latit == 0.0 || latit == 0) {
+                    if (check2) {
+                        camera.setVisibility(View.VISIBLE);
+                        camera.setBackground(getResources().getDrawable(R.drawable.rounded_blue_button));
+                        camera.setEnabled(true);
+                    } else {
+                        camera.setVisibility(View.GONE);
+                    }
+                } else {
+                    if (check2 || !perimeterCheck) {
+                        camera.setVisibility(View.VISIBLE);
+                        camera.setBackground(getResources().getDrawable(R.drawable.rounded_blue_button));
+                        camera.setEnabled(true);
+                    } else {
+                        camera.setVisibility(View.GONE);
+                    }
+                }
+            } else {
+                camera.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void ConfirmButton() {
+        boolean check = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
+        boolean checkHawb = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
+
+        String a = mDatabaseHelper.GetDna(hawb.getText().toString());
+        boolean check1 = Arrays.asList(deliveryDna).contains(a);
+        boolean check2 = Arrays.asList(returnDna).contains(a);
+        try {
+
+
+            if (preferences.getLowType().equals("ENTREGA")) {
+                java.util.List<Double> latLongs = mDatabaseHelper.GetLatLong(hawb.getText().toString());
+                double latit = Utils.GetLatitude(latLongs);
+                double longtit = Utils.GetLongitude(latLongs);
+                boolean checkForZero = Utils.CheckZeroInLocation(latit);
+                //Perimeter Check
+                boolean perimeterCheck = Utils.FindPerimeter(latit, longtit, Double.parseDouble(preferences.getLatitude()), Double.parseDouble(preferences.getLongitude()));
+
+                if (hawb.getText().toString().length() == 0) {
+                    Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+                    hawb.requestFocus();
+                } else if (!check) {
+                    Log.e(TAG, "Invalid hawb: ");
+                    Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+                } else if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
+                    Log.e(TAG, "select spinner ");
+                    Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+                } else if (Utils.CheckZeroInLocation(latit)) {
+                    Log.e(TAG, "CheckZeroInLocation: ");
+                    if (check1) {
+                        Log.e(TAG, "CheckZeroInLocation: t OR f");
+                        if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                            Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                        } else {
+                            storeDeliveryData();
+                            if (internetChecker.checkInternetConnection()) {
+                                PutJsonRequest();
+                            }
+                            mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                            mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                            boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+                            System.out.println(AddDeliveryType);
+                            ConfirmSuccessDialog("entregue");
+                        }
+                    }
+                } else if (check1 || !perimeterCheck) {
+                    Log.e(TAG, "CheckPerimeter: ");
+                    if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                    } else {
+                        storeDeliveryData();
+                        if (internetChecker.checkInternetConnection()) {
+                            PutJsonRequest();
+                        }
+                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+                        System.out.println(AddDeliveryType);
+                        ConfirmSuccessDialog("entregue");
+                    }
+                } else {
+                    Log.e(TAG, "StoreData: ");
+                    storeDeliveryData();
+                    if (internetChecker.checkInternetConnection()) {
+                        PutJsonRequest();
+                    }
+                    mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                    mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                    boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+                    System.out.println(AddDeliveryType);
+                    ConfirmSuccessDialog("entregue");
+                }
+            } else {
+                java.util.List<Double> latLongs = mDatabaseHelper.GetLatLong(hawb.getText().toString());
+                double latit = Utils.GetLatitude(latLongs);
+                double longtit = Utils.GetLongitude(latLongs);
+                boolean checkForZero = Utils.CheckZeroInLocation(latit);
+                //Perimeter Check
+                boolean perimeterCheck = Utils.FindPerimeter(latit, longtit, Double.parseDouble(preferences.getLatitude()), Double.parseDouble(preferences.getLongitude()));
+
+                if (hawb.getText().toString().length() == 0) {
+                    Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+                    hawb.requestFocus();
+                } else if (!check) {
+                    Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+                } else if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                    Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+                } else if (Utils.CheckZeroInLocation(latit)) {
+                    if (check2) {
+                        if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                            Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                        } else {
+                            storeDeliveryData();
+                            if (internetChecker.checkInternetConnection()) {
+                                PutJsonRequest();
+                            }
+                            mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                            mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                            boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+                            System.out.println(AddDeliveryType);
+                            ConfirmSuccessDialog("devolvida");
+                        }
+                    }
+                } else if (check1 || !perimeterCheck) {
+                    if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                    } else {
+                        storeDeliveryData();
+                        if (internetChecker.checkInternetConnection()) {
+                            PutJsonRequest();
+                        }
+                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+                        System.out.println(AddDeliveryType);
+                        ConfirmSuccessDialog("devolvida");
+                    }
+                } else {
+                    storeDeliveryData();
+                    if (internetChecker.checkInternetConnection()) {
+                        PutJsonRequest();
+                    }
+                    mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                    mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                    boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+                    System.out.println(AddDeliveryType);
+                    ConfirmSuccessDialog("devolvida");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void ConfirmButton2() {
+        boolean check = mDatabaseHelper.CheckHawbCode(hawb.getText().toString());
+
+        String a = mDatabaseHelper.GetDna(hawb.getText().toString());
+        boolean check1 = Arrays.asList(deliveryDna).contains(a);
+        boolean check2 = Arrays.asList(returnDna).contains(a);
+
+        if (preferences.getLowType().equals("ENTREGA")) {
+            if (hawb.getText().toString().length() == 0) {
+                Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+                hawb.requestFocus();
+            } else if (!check) {
+                Log.e(TAG, "Invalid hawb: ");
+                Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+            } else {
+                java.util.List<Double> latLongs = mDatabaseHelper.GetLatLong(hawb.getText().toString());
+                double latit = Utils.GetLatitude(latLongs);
+                double longtit = Utils.GetLongitude(latLongs);
+                //Perimeter Check
+                boolean perimeterCheck = Utils.FindPerimeter(latit, longtit, Double.parseDouble(preferences.getLatitude()), Double.parseDouble(preferences.getLongitude()));
+
+                if (spinner.getSelectedItem().toString().equals("-- Selecionar parentesco --")) {
+                    Log.e(TAG, "select spinner ");
+                    Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+                } else if (Utils.CheckZeroInLocation(latit)) {
+                    Log.e(TAG, "CheckZeroInLocation: ");
+                    if (check1) {
+                        Log.e(TAG, "CheckZeroInLocation: t OR f");
+                        if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                            Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                        } else {
+                            storeDeliveryData();
+                            if (internetChecker.checkInternetConnection()) {
+                                PutJsonRequest();
+                            }
+                            mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                            mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                            boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+                            System.out.println(AddDeliveryType);
+                            ConfirmSuccessDialog("entregue");
+                        }
+                    }
+                } else if (check1 || !perimeterCheck) {
+                    Log.e(TAG, "CheckPerimeter: ");
+                    if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                    } else {
+                        storeDeliveryData();
+                        if (internetChecker.checkInternetConnection()) {
+                            PutJsonRequest();
+                        }
+                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+                        System.out.println(AddDeliveryType);
+                        ConfirmSuccessDialog("entregue");
+                    }
+                } else {
+                    Log.e(TAG, "StoreData: ");
+                    storeDeliveryData();
+                    if (internetChecker.checkInternetConnection()) {
+                        PutJsonRequest();
+                    }
+                    mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                    mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                    boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("ENTREGA");
+                    System.out.println(AddDeliveryType);
+                    ConfirmSuccessDialog("entregue");
+                }
+            }
+        } else {
+            if (hawb.getText().toString().length() == 0) {
+                Toast.makeText(context, "Selecione um Hawb", Toast.LENGTH_LONG).show();
+                hawb.requestFocus();
+            } else if (!check) {
+                Log.e(TAG, "Invalid hawb: ");
+                Toast.makeText(context, "Hawb inserido é inválido", Toast.LENGTH_LONG).show();
+            } else {
+                java.util.List<Double> latLongs = mDatabaseHelper.GetLatLong(hawb.getText().toString());
+                double latit = Utils.GetLatitude(latLongs);
+                double longtit = Utils.GetLongitude(latLongs);
+                //Perimeter Check
+                boolean perimeterCheck = Utils.FindPerimeter(latit, longtit, Double.parseDouble(preferences.getLatitude()), Double.parseDouble(preferences.getLongitude()));
+
+                if (spinner2.getSelectedItem().toString().equals("-- Selecionar grupo --")) {
+                    Toast.makeText(context, "Selecione um item da lista suspensa", Toast.LENGTH_SHORT).show();
+                } else if (Utils.CheckZeroInLocation(latit)) {
+                    if (check2) {
+                        if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                            Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                        } else {
+                            storeDeliveryData();
+                            if (internetChecker.checkInternetConnection()) {
+                                PutJsonRequest();
+                            }
+                            mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                            mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                            boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+                            System.out.println(AddDeliveryType);
+                            ConfirmSuccessDialog("devolvida");
+                        }
+                    }
+                } else if (check2 || !perimeterCheck) {
+                    if (preferences.getImagePath().equals(" ") || preferences.getImagePath().equals("")) {
+                        Toast.makeText(context, "Por favor carregue uma foto", Toast.LENGTH_SHORT).show();
+                    } else {
+                        storeDeliveryData();
+                        if (internetChecker.checkInternetConnection()) {
+                            PutJsonRequest();
+                        }
+                        mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                        mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                        boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+                        System.out.println(AddDeliveryType);
+                        ConfirmSuccessDialog("devolvida");
+                    }
+                } else {
+                    storeDeliveryData();
+                    if (internetChecker.checkInternetConnection()) {
+                        PutJsonRequest();
+                    }
+                    mDatabaseHelper.deleteHawbFromTableFour(hawb.getText().toString());
+                    mDatabaseHelper.ValidateDataWithSecondTable(hawb.getText().toString());
+                    boolean AddDeliveryType = mDatabaseHelper.AddDeliveryType("DEVOLUCAO");
+                    System.out.println(AddDeliveryType);
+                    ConfirmSuccessDialog("devolvida");
+                }
             }
         }
     }

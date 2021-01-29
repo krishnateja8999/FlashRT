@@ -60,6 +60,10 @@ public class CollectListAdapter extends RecyclerView.Adapter<CollectListAdapter.
                 Bundle args = new Bundle();
                 args.putString("CID", listModalClasses.get(holder.getAdapterPosition()).getHawbCode());
                 args.putString("collect_dna", listModalClasses.get(holder.getAdapterPosition()).getDna());
+                args.putString("client_id", listModalClasses.get(holder.getAdapterPosition()).getClientID());
+                args.putString("contract_id", listModalClasses.get(holder.getAdapterPosition()).getContractID());
+                args.putDouble("latitude_collect", listModalClasses.get(holder.getAdapterPosition()).getLatitude());
+                args.putDouble("longitude_collect", listModalClasses.get(holder.getAdapterPosition()).getLatitude());
                 fr.setArguments(args);
                 fragmentTransaction.replace(R.id.content, fr);
                 fragmentTransaction.addToBackStack(null);

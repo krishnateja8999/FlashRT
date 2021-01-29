@@ -12,8 +12,9 @@ public class TableSixCollectModal {
     String longitude;
     int batteryPercentage;
     String imagePath;
+    String imageName;
 
-    public TableSixCollectModal(String collectID, String name, String identification, String dateTime, String type, String latitude, String longitude, int batteryPercentage, String imagePath) {
+    public TableSixCollectModal(String collectID, String name, String identification, String dateTime, String type, String latitude, String longitude, int batteryPercentage, String imagePath, String imageName) {
         this.collectID = collectID;
         this.name = name;
         this.identification = identification;
@@ -23,6 +24,7 @@ public class TableSixCollectModal {
         this.longitude = longitude;
         this.batteryPercentage = batteryPercentage;
         this.imagePath = imagePath;
+        this.imageName = imageName;
     }
 
     public String getCollectID() {
@@ -95,5 +97,13 @@ public class TableSixCollectModal {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

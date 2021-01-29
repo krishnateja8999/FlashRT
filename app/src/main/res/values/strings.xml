@@ -273,6 +273,18 @@
         <item>503 - Difícil Acesso</item>
         <item>501 - Recusado (Destinatário / Interlocutor)</item>
     </string-array>
+
+    <string-array name="list_delivery_dna">
+        <item>512</item>
+        <item>1024</item>
+        <item>4096</item>
+        <item>32768</item>
+    </string-array>
+
+    <string-array name="list_return_dna">
+        <item>2048</item>
+        <item>16384</item>
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

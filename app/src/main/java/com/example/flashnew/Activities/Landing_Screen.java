@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,6 +50,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.flashnew.Fragments.Collect;
@@ -75,6 +77,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,12 +134,6 @@ public class Landing_Screen extends AppCompatActivity {
             toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.white));
         }
 
-        try {
-            GetCurrentLocation.Location(Landing_Screen.this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         if (Build.VERSION.SDK_INT <= 26) {
             try {
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -167,14 +164,13 @@ public class Landing_Screen extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 drawer.closeDrawers();
-                //             navigationView.setItemBackgroundResource(R.color.white);
                 switch (menuItem.getItemId()) {
 
                     case R.id.account:
                         startActivity(new Intent(Landing_Screen.this, Profile_Class.class));
                         return true;
                     case R.id.about:
-                        Log.e(TAG, "About: " + preferences.getLongitude() + ", " + preferences.getLatitude());
+
                         return true;
 
                     case R.id.dashBoard:
@@ -529,7 +525,12 @@ public class Landing_Screen extends AppCompatActivity {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(imagePath), Utils.ConvertArrayListToString(imageName));
+                    if (Utils.ConvertArrayListToString(imagePath).equals("") || Utils.ConvertArrayListToString(imagePath).equals(" ") || Utils.ConvertArrayListToString(imagePath).equals(null)) {
+                        Log.e(TAG, "PutList: no image");
+                    } else {
+                        UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(imagePath), Utils.ConvertArrayListToString(imageName));
+                    }
+                    //U0ploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(imagePath), Utils.ConvertArrayListToString(imageName));
                 }
             });
             thread.start();
@@ -670,6 +671,8 @@ public class Landing_Screen extends AppCompatActivity {
         ArrayList<String> latitude = new ArrayList<String>();
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> batteryLevel = new ArrayList<String>();
+        ArrayList<String> collectImage = new ArrayList<String>();
+        ArrayList<String> collectImageName = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(ContentValues.TAG, "PostCollect: No Data");
@@ -683,6 +686,8 @@ public class Landing_Screen extends AppCompatActivity {
                 latitude.add(data.getString(6));
                 longitude.add(data.getString(7));
                 batteryLevel.add(data.getString(8));
+                collectImage.add(data.getString(9));
+                collectImageName.add(data.getString(10));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -706,7 +711,19 @@ public class Landing_Screen extends AppCompatActivity {
 
                     Log.e(ContentValues.TAG, "PostCollectData: " + jsonObj1);
 
-                    String url1 = ApiUtils.POST_COLETA;
+                    if (Utils.ConvertArrayListToString(collectImage).equals("") || Utils.ConvertArrayListToString(collectImage).equals(" ")) {
+                        Log.e(VolleyLog.TAG, "PostCollectData: No image");
+                    } else {
+                        Storage storage = UploadImages.setCredentials(getAssets().open("key.json"));
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(collectImage), Utils.ConvertArrayListToString(collectImageName));
+                            }
+                        });
+                        thread.start();
+                    }
+
                     String url2 = preferences.getHostUrl() + ApiUtils.POST_COLETA1;
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
@@ -734,6 +751,8 @@ public class Landing_Screen extends AppCompatActivity {
                     latitude.clear();
                     longitude.clear();
                     batteryLevel.clear();
+                    collectImage.clear();
+                    collectImageName.clear();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -751,6 +770,8 @@ public class Landing_Screen extends AppCompatActivity {
         ArrayList<String> latitude = new ArrayList<String>();
         ArrayList<String> longitude = new ArrayList<String>();
         ArrayList<String> batteryLevel = new ArrayList<String>();
+        ArrayList<String> notCollectImage = new ArrayList<String>();
+        ArrayList<String> notCollectImageName = new ArrayList<String>();
 
         if (data.getCount() == 0) {
             Log.e(ContentValues.TAG, "PostNotCollect: No Data");
@@ -762,6 +783,8 @@ public class Landing_Screen extends AppCompatActivity {
                 latitude.add(data.getString(4));
                 longitude.add(data.getString(5));
                 batteryLevel.add(data.getString(6));
+                notCollectImage.add(data.getString(7));
+                notCollectImageName.add(data.getString(8));
 
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObj = new JSONObject();
@@ -783,7 +806,19 @@ public class Landing_Screen extends AppCompatActivity {
 
                     Log.e(ContentValues.TAG, "PostNotCollectData: " + jsonObj1);
 
-                    String url1 = ApiUtils.POST_COLETA;
+                    if (Utils.ConvertArrayListToString(notCollectImage).equals("") || Utils.ConvertArrayListToString(notCollectImage).equals(" ")) {
+                        Log.e(VolleyLog.TAG, "PostCollectData: No image");
+                    } else {
+                        Storage storage = UploadImages.setCredentials(getAssets().open("key.json"));
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UploadImages.transmitImageFile(storage, Utils.ConvertArrayListToString(notCollectImage), Utils.ConvertArrayListToString(notCollectImageName));
+                            }
+                        });
+                        thread.start();
+                    }
+
                     String url2 = preferences.getHostUrl() + ApiUtils.POST_COLETA1;
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, jsonObj1, new Response.Listener<JSONObject>() {
@@ -809,8 +844,10 @@ public class Landing_Screen extends AppCompatActivity {
                     latitude.clear();
                     longitude.clear();
                     batteryLevel.clear();
+                    notCollectImage.clear();
+                    notCollectImageName.clear();
 
-                } catch (JSONException e) {
+                } catch (JSONException | IOException e) {
                     e.printStackTrace();
                 }
             }

@@ -82,14 +82,11 @@ public class LoginActivity extends AppCompatActivity {
         masterPasswordEditText = findViewById(R.id.masterPasswordEditText);
         dialog1 = new androidx.appcompat.app.AlertDialog.Builder(this);
 
-        Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
-        startActivity(i);
-
-//        if (preferences.isLoggedIn() && preferences.isLoggedIn1()) {
-//            Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
-//            startActivity(i);
-//            finish();
-//        }
+        if (preferences.isLoggedIn() && preferences.isLoggedIn1()) {
+            Intent i = new Intent(LoginActivity.this, Landing_Screen.class);
+            startActivity(i);
+            finish();
+        }
 
         masterPasswordOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,7 +178,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void jsonParse() {
         loginProgressBar.setVisibility(View.VISIBLE);
-        String url1 = ApiUtils.LOGIN;
         String url2 = hostserverUrl.getText().toString() + ApiUtils.LOGIN1;
         StringRequest request = new StringRequest(Request.Method.GET, url2, new Response.Listener<String>() {
             @Override

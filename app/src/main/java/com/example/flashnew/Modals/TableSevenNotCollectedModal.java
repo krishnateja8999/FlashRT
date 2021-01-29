@@ -10,8 +10,9 @@ public class TableSevenNotCollectedModal {
     String longitude;
     int batteryPercentage;
     String image;
+    String imageName;
 
-    public TableSevenNotCollectedModal(String collectID, String dateTime, String type, String latitude, String longitude, int batteryPercentage, String image) {
+    public TableSevenNotCollectedModal(String collectID, String dateTime, String type, String latitude, String longitude, int batteryPercentage, String image, String imageName) {
         this.collectID = collectID;
         this.dateTime = dateTime;
         this.type = type;
@@ -19,6 +20,7 @@ public class TableSevenNotCollectedModal {
         this.longitude = longitude;
         this.batteryPercentage = batteryPercentage;
         this.image = image;
+        this.imageName = imageName;
     }
 
     public String getCollectID() {
@@ -75,5 +77,13 @@ public class TableSevenNotCollectedModal {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }
