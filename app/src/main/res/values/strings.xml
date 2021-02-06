@@ -1,4 +1,14 @@
 <resources>
+
+    <!-- App Info -->
+    <string name="host_service">http://191.241.243.133:8081</string>
+    <string name="app_version">3.9.0</string>
+    <string name="master_password">tbmvc</string>
+    <string name="image_service_project_id">digitalizacao-174822</string>
+    <string name="test_bucket">gunsandroses-909459-dontcry-571723</string>
+    <string name="prod_bucket">saopaulo-blackbirds-imagens-174822</string>
+    <!-- App Info -->
+
     <string name="app_name">Flash_portuguese</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -59,7 +59,6 @@ import com.example.flashnew.Fragments.Messages;
 import com.example.flashnew.Fragments.Search;
 import com.example.flashnew.HelperClasses.AppPrefernces;
 import com.example.flashnew.HelperClasses.DatabaseHelper;
-import com.example.flashnew.HelperClasses.GetCurrentLocation;
 import com.example.flashnew.HelperClasses.UploadImages;
 import com.example.flashnew.LoginActivity;
 import com.example.flashnew.R;
@@ -108,6 +107,7 @@ public class Landing_Screen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing__screen);
+
         navigationView = findViewById(R.id.nav_view);
         layout = findViewById(R.id.container2);
         toolbar = findViewById(R.id.toolbar_t);
@@ -117,7 +117,6 @@ public class Landing_Screen extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         changeFragment(new List());
-        layout = findViewById(R.id.container2);
         databaseHelper = new DatabaseHelper(this);
         queue = Volley.newRequestQueue(this);
         internetChecker = new InternetConnectionChecker(this);

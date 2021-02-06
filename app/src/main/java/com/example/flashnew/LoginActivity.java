@@ -156,8 +156,6 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (password.getText().toString().length() <= 0) {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen7), Toast.LENGTH_LONG).show();
                     password.requestFocus();
-                } else if (!checkbox.isChecked()) {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.Login_screen11), Toast.LENGTH_LONG).show();
                 } else {
                     if (internetChecker.checkInternetConnection()) {
                         jsonParse();

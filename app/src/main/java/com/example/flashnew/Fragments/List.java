@@ -1,10 +1,12 @@
 package com.example.flashnew.Fragments;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -36,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -158,10 +161,14 @@ public class List extends Fragment {
         listScreenUpdater = new ListScreenUpdater();
         LocalBroadcastManager.getInstance(context).registerReceiver(listScreenUpdater, new IntentFilter("list_screen"));
 
-        try {
-            GetCurrentLocation.Location(context);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                GetCurrentLocation.Location(context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         Cursor data = mDatabaseHelper.getDeliveryData(); //table3
@@ -1122,7 +1129,7 @@ public class List extends Fragment {
         //Setting message manually and performing action on button click
         builder.setMessage("Hawb " + type + " com sucesso em " + formattedDate + " as " + formatTime)
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                         title.setText("Lista : " + preferences.getListID());
@@ -1139,7 +1146,6 @@ public class List extends Fragment {
         //Setting the title manually
         alert.setTitle("Atenção");
         alert.show();
-
     }
 
     private void dispatchTakePictureIntent() {
