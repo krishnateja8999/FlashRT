@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "digitalizacao-174822",
+  "private_key_id": "c3ae991f8b32847a40b4d66b4c8c07ad1312f11e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCslrDpmiDBmyJt\nbS9a8k6Of0/psLGcRCzpq/9dbZQK+VczMq2Gd++NShwAI2NlFOzPjRpCk2O4FqAl\nEGdWPyqLmGR6i30nTWIjpsyjKCEO+0EmQtHc6sLZs0Qgl1oe890hvnCOVuN0jF65\nEmcEmwT6wD4XPg9AGqDQP4rk/ZwTaJ0dm7pDC7Edq751hhmL1r0aU3AxI++41MK9\n2wHNZrS9aWIIXmrZ5E1j0F5IUAU7vPmRe58meW/PQE1MQLnUZ26nJ45zVup/5zN0\npxzyO1/6PKrWVIEhzMsh2g44YQMNlDk3qaT+b1iBd40T5T+dVUQ5V/RiO7gLdhSv\n/NvFREPBAgMBAAECggEABdKTp13mywFT2QM8/MF9+vq6lHS8mTwHk96Un+9JdlFR\nKs4D4qx7LXYZmbuX59ob3yiwgRx92cERqA50nglFgy4h/axlDYVj0TYYY0zASMQb\nP5IziFN3PWb53mucw7yQckn9fB/cTptJus6vIQ2lzlvb/GbAlvYPBNeP9QfFUzY/\nHvswnQplRGgyK6KCoTg2HQpBH46or2/tbT3pxYnuDoCTfIjTof/iJQ3Jg2lkr6AX\nk+N4jCf2mKKeq+5WBfa5LPAtj1N06yQwVx36YuyLK5OS7dTu/LphtXaPhbrkMiau\nLfTbqqKrdg9pjTrm3/ZF6xCxBKHkZ0aNumzIvEqJkQKBgQDW9/aIUh/J4ewlVKCh\n4gPJwRKThA/rugmxxOtfIp+s59TDrYGlwdI4silRNER3DmvYh9L76QVhUtioGttF\n92VGWd755OibNHPnszoC0TZcTpjIjWnKE3as3aH8tcWGJNVqwgKODohvW1tcr8SF\nRTbnLDbMI/VsXLcfZk7j5yjWLQKBgQDNh+kXg/eP1rsEBHNF6EAY1XKhaob2NK2O\nlEehV1TMRVr1hyvygHLcMsKocDh38bamE5xQYaKD0oYPpq9xvpYdOcpu3jRjmoTW\n5LQitVkQKUvUOlgJawmIsMs7gaIYonp0iXKRJgzgfwwjz97zNdRGbyDqfhUVPo42\nXH4/EQVUZQKBgCjo14np1xLcY8xW5proIEBs9dQM9dqudNnX19MrC6gkFmGGy313\n/UG85hAGGmFt5Sg38PbvyY5T7ddQBRqzkhppT/3OilW/Da+yc//FQMsgSgMgpllG\nivcq1oD5NrXonJTMhx/xtBU9FY32BTg3i9NCnssKrNIKcu8O0USd4S+hAoGAK0px\nQk69mkJ0acg2L4dX2OM8nds+SiWWWO3KmKU4az5Ahm7ORunfR5o5fhkFC96RxjFj\nP1sRTArPygQl+CNYoxdFGE0dY81sJYdOmfDwrYLFQhJ38KPnAi+a3xHS/rVabal1\nxDTriW25NOHX6Apyh9Nob3vXHP5sHe8leEsxgDECgYBVvvfMvYkumGat8HtIVOcI\nBFayGkWUSBv2qXXU1Yvdml82S/7UQUAeGWslKo6LHLXCfrYzEr7JuYdoeOCnZyxa\nqnpVlmXE+T9ii4susB9elUMkVM2iF8DpY42tt6jFoqvxLrZNxG9kTtk2h+Ct/sXt\nE7B5gmN4IDfGYTYcKKZ/mg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "digitalizacao@digitalizacao-174822.iam.gserviceaccount.com",
+  "client_id": "103197213483805765846",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/digitalizacao%40digitalizacao-174822.iam.gserviceaccount.com"
+}
